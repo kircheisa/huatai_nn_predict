@@ -1,0 +1,13 @@
+# Python 3.12 / Anaconda
+# GPU 版 torch 请按官方指引安装（项目使用 PyTorch 2.6.0 + CUDA）
+torch>=2.3
+numpy
+pandas
+scikit-learn
+scipy
+xgboost>=3.0
+matplotlib
+joblib
+openpyxl
+python-docx
+python-pptx

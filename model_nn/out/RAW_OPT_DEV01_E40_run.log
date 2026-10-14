@@ -1,0 +1,49 @@
+数据 B: 1950行 74列 2018-01-02~2026-01-14 缺失=0.048
+RAW_OPT_DEV01_E40 fold=1 seed=0 ep=1
+RAW_OPT_DEV01_E40 fold=1 {'n': 63, 'acc': 0.873015873015873, 'macro_f1': 0.4661016949152542, 'auc': 0.7886363636363637, 'brier': 0.21013432050553854, 'pred_down': 1.0, 'true_down': 0.873015873015873, 'majority_baseline': 0.873015873015873, 'fold': 1, 'features': 67, 'date_start': '2018-09-26', 'date_end': '2018-12-28'}
+RAW_OPT_DEV01_E40 fold=2 seed=0 ep=1
+RAW_OPT_DEV01_E40 fold=2 {'n': 63, 'acc': 0.5555555555555556, 'macro_f1': 0.35714285714285715, 'auc': 0.6183673469387755, 'brier': 0.24838262476735676, 'pred_down': 0.0, 'true_down': 0.4444444444444444, 'majority_baseline': 0.5555555555555556, 'fold': 2, 'features': 68, 'date_start': '2019-01-02', 'date_end': '2019-04-08'}
+RAW_OPT_DEV01_E40 fold=3 seed=0 ep=9
+RAW_OPT_DEV01_E40 fold=3 {'n': 63, 'acc': 0.6984126984126984, 'macro_f1': 0.411214953271028, 'auc': 0.638755980861244, 'brier': 0.22435775157574375, 'pred_down': 1.0, 'true_down': 0.6984126984126984, 'majority_baseline': 0.6984126984126984, 'fold': 3, 'features': 68, 'date_start': '2019-04-09', 'date_end': '2019-07-10'}
+RAW_OPT_DEV01_E40 fold=4 seed=0 ep=9
+RAW_OPT_DEV01_E40 fold=4 {'n': 63, 'acc': 0.3492063492063492, 'macro_f1': 0.25882352941176473, 'auc': 0.4124168514412417, 'brier': 0.41846164802967106, 'pred_down': 1.0, 'true_down': 0.3492063492063492, 'majority_baseline': 0.6507936507936508, 'fold': 4, 'features': 68, 'date_start': '2019-07-11', 'date_end': '2019-10-15'}
+RAW_OPT_DEV01_E40 fold=5 seed=0 ep=13
+RAW_OPT_DEV01_E40 fold=5 {'n': 63, 'acc': 0.7619047619047619, 'macro_f1': 0.43243243243243246, 'auc': 0.7319444444444445, 'brier': 0.21649808057767736, 'pred_down': 1.0, 'true_down': 0.7619047619047619, 'majority_baseline': 0.7619047619047619, 'fold': 5, 'features': 68, 'date_start': '2019-10-16', 'date_end': '2020-01-13'}
+RAW_OPT_DEV01_E40 fold=6 seed=0 ep=8
+RAW_OPT_DEV01_E40 fold=6 {'n': 63, 'acc': 0.7142857142857143, 'macro_f1': 0.5367647058823529, 'auc': 0.5066489361702128, 'brier': 0.22227400426307617, 'pred_down': 0.873015873015873, 'true_down': 0.746031746031746, 'majority_baseline': 0.746031746031746, 'fold': 6, 'features': 68, 'date_start': '2020-01-14', 'date_end': '2020-04-20'}
+RAW_OPT_DEV01_E40 fold=7 seed=0 ep=25
+RAW_OPT_DEV01_E40 fold=7 {'n': 63, 'acc': 0.2698412698412698, 'macro_f1': 0.2696572580645161, 'auc': 0.9053497942386831, 'brier': 0.6093919635661033, 'pred_down': 0.873015873015873, 'true_down': 0.14285714285714285, 'majority_baseline': 0.8571428571428572, 'fold': 7, 'features': 68, 'date_start': '2020-04-21', 'date_end': '2020-07-23'}
+RAW_OPT_DEV01_E40 fold=8 seed=0 ep=4
+RAW_OPT_DEV01_E40 fold=8 {'n': 63, 'acc': 0.23809523809523808, 'macro_f1': 0.19230769230769232, 'auc': 0.6486111111111111, 'brier': 0.47236655643894554, 'pred_down': 1.0, 'true_down': 0.23809523809523808, 'majority_baseline': 0.7619047619047619, 'fold': 8, 'features': 68, 'date_start': '2020-07-24', 'date_end': '2020-10-28'}
+RAW_OPT_DEV01_E40 fold=9 seed=0 ep=3
+RAW_OPT_DEV01_E40 fold=9 {'n': 63, 'acc': 0.49206349206349204, 'macro_f1': 0.32978723404255317, 'auc': 0.5080645161290323, 'brier': 0.33311794524875604, 'pred_down': 1.0, 'true_down': 0.49206349206349204, 'majority_baseline': 0.5079365079365079, 'fold': 9, 'features': 68, 'date_start': '2020-10-29', 'date_end': '2021-01-26'}
+RAW_OPT_DEV01_E40 fold=10 seed=0 ep=2
+RAW_OPT_DEV01_E40 fold=10 {'n': 63, 'acc': 0.6507936507936508, 'macro_f1': 0.3942307692307692, 'auc': 0.6618625277161864, 'brier': 0.2362060638729842, 'pred_down': 1.0, 'true_down': 0.6507936507936508, 'majority_baseline': 0.6507936507936508, 'fold': 10, 'features': 69, 'date_start': '2021-01-27', 'date_end': '2021-05-06'}
+RAW_OPT_DEV01_E40 fold=11 seed=0 ep=2
+RAW_OPT_DEV01_E40 fold=11 {'n': 63, 'acc': 0.7777777777777778, 'macro_f1': 0.4375, 'auc': 0.48833819241982507, 'brier': 0.1713695599594777, 'pred_down': 1.0, 'true_down': 0.7777777777777778, 'majority_baseline': 0.7777777777777778, 'fold': 11, 'features': 69, 'date_start': '2021-05-07', 'date_end': '2021-08-04'}
+RAW_OPT_DEV01_E40 fold=12 seed=0 ep=1
+RAW_OPT_DEV01_E40 fold=12 {'n': 63, 'acc': 0.4444444444444444, 'macro_f1': 0.3076923076923077, 'auc': 0.7255102040816327, 'brier': 0.2756961898574301, 'pred_down': 1.0, 'true_down': 0.4444444444444444, 'majority_baseline': 0.5555555555555556, 'fold': 12, 'features': 69, 'date_start': '2021-08-05', 'date_end': '2021-11-10'}
+RAW_OPT_DEV01_E40 fold=13 seed=0 ep=1
+RAW_OPT_DEV01_E40 fold=13 {'n': 63, 'acc': 0.6031746031746031, 'macro_f1': 0.37623762376237624, 'auc': 0.6273684210526316, 'brier': 0.23362460982960487, 'pred_down': 1.0, 'true_down': 0.6031746031746031, 'majority_baseline': 0.6031746031746031, 'fold': 13, 'features': 69, 'date_start': '2021-11-11', 'date_end': '2022-02-15'}
+RAW_OPT_DEV01_E40 fold=14 seed=0 ep=2
+RAW_OPT_DEV01_E40 fold=14 {'n': 63, 'acc': 0.6666666666666666, 'macro_f1': 0.4, 'auc': 0.6859410430839002, 'brier': 0.2129985048972652, 'pred_down': 1.0, 'true_down': 0.6666666666666666, 'majority_baseline': 0.6666666666666666, 'fold': 14, 'features': 69, 'date_start': '2022-02-16', 'date_end': '2022-05-20'}
+RAW_OPT_DEV01_E40 fold=15 seed=0 ep=2
+RAW_OPT_DEV01_E40 fold=15 {'n': 63, 'acc': 0.6507936507936508, 'macro_f1': 0.3942307692307692, 'auc': 0.09645232815964519, 'brier': 0.26103358825211126, 'pred_down': 1.0, 'true_down': 0.6507936507936508, 'majority_baseline': 0.6507936507936508, 'fold': 15, 'features': 69, 'date_start': '2022-05-23', 'date_end': '2022-08-18'}
+RAW_OPT_DEV01_E40 fold=16 seed=0 ep=5
+RAW_OPT_DEV01_E40 fold=16 {'n': 63, 'acc': 0.2698412698412698, 'macro_f1': 0.2125, 'auc': 0.3529411764705882, 'brier': 0.4307532829798228, 'pred_down': 1.0, 'true_down': 0.2698412698412698, 'majority_baseline': 0.7301587301587302, 'fold': 16, 'features': 69, 'date_start': '2022-08-19', 'date_end': '2022-11-23'}
+RAW_OPT_DEV01_E40 fold=17 seed=0 ep=3
+RAW_OPT_DEV01_E40 fold=17 {'n': 63, 'acc': 0.5079365079365079, 'macro_f1': 0.3368421052631579, 'auc': 0.4777777777777778, 'brier': 0.28635551388399677, 'pred_down': 0.9841269841269841, 'true_down': 0.5238095238095238, 'majority_baseline': 0.5238095238095238, 'fold': 17, 'features': 69, 'date_start': '2022-11-24', 'date_end': '2023-02-28'}
+RAW_OPT_DEV01_E40 fold=18 seed=0 ep=1
+RAW_OPT_DEV01_E40 fold=18 {'n': 63, 'acc': 0.3968253968253968, 'macro_f1': 0.32142857142857145, 'auc': 0.37244897959183676, 'brier': 0.257040908029968, 'pred_down': 0.4444444444444444, 'true_down': 0.8888888888888888, 'majority_baseline': 0.8888888888888888, 'fold': 18, 'features': 69, 'date_start': '2023-03-01', 'date_end': '2023-06-01'}
+RAW_OPT_DEV01_E40 fold=19 seed=0 ep=13
+RAW_OPT_DEV01_E40 fold=19 {'n': 63, 'acc': 0.3968253968253968, 'macro_f1': 0.2840909090909091, 'auc': 0.7926315789473684, 'brier': 0.4428462519482915, 'pred_down': 0.0, 'true_down': 0.6031746031746031, 'majority_baseline': 0.6031746031746031, 'fold': 19, 'features': 74, 'date_start': '2023-06-02', 'date_end': '2023-08-31'}
+RAW_OPT_DEV01_E40 fold=20 seed=0 ep=1
+RAW_OPT_DEV01_E40 fold=20 {'n': 63, 'acc': 0.4603174603174603, 'macro_f1': 0.4535714285714285, 'auc': 0.5758547008547009, 'brier': 0.25082579277111905, 'pred_down': 0.7301587301587301, 'true_down': 0.38095238095238093, 'majority_baseline': 0.6190476190476191, 'fold': 20, 'features': 74, 'date_start': '2023-09-01', 'date_end': '2023-12-06'}
+RAW_OPT_DEV01_E40 fold=21 seed=0 ep=8
+RAW_OPT_DEV01_E40 fold=21 {'n': 63, 'acc': 0.8253968253968254, 'macro_f1': 0.45217391304347826, 'auc': 0.28826530612244905, 'brier': 0.1498956384377865, 'pred_down': 0.9365079365079365, 'true_down': 0.8888888888888888, 'majority_baseline': 0.8888888888888888, 'fold': 21, 'features': 74, 'date_start': '2023-12-07', 'date_end': '2024-03-13'}
+RAW_OPT_DEV01_E40 fold=22 seed=0 ep=11
+RAW_OPT_DEV01_E40 fold=22 {'n': 63, 'acc': 0.38095238095238093, 'macro_f1': 0.35764705882352943, 'auc': 0.3002392344497608, 'brier': 0.44827479474194487, 'pred_down': 0.49206349206349204, 'true_down': 0.6984126984126984, 'majority_baseline': 0.6984126984126984, 'fold': 22, 'features': 74, 'date_start': '2024-03-14', 'date_end': '2024-06-18'}
+RAW_OPT_DEV01_E40 fold=23 seed=0 ep=10
+RAW_OPT_DEV01_E40 fold=23 {'n': 63, 'acc': 0.36507936507936506, 'macro_f1': 0.26744186046511625, 'auc': 0.7141304347826086, 'brier': 0.40669954009791565, 'pred_down': 0.0, 'true_down': 0.6349206349206349, 'majority_baseline': 0.6349206349206349, 'fold': 23, 'features': 74, 'date_start': '2024-06-19', 'date_end': '2024-09-13'}
+RAW_OPT_DEV01_E40 fold=24 seed=0 ep=6
+RAW_OPT_DEV01_E40 fold=24 {'n': 60, 'acc': 0.8166666666666667, 'macro_f1': 0.7371565113500598, 'auc': 0.7259259259259259, 'brier': 0.16491672176211572, 'pred_down': 0.8, 'true_down': 0.75, 'majority_baseline': 0.75, 'fold': 24, 'features': 74, 'date_start': '2024-09-18', 'date_end': '2024-12-17'}

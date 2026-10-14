@@ -1,0 +1,44 @@
+{
+  "task": "featrelab_E_W1260",
+  "variant": "E",
+  "label": "down_ex2",
+  "twostage": false,
+  "rows": 1764,
+  "features": 120,
+  "max_train_days": 1260,
+  "recency_halflife": 0,
+  "state_similarity": 0,
+  "dev": {
+    "n": 1509,
+    "coverage": 1.0,
+    "acc": 0.49966865473823724,
+    "macro_f1": 0.478503569197108,
+    "pred_down": 0.3320079522862823,
+    "true_down": 0.4665341285619616,
+    "majority_baseline": 0.5334658714380385,
+    "auc": 0.4853631422924901,
+    "vs_majority": -0.033797216699801236
+  },
+  "full": {
+    "n": 1764,
+    "coverage": 1.0,
+    "acc": 0.4931972789115646,
+    "macro_f1": 0.47091575937076857,
+    "pred_down": 0.35600907029478457,
+    "true_down": 0.4387755102040816,
+    "majority_baseline": 0.5612244897959184,
+    "auc": 0.4820152428679561,
+    "vs_majority": -0.06802721088435382
+  },
+  "2025": {
+    "n": 243,
+    "coverage": 1.0,
+    "acc": 0.4732510288065844,
+    "macro_f1": 0.44025338324215374,
+    "pred_down": 0.51440329218107,
+    "true_down": 0.24279835390946503,
+    "majority_baseline": 0.757201646090535,
+    "auc": 0.47807663964627856,
+    "vs_majority": -0.2839506172839506
+  }
+}

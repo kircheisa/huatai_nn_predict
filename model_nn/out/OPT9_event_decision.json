@@ -1,0 +1,32 @@
+{
+  "selection": "仅开发期原始方向；2025只作诊断，不用于采用判断",
+  "limitation": "精选回溯事件标注不能视为已验证的实时新闻数据",
+  "candidates": {
+    "OPT9_event_objective_E": {
+      "adopt": false,
+      "checks": {
+        "original_dev_above_majority": false,
+        "paired_dev_interval_positive": false,
+        "majority_of_seeds_improve": false
+      },
+      "original_dev_vs_E": -0.015904572564612324,
+      "paired_dev_interval": [
+        -0.04970178926441352,
+        0.019897282968853455
+      ]
+    },
+    "OPT9_event_direction_E": {
+      "adopt": false,
+      "checks": {
+        "original_dev_above_majority": false,
+        "paired_dev_interval_positive": false,
+        "majority_of_seeds_improve": false
+      },
+      "original_dev_vs_E": -0.030483764082173626,
+      "paired_dev_interval": [
+        -0.07488402915838303,
+        0.009940357852882704
+      ]
+    }
+  }
+}

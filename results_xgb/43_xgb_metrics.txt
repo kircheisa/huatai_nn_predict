@@ -1,0 +1,57 @@
+XGBoost 三分类测试结果（优化：去重遗传+利率强度+超参调优）
+训练模式: rolling (window=756, step=63, val=63)
+训练 folds: 14
+数据起始: 2018-01-01
+测试样本数: 882
+总特征数: 153
+超参: depth=3, n=600, lr=0.05 (原有效参数+增树数)
+Accuracy: 0.4705
+Macro F1: 0.3852
+多数类基线标签: 1
+多数类基线 Accuracy: 0.5828
+
+测试集标签分布:
+0    0.264172
+1    0.582766
+2    0.153061
+
+Confusion Matrix:
+        pred_0  pred_1  pred_2
+true_0      61     157      15
+true_1     119     317      78
+true_2      20      78      37
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           0     0.3050    0.2618    0.2818       233
+           1     0.5743    0.6167    0.5947       514
+           2     0.2846    0.2741    0.2792       135
+
+    accuracy                         0.4705       882
+   macro avg     0.3880    0.3842    0.3852       882
+weighted avg     0.4588    0.4705    0.4638       882
+
+
+Top 20 重要特征:
+                        feature  importance
+                   股债相对回报率_ma_5    0.016349
+                     rate_lag_2    0.014956
+                         5年信用利差    0.014242
+                   3年信用利差_ma_20    0.013581
+                   gp_feature_8    0.013465
+momentum_30_robust_scaled_lag_5    0.012730
+                   gp_feature_3    0.012717
+              curve_ma_gap_5_20    0.012166
+         期货收盘价(活跃合约):动力煤:前一个观测值    0.011630
+                  5年信用利差_chg_5d    0.011567
+                    rate_lag_10    0.011501
+                 股债相对回报率_chg_5d    0.011450
+ 中国:开工率:汽车轮胎(半钢胎):周:结束日5:前一个观测值    0.011130
+                     GC001:加权平均    0.010780
+                股债相对回报率_chg_20d    0.010754
+                     广义基金托管同比_x    0.010706
+ momentum_7_robust_scaled_lag_1    0.010441
+                   dollar_ma_20    0.010203
+                      rate_ma_5    0.010081
+      momentum_60_robust_scaled    0.010040

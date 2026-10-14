@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "f:\43_华泰证券预处理\43_华泰证券预处理\model_nn\04_导出Word报告.py", line 192, in <module>
+    main()
+  File "f:\43_华泰证券预处理\43_华泰证券预处理\model_nn\04_导出Word报告.py", line 186, in main
+    doc.save(OUT)
+  File "f:\43_华泰证券预处理\43_华泰证券预处理\model_nn\_libs\docx\document.py", line 204, in save
+    self._part.save(path_or_stream)
+  File "f:\43_华泰证券预处理\43_华泰证券预处理\model_nn\_libs\docx\parts\document.py", line 114, in save
+    self.package.save(path_or_stream)
+  File "f:\43_华泰证券预处理\43_华泰证券预处理\model_nn\_libs\docx\opc\package.py", line 166, in save
+    PackageWriter.write(pkg_file, self.rels, self.parts)
+  File "f:\43_华泰证券预处理\43_华泰证券预处理\model_nn\_libs\docx\opc\pkgwriter.py", line 34, in write
+    phys_writer = PhysPkgWriter(pkg_file)
+                  ^^^^^^^^^^^^^^^^^^^^^^^
+  File "f:\43_华泰证券预处理\43_华泰证券预处理\model_nn\_libs\docx\opc\phys_pkg.py", line 109, in __init__
+    self._zipf = ZipFile(pkg_file, "w", compression=ZIP_DEFLATED)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\soft\Anaconda3\Lib\zipfile\__init__.py", line 1331, in __init__
+    self.fp = io.open(file, filemode)
+              ^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: 'f:\\43_华泰证券预处理\\43_华泰证券预处理\\model_nn\\模型迭代报告_BiGRU.docx'

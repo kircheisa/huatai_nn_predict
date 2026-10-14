@@ -1,0 +1,4 @@
+﻿pip PID=218816 IO_read_MB=0 WS_MB=52
+Looking in indexes: https://mirrors.aliyun.com/pypi/simple/
+Collecting torch==2.7.1
+  Downloading https://mirrors.aliyun.com/pypi/packages/50/9e/acf04ff375b0b49a45511c55d188bcea5c942da2aaf293096676110086d1/torch-2.7.1-cp311-cp311-win_amd64.whl (216.1 MB)

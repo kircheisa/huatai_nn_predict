@@ -1,0 +1,8 @@
+﻿CommandLine                                                           ProcessId  
+
+"D:\anaconda\python.exe"  "D:\anaconda\Scripts\mysql_mcp_server.exe"  191200     
+
+
+
+Name: torch
+Version: 2.2.2

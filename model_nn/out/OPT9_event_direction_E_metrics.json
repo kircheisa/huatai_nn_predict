@@ -1,0 +1,81 @@
+{
+  "task": "event_direction_E",
+  "variant": "E",
+  "label": "down_ex2",
+  "twostage": false,
+  "rows": 1764,
+  "features": 133,
+  "max_train_days": 0,
+  "recency_halflife": 0,
+  "state_similarity": 0,
+  "training": {
+    "n_seeds": 3,
+    "epochs": 25,
+    "seq_len": 20,
+    "hidden_size": 32,
+    "lr": 0.0005,
+    "dropout": 0.3,
+    "seed": 42,
+    "history_start": "2010-01-01"
+  },
+  "event_mode": "direction",
+  "dev": {
+    "n": 1509,
+    "coverage": 1.0,
+    "acc": 0.5255135851557323,
+    "macro_f1": 0.5084690553745929,
+    "pred_down": 0.3472498343273691,
+    "true_down": 0.4665341285619616,
+    "majority_baseline": 0.5334658714380385,
+    "auc": 0.5615877329192547,
+    "vs_majority": -0.007952286282306154
+  },
+  "full": {
+    "n": 1764,
+    "coverage": 1.0,
+    "acc": 0.5498866213151927,
+    "macro_f1": 0.5225626292774913,
+    "pred_down": 0.3219954648526077,
+    "true_down": 0.4387755102040816,
+    "majority_baseline": 0.5612244897959184,
+    "auc": 0.5784081121290423,
+    "vs_majority": -0.01133786848072571
+  },
+  "2025": {
+    "n": 243,
+    "coverage": 1.0,
+    "acc": 0.7242798353909465,
+    "macro_f1": 0.5872899186291161,
+    "pred_down": 0.18106995884773663,
+    "true_down": 0.24279835390946503,
+    "majority_baseline": 0.757201646090535,
+    "auc": 0.633843036109064,
+    "vs_majority": -0.03292181069958844
+  },
+  "events": {
+    "path": "F:\\43_华泰证券预处理\\43_华泰证券预处理\\data\\out_data\\文本标签_政策事件日历.csv",
+    "sha256": "5d423fa6342a40d8b4800da37e04511f9b618b50bb64832916aa91d144e93951",
+    "count": 72,
+    "first_date": "2018-04-17",
+    "last_date": "2025-10-20",
+    "half_life": 10.0,
+    "max_gap": 60,
+    "availability": "next_trading_day",
+    "features": [
+      "txt_intensity",
+      "txt_cnt20",
+      "txt_gap",
+      "txt_cat_loose",
+      "txt_cat_tight",
+      "txt_cat_meeting",
+      "txt_cat_fiscal",
+      "txt_cat_external",
+      "txt_cat_risk",
+      "txt_cat_credit",
+      "txt_pos",
+      "txt_neg",
+      "txt_net"
+    ],
+    "limitation": "回溯精选日历，未验证标注的当时可得性；2018年前无事件覆盖"
+  }
+}

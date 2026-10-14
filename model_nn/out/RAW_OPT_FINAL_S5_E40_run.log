@@ -1,0 +1,169 @@
+数据 D: 3895行 100列 2010-01-04~2026-01-14 缺失=0.148
+RAW_OPT_FINAL_S5_E40 fold=1 seed=0 ep=3
+RAW_OPT_FINAL_S5_E40 fold=1 seed=1 ep=3
+RAW_OPT_FINAL_S5_E40 fold=1 seed=2 ep=2
+RAW_OPT_FINAL_S5_E40 fold=1 seed=3 ep=2
+RAW_OPT_FINAL_S5_E40 fold=1 seed=4 ep=6
+RAW_OPT_FINAL_S5_E40 fold=1 {'n': 63, 'acc': 0.873015873015873, 'macro_f1': 0.4661016949152542, 'auc': 0.14090909090909093, 'brier': 0.14580907418477346, 'pred_down': 1.0, 'true_down': 0.873015873015873, 'majority_baseline': 0.873015873015873, 'fold': 1, 'features': 94, 'date_start': '2018-09-26', 'date_end': '2018-12-28'}
+RAW_OPT_FINAL_S5_E40 fold=2 seed=0 ep=2
+RAW_OPT_FINAL_S5_E40 fold=2 seed=1 ep=3
+RAW_OPT_FINAL_S5_E40 fold=2 seed=2 ep=1
+RAW_OPT_FINAL_S5_E40 fold=2 seed=3 ep=2
+RAW_OPT_FINAL_S5_E40 fold=2 seed=4 ep=4
+RAW_OPT_FINAL_S5_E40 fold=2 {'n': 63, 'acc': 0.4603174603174603, 'macro_f1': 0.4063192904656319, 'auc': 0.5755102040816327, 'brier': 0.2571828471185108, 'pred_down': 0.8571428571428571, 'true_down': 0.4444444444444444, 'majority_baseline': 0.5555555555555556, 'fold': 2, 'features': 94, 'date_start': '2019-01-02', 'date_end': '2019-04-08'}
+RAW_OPT_FINAL_S5_E40 fold=3 seed=0 ep=6
+RAW_OPT_FINAL_S5_E40 fold=3 seed=1 ep=30
+RAW_OPT_FINAL_S5_E40 fold=3 seed=2 ep=20
+RAW_OPT_FINAL_S5_E40 fold=3 seed=3 ep=4
+RAW_OPT_FINAL_S5_E40 fold=3 seed=4 ep=11
+RAW_OPT_FINAL_S5_E40 fold=3 {'n': 63, 'acc': 0.6984126984126984, 'macro_f1': 0.411214953271028, 'auc': 0.5657894736842105, 'brier': 0.21744522537845337, 'pred_down': 1.0, 'true_down': 0.6984126984126984, 'majority_baseline': 0.6984126984126984, 'fold': 3, 'features': 94, 'date_start': '2019-04-09', 'date_end': '2019-07-10'}
+RAW_OPT_FINAL_S5_E40 fold=4 seed=0 ep=5
+RAW_OPT_FINAL_S5_E40 fold=4 seed=1 ep=6
+RAW_OPT_FINAL_S5_E40 fold=4 seed=2 ep=4
+RAW_OPT_FINAL_S5_E40 fold=4 seed=3 ep=2
+RAW_OPT_FINAL_S5_E40 fold=4 seed=4 ep=12
+RAW_OPT_FINAL_S5_E40 fold=4 {'n': 63, 'acc': 0.3968253968253968, 'macro_f1': 0.3040697674418605, 'auc': 0.13968957871396898, 'brier': 0.3112057621322716, 'pred_down': 0.2857142857142857, 'true_down': 0.3492063492063492, 'majority_baseline': 0.6507936507936508, 'fold': 4, 'features': 94, 'date_start': '2019-07-11', 'date_end': '2019-10-15'}
+RAW_OPT_FINAL_S5_E40 fold=5 seed=0 ep=5
+RAW_OPT_FINAL_S5_E40 fold=5 seed=1 ep=31
+RAW_OPT_FINAL_S5_E40 fold=5 seed=2 ep=14
+RAW_OPT_FINAL_S5_E40 fold=5 seed=3 ep=3
+RAW_OPT_FINAL_S5_E40 fold=5 seed=4 ep=6
+RAW_OPT_FINAL_S5_E40 fold=5 {'n': 63, 'acc': 0.42857142857142855, 'macro_f1': 0.37139689578713975, 'auc': 0.42361111111111105, 'brier': 0.2841837397116916, 'pred_down': 0.5396825396825397, 'true_down': 0.7619047619047619, 'majority_baseline': 0.7619047619047619, 'fold': 5, 'features': 94, 'date_start': '2019-10-16', 'date_end': '2020-01-13'}
+RAW_OPT_FINAL_S5_E40 fold=6 seed=0 ep=5
+RAW_OPT_FINAL_S5_E40 fold=6 seed=1 ep=3
+RAW_OPT_FINAL_S5_E40 fold=6 seed=2 ep=30
+RAW_OPT_FINAL_S5_E40 fold=6 seed=3 ep=3
+RAW_OPT_FINAL_S5_E40 fold=6 seed=4 ep=5
+RAW_OPT_FINAL_S5_E40 fold=6 {'n': 63, 'acc': 0.25396825396825395, 'macro_f1': 0.20253164556962025, 'auc': 0.6170212765957447, 'brier': 0.45322623474750084, 'pred_down': 0.0, 'true_down': 0.746031746031746, 'majority_baseline': 0.746031746031746, 'fold': 6, 'features': 94, 'date_start': '2020-01-14', 'date_end': '2020-04-20'}
+RAW_OPT_FINAL_S5_E40 fold=7 seed=0 ep=5
+RAW_OPT_FINAL_S5_E40 fold=7 seed=1 ep=20
+RAW_OPT_FINAL_S5_E40 fold=7 seed=2 ep=4
+RAW_OPT_FINAL_S5_E40 fold=7 seed=3 ep=2
+RAW_OPT_FINAL_S5_E40 fold=7 seed=4 ep=3
+RAW_OPT_FINAL_S5_E40 fold=7 {'n': 63, 'acc': 0.3333333333333333, 'macro_f1': 0.3291075050709939, 'auc': 0.44650205761316875, 'brier': 0.38212152465101656, 'pred_down': 0.7777777777777778, 'true_down': 0.14285714285714285, 'majority_baseline': 0.8571428571428572, 'fold': 7, 'features': 94, 'date_start': '2020-04-21', 'date_end': '2020-07-23'}
+RAW_OPT_FINAL_S5_E40 fold=8 seed=0 ep=8
+RAW_OPT_FINAL_S5_E40 fold=8 seed=1 ep=28
+RAW_OPT_FINAL_S5_E40 fold=8 seed=2 ep=39
+RAW_OPT_FINAL_S5_E40 fold=8 seed=3 ep=11
+RAW_OPT_FINAL_S5_E40 fold=8 seed=4 ep=14
+RAW_OPT_FINAL_S5_E40 fold=8 {'n': 63, 'acc': 0.8095238095238095, 'macro_f1': 0.7375, 'auc': 0.7041666666666666, 'brier': 0.17626639163988958, 'pred_down': 0.23809523809523808, 'true_down': 0.23809523809523808, 'majority_baseline': 0.7619047619047619, 'fold': 8, 'features': 94, 'date_start': '2020-07-24', 'date_end': '2020-10-28'}
+RAW_OPT_FINAL_S5_E40 fold=9 seed=0 ep=18
+RAW_OPT_FINAL_S5_E40 fold=9 seed=1 ep=37
+RAW_OPT_FINAL_S5_E40 fold=9 seed=2 ep=37
+RAW_OPT_FINAL_S5_E40 fold=9 seed=3 ep=30
+RAW_OPT_FINAL_S5_E40 fold=9 seed=4 ep=3
+RAW_OPT_FINAL_S5_E40 fold=9 {'n': 63, 'acc': 0.5873015873015873, 'macro_f1': 0.5743243243243243, 'auc': 0.6411290322580645, 'brier': 0.24360883990578575, 'pred_down': 0.3333333333333333, 'true_down': 0.49206349206349204, 'majority_baseline': 0.5079365079365079, 'fold': 9, 'features': 94, 'date_start': '2020-10-29', 'date_end': '2021-01-26'}
+RAW_OPT_FINAL_S5_E40 fold=10 seed=0 ep=14
+RAW_OPT_FINAL_S5_E40 fold=10 seed=1 ep=12
+RAW_OPT_FINAL_S5_E40 fold=10 seed=2 ep=1
+RAW_OPT_FINAL_S5_E40 fold=10 seed=3 ep=21
+RAW_OPT_FINAL_S5_E40 fold=10 seed=4 ep=1
+RAW_OPT_FINAL_S5_E40 fold=10 {'n': 63, 'acc': 0.7301587301587301, 'macro_f1': 0.6843501326259946, 'auc': 0.6718403547671841, 'brier': 0.19486516575088764, 'pred_down': 0.7301587301587301, 'true_down': 0.6507936507936508, 'majority_baseline': 0.6507936507936508, 'fold': 10, 'features': 94, 'date_start': '2021-01-27', 'date_end': '2021-05-06'}
+RAW_OPT_FINAL_S5_E40 fold=11 seed=0 ep=26
+RAW_OPT_FINAL_S5_E40 fold=11 seed=1 ep=9
+RAW_OPT_FINAL_S5_E40 fold=11 seed=2 ep=38
+RAW_OPT_FINAL_S5_E40 fold=11 seed=3 ep=17
+RAW_OPT_FINAL_S5_E40 fold=11 seed=4 ep=2
+RAW_OPT_FINAL_S5_E40 fold=11 {'n': 63, 'acc': 0.47619047619047616, 'macro_f1': 0.4756620428751577, 'auc': 0.9402332361516035, 'brier': 0.3082803567383783, 'pred_down': 0.25396825396825395, 'true_down': 0.7777777777777778, 'majority_baseline': 0.7777777777777778, 'fold': 11, 'features': 94, 'date_start': '2021-05-07', 'date_end': '2021-08-04'}
+RAW_OPT_FINAL_S5_E40 fold=12 seed=0 ep=23
+RAW_OPT_FINAL_S5_E40 fold=12 seed=1 ep=11
+RAW_OPT_FINAL_S5_E40 fold=12 seed=2 ep=1
+RAW_OPT_FINAL_S5_E40 fold=12 seed=3 ep=28
+RAW_OPT_FINAL_S5_E40 fold=12 seed=4 ep=29
+RAW_OPT_FINAL_S5_E40 fold=12 {'n': 63, 'acc': 0.5238095238095238, 'macro_f1': 0.43480861244019137, 'auc': 0.46734693877551026, 'brier': 0.32166116312607945, 'pred_down': 0.15873015873015872, 'true_down': 0.4444444444444444, 'majority_baseline': 0.5555555555555556, 'fold': 12, 'features': 94, 'date_start': '2021-08-05', 'date_end': '2021-11-10'}
+RAW_OPT_FINAL_S5_E40 fold=13 seed=0 ep=26
+RAW_OPT_FINAL_S5_E40 fold=13 seed=1 ep=7
+RAW_OPT_FINAL_S5_E40 fold=13 seed=2 ep=1
+RAW_OPT_FINAL_S5_E40 fold=13 seed=3 ep=21
+RAW_OPT_FINAL_S5_E40 fold=13 seed=4 ep=2
+RAW_OPT_FINAL_S5_E40 fold=13 {'n': 63, 'acc': 0.5714285714285714, 'macro_f1': 0.5333333333333333, 'auc': 0.7094736842105263, 'brier': 0.21687247536646093, 'pred_down': 0.6825396825396826, 'true_down': 0.6031746031746031, 'majority_baseline': 0.6031746031746031, 'fold': 13, 'features': 94, 'date_start': '2021-11-11', 'date_end': '2022-02-15'}
+RAW_OPT_FINAL_S5_E40 fold=14 seed=0 ep=19
+RAW_OPT_FINAL_S5_E40 fold=14 seed=1 ep=15
+RAW_OPT_FINAL_S5_E40 fold=14 seed=2 ep=23
+RAW_OPT_FINAL_S5_E40 fold=14 seed=3 ep=12
+RAW_OPT_FINAL_S5_E40 fold=14 seed=4 ep=1
+RAW_OPT_FINAL_S5_E40 fold=14 {'n': 63, 'acc': 0.6666666666666666, 'macro_f1': 0.4, 'auc': 0.7517006802721089, 'brier': 0.25047787785039405, 'pred_down': 1.0, 'true_down': 0.6666666666666666, 'majority_baseline': 0.6666666666666666, 'fold': 14, 'features': 94, 'date_start': '2022-02-16', 'date_end': '2022-05-20'}
+RAW_OPT_FINAL_S5_E40 fold=15 seed=0 ep=35
+RAW_OPT_FINAL_S5_E40 fold=15 seed=1 ep=13
+RAW_OPT_FINAL_S5_E40 fold=15 seed=2 ep=31
+RAW_OPT_FINAL_S5_E40 fold=15 seed=3 ep=28
+RAW_OPT_FINAL_S5_E40 fold=15 seed=4 ep=25
+RAW_OPT_FINAL_S5_E40 fold=15 {'n': 63, 'acc': 0.5555555555555556, 'macro_f1': 0.3875, 'auc': 0.34035476718403546, 'brier': 0.38198549470759346, 'pred_down': 0.873015873015873, 'true_down': 0.6507936507936508, 'majority_baseline': 0.6507936507936508, 'fold': 15, 'features': 94, 'date_start': '2022-05-23', 'date_end': '2022-08-18'}
+RAW_OPT_FINAL_S5_E40 fold=16 seed=0 ep=19
+RAW_OPT_FINAL_S5_E40 fold=16 seed=1 ep=13
+RAW_OPT_FINAL_S5_E40 fold=16 seed=2 ep=28
+RAW_OPT_FINAL_S5_E40 fold=16 seed=3 ep=30
+RAW_OPT_FINAL_S5_E40 fold=16 seed=4 ep=8
+RAW_OPT_FINAL_S5_E40 fold=16 {'n': 63, 'acc': 0.5396825396825397, 'macro_f1': 0.4880919024936957, 'auc': 0.6956521739130435, 'brier': 0.26148589494242747, 'pred_down': 0.4126984126984127, 'true_down': 0.2698412698412698, 'majority_baseline': 0.7301587301587302, 'fold': 16, 'features': 94, 'date_start': '2022-08-19', 'date_end': '2022-11-23'}
+RAW_OPT_FINAL_S5_E40 fold=17 seed=0 ep=12
+RAW_OPT_FINAL_S5_E40 fold=17 seed=1 ep=16
+RAW_OPT_FINAL_S5_E40 fold=17 seed=2 ep=13
+RAW_OPT_FINAL_S5_E40 fold=17 seed=3 ep=6
+RAW_OPT_FINAL_S5_E40 fold=17 seed=4 ep=26
+RAW_OPT_FINAL_S5_E40 fold=17 {'n': 63, 'acc': 0.5238095238095238, 'macro_f1': 0.34375, 'auc': 0.6292929292929292, 'brier': 0.4007754238881218, 'pred_down': 1.0, 'true_down': 0.5238095238095238, 'majority_baseline': 0.5238095238095238, 'fold': 17, 'features': 95, 'date_start': '2022-11-24', 'date_end': '2023-02-28'}
+RAW_OPT_FINAL_S5_E40 fold=18 seed=0 ep=4
+RAW_OPT_FINAL_S5_E40 fold=18 seed=1 ep=10
+RAW_OPT_FINAL_S5_E40 fold=18 seed=2 ep=27
+RAW_OPT_FINAL_S5_E40 fold=18 seed=3 ep=3
+RAW_OPT_FINAL_S5_E40 fold=18 seed=4 ep=2
+RAW_OPT_FINAL_S5_E40 fold=18 {'n': 63, 'acc': 0.23809523809523808, 'macro_f1': 0.22857142857142856, 'auc': 0.3979591836734694, 'brier': 0.5546562189450308, 'pred_down': 0.2222222222222222, 'true_down': 0.8888888888888888, 'majority_baseline': 0.8888888888888888, 'fold': 18, 'features': 95, 'date_start': '2023-03-01', 'date_end': '2023-06-01'}
+RAW_OPT_FINAL_S5_E40 fold=19 seed=0 ep=3
+RAW_OPT_FINAL_S5_E40 fold=19 seed=1 ep=12
+RAW_OPT_FINAL_S5_E40 fold=19 seed=2 ep=3
+RAW_OPT_FINAL_S5_E40 fold=19 seed=3 ep=2
+RAW_OPT_FINAL_S5_E40 fold=19 seed=4 ep=1
+RAW_OPT_FINAL_S5_E40 fold=19 {'n': 63, 'acc': 0.4603174603174603, 'macro_f1': 0.4063192904656319, 'auc': 0.7810526315789474, 'brier': 0.2807736912004969, 'pred_down': 0.09523809523809523, 'true_down': 0.6031746031746031, 'majority_baseline': 0.6031746031746031, 'fold': 19, 'features': 95, 'date_start': '2023-06-02', 'date_end': '2023-08-31'}
+RAW_OPT_FINAL_S5_E40 fold=20 seed=0 ep=4
+RAW_OPT_FINAL_S5_E40 fold=20 seed=1 ep=11
+RAW_OPT_FINAL_S5_E40 fold=20 seed=2 ep=7
+RAW_OPT_FINAL_S5_E40 fold=20 seed=3 ep=2
+RAW_OPT_FINAL_S5_E40 fold=20 seed=4 ep=12
+RAW_OPT_FINAL_S5_E40 fold=20 {'n': 63, 'acc': 0.6190476190476191, 'macro_f1': 0.38235294117647056, 'auc': 0.6891025641025641, 'brier': 0.23537968679397656, 'pred_down': 0.0, 'true_down': 0.38095238095238093, 'majority_baseline': 0.6190476190476191, 'fold': 20, 'features': 95, 'date_start': '2023-09-01', 'date_end': '2023-12-06'}
+RAW_OPT_FINAL_S5_E40 fold=21 seed=0 ep=5
+RAW_OPT_FINAL_S5_E40 fold=21 seed=1 ep=15
+RAW_OPT_FINAL_S5_E40 fold=21 seed=2 ep=16
+RAW_OPT_FINAL_S5_E40 fold=21 seed=3 ep=3
+RAW_OPT_FINAL_S5_E40 fold=21 seed=4 ep=25
+RAW_OPT_FINAL_S5_E40 fold=21 {'n': 63, 'acc': 0.6190476190476191, 'macro_f1': 0.38235294117647056, 'auc': 0.48469387755102045, 'brier': 0.20654946072875632, 'pred_down': 0.7301587301587301, 'true_down': 0.8888888888888888, 'majority_baseline': 0.8888888888888888, 'fold': 21, 'features': 95, 'date_start': '2023-12-07', 'date_end': '2024-03-13'}
+RAW_OPT_FINAL_S5_E40 fold=22 seed=0 ep=8
+RAW_OPT_FINAL_S5_E40 fold=22 seed=1 ep=23
+RAW_OPT_FINAL_S5_E40 fold=22 seed=2 ep=26
+RAW_OPT_FINAL_S5_E40 fold=22 seed=3 ep=15
+RAW_OPT_FINAL_S5_E40 fold=22 seed=4 ep=28
+RAW_OPT_FINAL_S5_E40 fold=22 {'n': 63, 'acc': 0.5238095238095238, 'macro_f1': 0.39578005115089515, 'auc': 0.3672248803827751, 'brier': 0.3067010074383974, 'pred_down': 0.7619047619047619, 'true_down': 0.6984126984126984, 'majority_baseline': 0.6984126984126984, 'fold': 22, 'features': 95, 'date_start': '2024-03-14', 'date_end': '2024-06-18'}
+RAW_OPT_FINAL_S5_E40 fold=23 seed=0 ep=30
+RAW_OPT_FINAL_S5_E40 fold=23 seed=1 ep=21
+RAW_OPT_FINAL_S5_E40 fold=23 seed=2 ep=26
+RAW_OPT_FINAL_S5_E40 fold=23 seed=3 ep=6
+RAW_OPT_FINAL_S5_E40 fold=23 seed=4 ep=22
+RAW_OPT_FINAL_S5_E40 fold=23 {'n': 63, 'acc': 0.49206349206349204, 'macro_f1': 0.47609147609147606, 'auc': 0.358695652173913, 'brier': 0.38498929779883595, 'pred_down': 0.5396825396825397, 'true_down': 0.6349206349206349, 'majority_baseline': 0.6349206349206349, 'fold': 23, 'features': 95, 'date_start': '2024-06-19', 'date_end': '2024-09-13'}
+RAW_OPT_FINAL_S5_E40 fold=24 seed=0 ep=19
+RAW_OPT_FINAL_S5_E40 fold=24 seed=1 ep=38
+RAW_OPT_FINAL_S5_E40 fold=24 seed=2 ep=6
+RAW_OPT_FINAL_S5_E40 fold=24 seed=3 ep=5
+RAW_OPT_FINAL_S5_E40 fold=24 seed=4 ep=29
+RAW_OPT_FINAL_S5_E40 fold=24 {'n': 63, 'acc': 0.42857142857142855, 'macro_f1': 0.42727272727272725, 'auc': 0.7597222222222222, 'brier': 0.3804921251104519, 'pred_down': 0.19047619047619047, 'true_down': 0.7619047619047619, 'majority_baseline': 0.7619047619047619, 'fold': 24, 'features': 95, 'date_start': '2024-09-18', 'date_end': '2024-12-20'}
+RAW_OPT_FINAL_S5_E40 fold=25 seed=0 ep=11
+RAW_OPT_FINAL_S5_E40 fold=25 seed=1 ep=22
+RAW_OPT_FINAL_S5_E40 fold=25 seed=2 ep=3
+RAW_OPT_FINAL_S5_E40 fold=25 seed=3 ep=39
+RAW_OPT_FINAL_S5_E40 fold=25 seed=4 ep=18
+RAW_OPT_FINAL_S5_E40 fold=25 {'n': 63, 'acc': 0.5238095238095238, 'macro_f1': 0.5236895161290323, 'auc': 0.608080808080808, 'brier': 0.29900022841283963, 'pred_down': 0.5079365079365079, 'true_down': 0.47619047619047616, 'majority_baseline': 0.5238095238095238, 'fold': 25, 'features': 95, 'date_start': '2024-12-23', 'date_end': '2025-03-28'}
+RAW_OPT_FINAL_S5_E40 fold=26 seed=0 ep=20
+RAW_OPT_FINAL_S5_E40 fold=26 seed=1 ep=12
+RAW_OPT_FINAL_S5_E40 fold=26 seed=2 ep=25
+RAW_OPT_FINAL_S5_E40 fold=26 seed=3 ep=30
+RAW_OPT_FINAL_S5_E40 fold=26 seed=4 ep=18
+RAW_OPT_FINAL_S5_E40 fold=26 {'n': 63, 'acc': 0.6984126984126984, 'macro_f1': 0.6981084489281211, 'auc': 0.720766129032258, 'brier': 0.2181757473307109, 'pred_down': 0.47619047619047616, 'true_down': 0.49206349206349204, 'majority_baseline': 0.5079365079365079, 'fold': 26, 'features': 95, 'date_start': '2025-03-31', 'date_end': '2025-07-02'}
+RAW_OPT_FINAL_S5_E40 fold=27 seed=0 ep=13
+RAW_OPT_FINAL_S5_E40 fold=27 seed=1 ep=2
+RAW_OPT_FINAL_S5_E40 fold=27 seed=2 ep=6
+RAW_OPT_FINAL_S5_E40 fold=27 seed=3 ep=2
+RAW_OPT_FINAL_S5_E40 fold=27 seed=4 ep=1
+RAW_OPT_FINAL_S5_E40 fold=27 {'n': 63, 'acc': 0.5079365079365079, 'macro_f1': 0.4395982783357245, 'auc': 0.49854227405247814, 'brier': 0.25023522524680947, 'pred_down': 0.42857142857142855, 'true_down': 0.2222222222222222, 'majority_baseline': 0.7777777777777778, 'fold': 27, 'features': 100, 'date_start': '2025-07-03', 'date_end': '2025-09-29'}
+RAW_OPT_FINAL_S5_E40 fold=28 seed=0 ep=25
+RAW_OPT_FINAL_S5_E40 fold=28 seed=1 ep=1
+RAW_OPT_FINAL_S5_E40 fold=28 seed=2 ep=29
+RAW_OPT_FINAL_S5_E40 fold=28 seed=3 ep=1
+RAW_OPT_FINAL_S5_E40 fold=28 seed=4 ep=1
+RAW_OPT_FINAL_S5_E40 fold=28 {'n': 63, 'acc': 0.5079365079365079, 'macro_f1': 0.3368421052631579, 'auc': 0.43346774193548393, 'brier': 0.2743246183855252, 'pred_down': 0.0, 'true_down': 0.49206349206349204, 'majority_baseline': 0.5079365079365079, 'fold': 28, 'features': 100, 'date_start': '2025-09-30', 'date_end': '2026-01-06'}

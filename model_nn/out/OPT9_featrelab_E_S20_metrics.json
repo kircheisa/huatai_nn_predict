@@ -1,0 +1,44 @@
+{
+  "task": "featrelab_E_S20",
+  "variant": "E",
+  "label": "down_ex2",
+  "twostage": false,
+  "rows": 1764,
+  "features": 120,
+  "max_train_days": 0,
+  "recency_halflife": 0,
+  "state_similarity": 20,
+  "dev": {
+    "n": 1509,
+    "coverage": 1.0,
+    "acc": 0.5102717031146454,
+    "macro_f1": 0.5079344207319091,
+    "pred_down": 0.464546056991385,
+    "true_down": 0.4665341285619616,
+    "majority_baseline": 0.5334658714380385,
+    "auc": 0.5085527244494635,
+    "vs_majority": -0.02319416832339305
+  },
+  "full": {
+    "n": 1764,
+    "coverage": 1.0,
+    "acc": 0.54421768707483,
+    "macro_f1": 0.5342546727038434,
+    "pred_down": 0.41496598639455784,
+    "true_down": 0.4387755102040816,
+    "majority_baseline": 0.5612244897959184,
+    "auc": 0.5192506459948321,
+    "vs_majority": -0.017006802721088454
+  },
+  "2025": {
+    "n": 243,
+    "coverage": 1.0,
+    "acc": 0.7777777777777778,
+    "macro_f1": 0.6318181818181818,
+    "pred_down": 0.12757201646090535,
+    "true_down": 0.24279835390946503,
+    "majority_baseline": 0.757201646090535,
+    "auc": 0.5557295504789977,
+    "vs_majority": 0.020576131687242816
+  }
+}
