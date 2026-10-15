@@ -1,0 +1,49 @@
+1）如研报所说，神经网络中上百万的参数，但是实验中只有3000条数据，不是一定会出现过拟合的情况吗？训练集中每个点都能精准预测，损失函数应该趋近于0才对？
+回答：原文提到模型使用了1600万的参数，理论上来说3000条数据会出现过拟合的情况，数据量还是太少了，不会训练太好。这种情况避免过拟合我们只能early stop了，或者引入dropout，减少隐藏层参数，或者文章使用了三层block（双向GRU+CNN+Attention）的循环，我们可以使用两层或者一层，核心就是减少网络层的参数。
+2）按照研报的内容，CNN中用到了二维卷积，所以输入输出的通道数量都是1吗？
+回答：通道数跟使用了几维卷积没有关系，在处理序列特征时，输入通道数一般是序列的特征维度，比如该文中输入通道数1024（单层GRU的输出是512）。输出通道数可以理解为卷积操作之后的特征的维度，文章说整体上Inception的输出是128，因此可以计算出每个并行的CNN的输出通道数是128/4 = 32
+
+回答：在NLP中，也会使用2D-CNN。NLP中的输入是Batch_Size*Seq_lenth*embed_dim。接2D-CNN之前会增加一个维度，变成Batch_Size*1*Seq_lenth*embed_dim，所以输入通道数是1，在文本中，卷积核的大小一般是k*embed_dim，这是与cv的区别，cv中卷积核的大小一般是k*k。
+class TextCNN(nn.Module):
+    def __init__(self, vocab_size, embed_dim, num_classes, kernel_sizes=[3, 4, 5], num_filters=100):
+        super(TextCNN, self).__init__()
+        self.embedding = nn.Embedding(vocab_size, embed_dim)
+        self.convs = nn.ModuleList([
+            nn.Conv2d(1, num_filters, (k, embed_dim)) for k in kernel_sizes
+        ])
+        self.fc = nn.Linear(len(kernel_sizes) * num_filters, num_classes)
+        self.dropout = nn.Dropout(0.5)
+
+    def forward(self, x):
+        x = self.embedding(x)  # (batch_size, seq_len, embed_dim)
+        x = x.unsqueeze(1)  # (batch_size, 1, seq_len, embed_dim)
+        x = [torch.relu(conv(x)).squeeze(3) for conv in self.convs]  
+        x = [torch.max_pool1d(i, i.size(2)).squeeze(2) for i in x]  
+        x = torch.cat(x, 1)  
+        x = self.dropout(x)
+        x = self.fc(x) 
+        return x
+对应到这里就是Batch_size*10*180*1024   其中180是使用过去180天的数据，512是双向GRU的输出结果。输入通道是10，看图中的说明，经过2D-CNN之后，输出维度是Batch_size*128*180*1024，所以输出通道是128。
+不过这里有一点我没想明白的是，为啥GRU的输出会是Batch_size*10*180*512。GRU的输入应该是Batch_size*10*180，咋还增加了一个维度。除非是先生成了Batch_size*5120*180，然后强行拆成了10*512。
+
+在复现的时候给出三种复现方案：方案1. 使用1D-conv，方案2. 使用NLP中的2D-conv方式，方案3. 采用上面生成5120的隐藏层，然后强行拆开。
+
+3）CNN内部的结构，池化层是并行于四个分支，还是四个分支的结果合并后再进行池化处理。
+回答：文章没有提到池化层接入哪里的，我们自己在复现的时候，需要理解池化层是干什么的，他只是让结果更加鲁棒的，所以以我的经验看，池化层是接在四个分支合并以后，注意，文章有个残差连接，这块可以自己去试一试在残差前还是残差后，这是我这边建议的接入方式，不固定，不过我感觉差异也不会太大
+# 4个分支的输出
+out1 = self.branch1(x)
+out2 = self.branch2(x)
+out3 = self.branch3(x)
+out4 = self.branch4(x)
+# 拼接4个分支的输出
+out = torch.cat([out1, out2, out3, out4], dim=1)
+# 残差连接
+residual = self.residual(x)
+out += residual
+out = self.relu(out)
+# 池化层
+out = self.pool(out)  # 池化后的输出
+
+4）日常的CNN预测中，是不是一维卷积更加合理啊
+回答：卷积一开始在CV方向用得比较多，CV里面的一张图片本身就是2维的，所以CV一般都是用2维CNN，相较而言，NLP引入了卷积，使用1维CNN做序列特征的处理，这里可以去感受按时间顺序的变化。后面发现2D-CNN也可以用在NLP中处理序列特征。如果强行要去理解为啥2DCNN也可以用来处理序列特征，在量化交易里面，可以别认为是引入了一些交叉特征，这些交叉特征就是相邻几个特征的交叉。因此，感觉无论是1D还是2D的CNN差异都不会太大。
+怎么做量化

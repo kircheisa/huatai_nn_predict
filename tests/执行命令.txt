@@ -1,0 +1,1 @@
+python -W ignore 43_3_华泰证券债券预测_XGB训练_二分类.py --rolling-window 150 > _bin_train_w150.txt 2>&1
