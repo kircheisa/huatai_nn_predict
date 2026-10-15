@@ -74,18 +74,20 @@ python -B "model_nn/02_阈值后校准_2025.py"
 python -u -B "model_nn/03_可视化分析.py"
 ```
 
-## 数据说明（未入库）
+## 数据说明
 
-原始行情数据与中间特征属内部数据，未随仓库上传。脚本按以下相对路径读取（保持原工程布局即可运行）：
+原始数据与特征已随仓库上传（保持原工程相对布局，脚本可直接运行）：
 
-| 路径 | 说明 | 生成者 |
-|---|---|---|
-| `model_new/data/xgb_train_features_bin.csv` | 280 维训练特征 | 43_2/43_3 流程产出 |
-| `model_new/data/data.csv`、`rate.csv` | 日度数据与利率序列 | 43_1 产出 |
-| `data_ori/2026_origin_rate.csv` | 原始利率数据 | 外部输入 |
-| `data/out_data/文本标签_政策事件日历.csv` | 政策事件日历（已随仓库提供） | LLM 辅助标注 |
+| 路径 | 说明 |
+|---|---|
+| `data_ori/` | 原始输入：利率与日度数据（2026_origin_data.xlsx / 2026_origin_rate.csv 等） |
+| `data/` | 预处理产出与特征：43_rate.csv、43_xgb_train_features*.csv、训练/标签矩阵、预处理 checkpoints、政策事件日历（out_data/） |
+| `model_new/` | 特征工程管线脚本（01_数据预处理 ~ 11_双周快训）及其产出 `data/xgb_train_features_bin.csv`（280 维特征，NN 主输入）、`data.csv`、`rate.csv`、XGB 模型与诊断产物 |
+| `data_wind/` | Wind 日粒度原始数据与分类 |
+| `data2/` | 事件识别/相关性/RDD 分析脚本与月度数据 |
+| `data/out_data/文本标签_政策事件日历.csv` | LLM 辅助标注的政策事件日历（02_文本特征构建.py 的输入） |
 
-`model_nn/out/` 中逐 fold 的 `.pt` checkpoint（约 345MB）未入库，指标与预测明细均已保留。
+未入库：`model_nn/out/` 中逐 fold 的 `.pt` checkpoint（约 345MB，可由训练脚本复现），指标与预测明细均已保留。
 
 ## 关键经验（详见迭代报告第五节）
 
