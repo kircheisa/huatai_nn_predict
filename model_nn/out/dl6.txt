@@ -1,2 +1,0 @@
-﻿cache=189.4MB
-VER 2.2.2+cpu
