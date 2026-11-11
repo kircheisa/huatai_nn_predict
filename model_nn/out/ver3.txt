@@ -1,0 +1,3 @@
+﻿Name: torch
+Version: 2.2.2
+IMPORT-OK 2.2.2+cpu

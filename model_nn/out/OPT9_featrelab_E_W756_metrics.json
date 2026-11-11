@@ -1,0 +1,44 @@
+{
+  "task": "featrelab_E_W756",
+  "variant": "E",
+  "label": "down_ex2",
+  "twostage": false,
+  "rows": 1764,
+  "features": 120,
+  "max_train_days": 756,
+  "recency_halflife": 0,
+  "state_similarity": 0,
+  "dev": {
+    "n": 1509,
+    "coverage": 1.0,
+    "acc": 0.512259774685222,
+    "macro_f1": 0.5119663648124191,
+    "pred_down": 0.5089463220675944,
+    "true_down": 0.4665341285619616,
+    "majority_baseline": 0.5334658714380385,
+    "auc": 0.5195987436476567,
+    "vs_majority": -0.021206096752816483
+  },
+  "full": {
+    "n": 1764,
+    "coverage": 1.0,
+    "acc": 0.4914965986394558,
+    "macro_f1": 0.49127278257237905,
+    "pred_down": 0.5402494331065759,
+    "true_down": 0.4387755102040816,
+    "majority_baseline": 0.5612244897959184,
+    "auc": 0.5037402448255162,
+    "vs_majority": -0.06972789115646266
+  },
+  "2025": {
+    "n": 243,
+    "coverage": 1.0,
+    "acc": 0.38271604938271603,
+    "macro_f1": 0.3827055954477713,
+    "pred_down": 0.7530864197530864,
+    "true_down": 0.24279835390946503,
+    "majority_baseline": 0.757201646090535,
+    "auc": 0.5309506263817243,
+    "vs_majority": -0.37448559670781895
+  }
+}

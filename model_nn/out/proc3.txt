@@ -1,0 +1,8 @@
+﻿CommandLine                                                                                                                                         ProcessId  
+
+"D:\anaconda\python.exe"  "D:\anaconda\Scripts\mysql_mcp_server.exe"                                                                                191200     
+
+"D:\anaconda\python.exe"  "D:\anaconda\Scripts\pip.exe" install torch==2.7.1 -i https://pypi.tuna.tsinghua.edu.cn/simple --no-warn-script-location  149068     
+
+
+

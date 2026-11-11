@@ -1,0 +1,10 @@
+﻿Looking in indexes: https://pypi.tuna.tsinghua.edu.cn/simple
+Collecting torch==2.7.1
+  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/50/9e/acf04ff375b0b49a45511c55d188bcea5c942da2aaf293096676110086d1/torch-2.7.1-cp311-cp311-win_amd64.whl (216.1 MB)
+塅呉ㄽ਍
+
+"D:\anaconda\python.exe"  "D:\anaconda\Scripts\pip.exe" install torch==2.7.1 -i
+ https://mirrors.aliyun.com/pypi/simple/ --no-warn-script-location --timeout 12
+0  218816     
+
+

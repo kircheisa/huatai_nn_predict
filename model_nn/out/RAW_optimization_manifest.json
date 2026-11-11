@@ -1,0 +1,109 @@
+{
+  "selection": "截至2024年开发期，score=(AUC+MacroF1)/2；2025未用于选型",
+  "candidates": [
+    {
+      "normalization": "fold",
+      "lr": 0.0005,
+      "max_train_days": 1260,
+      "dropout": 0.3,
+      "label_smoothing": 0.0,
+      "no_class_weight": true,
+      "uniform_weights": true,
+      "variant": "B",
+      "architecture": "compact",
+      "seq_len": 20,
+      "hidden_size": 32
+    },
+    {
+      "normalization": "rolling",
+      "lr": 0.0005,
+      "max_train_days": 1260,
+      "dropout": 0.3,
+      "label_smoothing": 0.0,
+      "no_class_weight": true,
+      "uniform_weights": true,
+      "variant": "B",
+      "architecture": "compact",
+      "seq_len": 20,
+      "hidden_size": 32
+    },
+    {
+      "normalization": "rolling",
+      "lr": 0.0005,
+      "max_train_days": 1260,
+      "dropout": 0.3,
+      "label_smoothing": 0.0,
+      "no_class_weight": true,
+      "uniform_weights": true,
+      "variant": "B",
+      "architecture": "compact",
+      "seq_len": 40,
+      "hidden_size": 32
+    },
+    {
+      "normalization": "rolling",
+      "lr": 0.0005,
+      "max_train_days": 1260,
+      "dropout": 0.3,
+      "label_smoothing": 0.0,
+      "no_class_weight": true,
+      "uniform_weights": true,
+      "variant": "C",
+      "architecture": "compact",
+      "seq_len": 20,
+      "hidden_size": 32
+    },
+    {
+      "normalization": "rolling",
+      "lr": 0.0005,
+      "max_train_days": 1260,
+      "dropout": 0.3,
+      "label_smoothing": 0.0,
+      "no_class_weight": true,
+      "uniform_weights": true,
+      "variant": "C",
+      "architecture": "compact",
+      "seq_len": 40,
+      "hidden_size": 64
+    },
+    {
+      "normalization": "rolling",
+      "lr": 0.0005,
+      "max_train_days": 0,
+      "dropout": 0.3,
+      "label_smoothing": 0.0,
+      "no_class_weight": true,
+      "uniform_weights": true,
+      "variant": "D",
+      "architecture": "compact",
+      "seq_len": 20,
+      "hidden_size": 32
+    },
+    {
+      "normalization": "rolling",
+      "lr": 0.0005,
+      "max_train_days": 504,
+      "dropout": 0.3,
+      "label_smoothing": 0.0,
+      "no_class_weight": true,
+      "uniform_weights": true,
+      "variant": "B",
+      "architecture": "compact",
+      "seq_len": 20,
+      "hidden_size": 32
+    },
+    {
+      "normalization": "rolling",
+      "lr": 0.0005,
+      "max_train_days": 1260,
+      "dropout": 0.3,
+      "label_smoothing": 0.0,
+      "no_class_weight": true,
+      "uniform_weights": true,
+      "variant": "B",
+      "architecture": "scaled",
+      "seq_len": 40,
+      "hidden_size": 32
+    }
+  ]
+}

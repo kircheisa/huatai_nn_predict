@@ -1,0 +1,8 @@
+﻿Collecting python-docx
+  Using cached python_docx-1.2.0-py3-none-any.whl.metadata (2.0 kB)
+Collecting lxml>=3.1.0 (from python-docx)
+  Using cached lxml-6.1.2-cp312-cp312-win_amd64.whl.metadata (3.4 kB)
+Collecting typing_extensions>=4.9.0 (from python-docx)
+  Using cached typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Using cached python_docx-1.2.0-py3-none-any.whl (252 kB)
+Downloading lxml-6.1.2-cp312-cp312-win_amd64.whl (4.0 MB)

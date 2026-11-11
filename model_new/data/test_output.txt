@@ -1,0 +1,3 @@
+STEP 1: setting argv
+STEP 2: running main
+STEP 3: module loaded, calling main()

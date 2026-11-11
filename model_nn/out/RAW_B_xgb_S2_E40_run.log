@@ -1,0 +1,7 @@
+数据 B: 1950行 74列 2018-01-02~2026-01-14 缺失=0.037
+Traceback (most recent call last):
+  File "F:\43_华泰证券预处理\43_华泰证券预处理\model_nn\05_基础特征对照训练.py", line 308, in <module>
+    main()
+  File "F:\43_华泰证券预处理\43_华泰证券预处理\model_nn\05_基础特征对照训练.py", line 259, in main
+    from xgboost import XGBClassifier
+ModuleNotFoundError: No module named 'xgboost'

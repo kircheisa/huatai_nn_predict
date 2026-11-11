@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "f:\43_华泰证券预处理\43_华泰证券预处理\model_nn\04_导出Word报告.py", line 198, in <module>
+    main()
+  File "f:\43_华泰证券预处理\43_华泰证券预处理\model_nn\04_导出Word报告.py", line 188, in main
+    doc.save(OUT)
+             ^^^
+UnboundLocalError: cannot access local variable 'OUT' where it is not associated with a value

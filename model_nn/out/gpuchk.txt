@@ -1,0 +1,4 @@
+at=23:21:31
+utilization.gpu [%], memory.used [MiB]
+14 %, 525 MiB
+

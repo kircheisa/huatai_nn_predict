@@ -1,0 +1,44 @@
+{
+  "task": "featF_down",
+  "variant": "F",
+  "label": "down",
+  "twostage": false,
+  "rows": 1764,
+  "features": 144,
+  "max_train_days": 0,
+  "recency_halflife": 0,
+  "state_similarity": 0,
+  "dev": {
+    "n": 1509,
+    "coverage": 1.0,
+    "acc": 0.5493704440026508,
+    "macro_f1": 0.5383643633772301,
+    "pred_down": 0.563949635520212,
+    "true_down": 0.5904572564612326,
+    "majority_baseline": 0.5904572564612326,
+    "auc": 0.5490594546689477,
+    "vs_majority": -0.04108681245858181
+  },
+  "full": {
+    "n": 1764,
+    "coverage": 1.0,
+    "acc": 0.5544217687074829,
+    "macro_f1": 0.5517574033363507,
+    "pred_down": 0.5102040816326531,
+    "true_down": 0.5668934240362812,
+    "majority_baseline": 0.5668934240362812,
+    "auc": 0.5769371727748691,
+    "vs_majority": -0.012471655328798237
+  },
+  "2025": {
+    "n": 243,
+    "coverage": 1.0,
+    "acc": 0.5925925925925926,
+    "macro_f1": 0.5054579093432008,
+    "pred_down": 0.18106995884773663,
+    "true_down": 0.3991769547325103,
+    "majority_baseline": 0.6008230452674896,
+    "auc": 0.6638186696794239,
+    "vs_majority": -0.008230452674897082
+  }
+}

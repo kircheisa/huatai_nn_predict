@@ -1,0 +1,222 @@
+XGBoost 二分类测试结果（horizon=10d）
+训练模式: rolling (window=120, step=63, val=30)
+训练 folds: 29
+数据起始: 2018-01-01
+测试样本数: 1827
+总特征数: 116
+超参: depth=3, n=400, lr=0.1, mcw=5.0, ra=1.0
+
+=== 核心指标 ===
+Accuracy:       0.5774  (基线: 0.5030)
+Macro F1:       0.5774
+F1 (下行=1):    0.5725
+F1 (上行=0):    0.5823
+AUC:            0.6344
+
+=== 混淆矩阵 ===
+           pred_0_上行  pred_1_下行
+true_0_上行        538        381
+true_1_下行        391        517
+
+=== Classification Report ===
+              precision    recall  f1-score   support
+
+      上行(偏空)     0.5791    0.5854    0.5823       919
+      下行(偏多)     0.5757    0.5694    0.5725       908
+
+    accuracy                         0.5774      1827
+   macro avg     0.5774    0.5774    0.5774      1827
+weighted avg     0.5774    0.5774    0.5774      1827
+
+
+=== Top 20 重要特征 ===
+                              feature  importance
+                       dev_zscore_120    0.128343
+                       vol_of_vol_120    0.104499
+               唐山:高炉开工率:周:结束日5:前一个观测值    0.097665
+       上海出口集装箱运价指数:综合指数:周:结束日5:前一个观测值    0.094663
+                  corr_rate_copper_60    0.079388
+                  corr_rate_dollar_60    0.072484
+                         stl_seasonal    0.068042
+                        dollar_chg_5d    0.056095
+                  dollar_deviation_20    0.045983
+                           30城商品房成交面积    0.044150
+                    days_to_month_end    0.044097
+中国:100大中城市:成交土地占地面积:当周值:周:结束日5:前一个观测值    0.038355
+                       3年信用利差_chg_20d    0.033206
+                  corr_rate_cement_60    0.029369
+                      stl_resid_lag_1    0.024957
+                  corr_rate_copper_20    0.023219
+              vol_deviation_zscore_20    0.015484
+                          国债期货成交量：10年    0.000000
+                             FR007:1年    0.000000
+                                  中间价    0.000000
+
+======================================================================
+=== 逐 fold 指标 ===
+ fold date_start   date_end  accuracy  macro_f1      auc  best_iteration
+    1 2018-07-03 2018-09-28  0.428571  0.421429 0.615385               0
+    2 2018-10-08 2019-01-04  0.396825  0.370000 0.812791               0
+    3 2019-01-07 2019-04-11  0.650794  0.607143 0.717949               0
+    4 2019-04-12 2019-07-15  0.571429  0.363636 0.876543               0
+    5 2019-07-16 2019-10-18  0.619048  0.516624 0.626744               0
+    6 2019-10-21 2020-01-16  0.539683  0.379626 0.913131               0
+    7 2020-01-17 2020-04-23  0.380952  0.294978 0.729348               0
+    8 2020-04-24 2020-07-28  0.412698  0.372206 0.827664              36
+    9 2020-07-29 2020-11-02  0.730159  0.729887 0.804040               0
+   10 2020-11-03 2021-01-29  0.698413  0.698108 0.795363               0
+   11 2021-02-01 2021-05-11  0.746032  0.720621 0.798980               0
+   12 2021-05-12 2021-08-09  0.603175  0.602774 0.721774              31
+   13 2021-08-10 2021-11-15  0.603175  0.601568 0.820166              10
+   14 2021-11-16 2022-02-18  0.730159  0.720000 0.848790               0
+   15 2022-02-21 2022-05-25  0.761905  0.571429 0.882716               0
+   16 2022-05-26 2022-08-23  0.698413  0.664612 0.840816               0
+   17 2022-08-24 2022-11-28  0.587302  0.587198 0.788278              94
+   18 2022-11-29 2023-03-03  0.349206  0.258824 0.688470               0
+   19 2023-03-06 2023-06-06  0.666667  0.637037 0.712963               0
+   20 2023-06-07 2023-09-05  0.603175  0.505495 0.720165               0
+   21 2023-09-06 2023-12-11  0.523810  0.476164 0.948025               0
+   22 2023-12-12 2024-03-18  0.396825  0.349457 0.853741               0
+   23 2024-03-19 2024-06-21  0.634921  0.594004 0.773834               0
+   24 2024-06-24 2024-09-20  0.809524  0.803534 0.894033               0
+   25 2024-09-23 2024-12-25  0.523810  0.464286 0.611227               0
+   26 2024-12-26 2025-04-02  0.333333  0.250000 0.869615               0
+   27 2025-04-03 2025-07-07  0.444444  0.307692 0.747959               0
+   28 2025-07-08 2025-10-10  0.682540  0.678571 0.864211               0
+   29 2025-10-13 2026-01-09  0.619048  0.571429 0.879032               0
+
+======================================================================
+=== 特征稳定性 Top 30 ===
+Empty DataFrame
+Columns: [feature, appear_in_top30, appear_ratio, avg_importance, avg_rank]
+Index: []
+
+--- 从未出现 importance>0 的特征 (116 个) ---
+  1Y存单发行利率
+  1年信用利差
+  1年信用利差_chg_20d
+  1年信用利差_chg_5d
+  2年美债
+  30城商品房成交面积
+  3年信用利差
+  3年信用利差_chg_20d
+  3年信用利差_chg_5d
+  3年信用利差_ma_20
+  5年信用利差
+  5年信用利差_chg_20d
+  5年信用利差_chg_5d
+  COMEX金价
+  CPI同比
+  DR001
+  DR007
+  FR007:1年
+  PTA负荷率
+  ar1_10
+  ar1_20
+  cn_us_spread_10d_chg
+  cn_us_spread_20d_chg
+  corr_break_usdcny
+  corr_rate_cement_60
+  corr_rate_copper_20
+  corr_rate_copper_60
+  corr_rate_dollar_20
+  corr_rate_dollar_60
+  corr_rate_hsi_tech_20
+  corr_rate_nanhua_20
+  corr_rate_nanhua_60
+  corr_rate_rebar_20
+  corr_rate_rebar_60
+  corr_rate_sp500_20
+  csi300_mom_5
+  curve_ma_gap_10_20
+  days_to_month_end
+  days_to_quarter_end
+  dev_zscore_120
+  divergence_cement
+  divergence_copper
+  divergence_nanhua
+  divergence_rebar
+  dollar_chg_5d
+  dollar_deviation_20
+  dollar_ma_20
+  dr001_dr007_spread
+  fft_max_ratio_60
+  fx_chg_20d
+  fx_chg_5d
+  fx_intervention_5d
+  gp_feature_8
+  hsi_tech_mom_20
+  hsi_tech_mom_5
+  hurst_60
+  lr_dev_from_trend_126
+  lr_dev_from_trend_252
+  macd_hist
+  macd_signal
+  momentum_180_robust_scaled
+  momentum_1_robust_scaled
+  momentum_1_robust_scaled_lag_1
+  momentum_60_robust_scaled
+  momentum_7_robust_scaled_lag_1
+  netbuy_broker_5d
+  netbuy_insurance_5d
+  overnight_ratio_chg_5d
+  overnight_ratio_dev_20
+  overnight_ratio_ma_20
+  r001_r007_spread
+  r001_r007_spread_chg_5d
+  rate_change_10d
+  rate_change_5d
+  rate_ma_10
+  rate_std_10
+  rate_std_20
+  rate_std_5
+  realized_vol_10
+  realized_vol_5
+  rsi_14
+  stl_resid_lag_1
+  stl_resid_lag_5
+  stl_seasonal
+  stock_bond_swing_5
+  tf_holdings_chg_5d
+  tf_price_ma_20
+  trend_accel
+  trend_r2_20
+  vol_deviation_zscore_20
+  vol_deviation_zscore_60
+  vol_of_vol_120
+  vol_r001_chg_20d
+  vol_r001_chg_5d
+  vol_r001_ma_20
+  vol_regime
+  williams_r_28
+  上海出口集装箱运价指数:综合指数:周:结束日5:前一个观测值
+  上证综指
+  中国:100大中城市:成交土地占地面积:当周值:周:结束日5:前一个观测值
+  中国:开工率:石油沥青装置:周:结束日5:前一个观测值
+  中国:日均产量:粗钢:周:结束日5:前一个观测值
+  中间价
+  债券净融资
+  出口金额:当月同比
+  十年国债活跃券成交量
+  唐山:高炉开工率:周:结束日5:前一个观测值
+  国债期货成交量：10年
+  国债期货持仓量:10年
+  恒生科技
+  波罗的海
+  票房收入
+  秦皇岛港口吞吐量
+  纳斯达克
+  股债相对_deviation_20
+  股债相对_ma_5
+
+==================================================
+=== 置信度门控评估（中信建投同款手法）===
+门控参数: prob_margin=0.1, vol_quantile=0.5 (阈值=1.011)
+弃权样本: 301 / 1827 (16.5%)
+置信覆盖率: 83.5%
+
+指标                       全量        门控后         提升
+--------------------------------------------------
+Accuracy             0.5774     0.5976    +0.0202
+Macro F1             0.5774     0.5976    +0.0202
+AUC                  0.6344     0.6556    +0.0212

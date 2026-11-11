@@ -1,0 +1,385 @@
+XGBoost 二分类测试结果（horizon=5d）
+训练模式: rolling (window=180, step=63, val=63)
+训练 folds: 28
+数据起始: 2018-01-01
+测试样本数: 1764
+总特征数: 280
+超参: depth=3, n=600, lr=0.1, mcw=8.0, ra=1.5
+
+=== 核心指标 ===
+Accuracy:       0.5635  (基线: 0.5085)
+Macro F1:       0.5627
+F1 (下行=1):    0.5815
+F1 (上行=0):    0.5438
+AUC:            0.5822
+
+=== 混淆矩阵 ===
+           pred_0_上行  pred_1_下行
+true_0_上行        459        408
+true_1_下行        362        535
+
+=== Classification Report ===
+              precision    recall  f1-score   support
+
+      上行(偏空)     0.5591    0.5294    0.5438       867
+      下行(偏多)     0.5673    0.5964    0.5815       897
+
+    accuracy                         0.5635      1764
+   macro avg     0.5632    0.5629    0.5627      1764
+weighted avg     0.5633    0.5635    0.5630      1764
+
+
+=== Top 20 重要特征 ===
+                       feature  importance
+                dev_from_trend    0.078080
+             corr_break_dollar    0.075766
+                dev_zscore_120    0.071387
+             days_to_month_end    0.071211
+                   trend_r2_20    0.070356
+               reversal_signal    0.063436
+                 1年信用利差_chg_5d    0.060439
+           corr_rate_copper_60    0.052182
+                     精对苯二甲酸开工率    0.046144
+                vol_of_vol_120    0.045402
+           stock_bond_swing_20    0.041840
+               stl_resid_lag_1    0.041670
+        overnight_ratio_chg_5d    0.039414
+           corr_rate_copper_20    0.039300
+            corr_rate_sp500_20    0.037250
+                   rate_std_20    0.035112
+上海出口集装箱运价指数:综合指数:周:结束日5:前一个观测值    0.029886
+                  gp_feature_4    0.029354
+                   国债期货持仓量:10年    0.027584
+            curve_ma_gap_10_20    0.026318
+
+======================================================================
+=== 逐 fold 指标 ===
+ fold date_start   date_end  accuracy  macro_f1      auc  best_iteration
+    1 2018-09-26 2018-12-28  0.650794  0.394231 0.501109               0
+    2 2019-01-02 2019-04-08  0.666667  0.665317 0.691919               0
+    3 2019-04-09 2019-07-10  0.571429  0.498674 0.820202               0
+    4 2019-07-11 2019-10-15  0.603175  0.535809 0.617284               0
+    5 2019-10-16 2020-01-13  0.571429  0.511908 0.831643               0
+    6 2020-01-14 2020-04-20  0.507937  0.505945 0.561966               0
+    7 2020-04-21 2020-07-23  0.507937  0.439598 0.753086               0
+    8 2020-07-24 2020-10-28  0.619048  0.589130 0.789899               0
+    9 2020-10-29 2021-01-26  0.555556  0.511086 0.690909               0
+   10 2021-01-27 2021-05-06  0.523810  0.513889 0.542339               0
+   11 2021-05-07 2021-08-04  0.507937  0.507440 0.556452               0
+   12 2021-08-05 2021-11-10  0.650794  0.623370 0.673868               0
+   13 2021-11-11 2022-02-15  0.587302  0.510167 0.721095               0
+   14 2022-02-16 2022-05-20  0.555556  0.555444 0.609533               0
+   15 2022-05-23 2022-08-18  0.587302  0.587198 0.636735               0
+   16 2022-08-19 2022-11-23  0.603175  0.376238 0.444211               0
+   17 2022-11-24 2023-02-28  0.698413  0.656528 0.697339               0
+   18 2023-03-01 2023-06-01  0.603175  0.567901 0.723124               0
+   19 2023-06-02 2023-08-31  0.523810  0.434809 0.742394               0
+   20 2023-09-01 2023-12-06  0.571429  0.570996 0.733684               0
+   21 2023-12-07 2024-03-13  0.412698  0.331133 0.704060               0
+   22 2024-03-14 2024-06-18  0.555556  0.357143 0.626531               0
+   23 2024-06-19 2024-09-13  0.650794  0.615854 0.675789               0
+   24 2024-09-18 2024-12-20  0.746032  0.726087 0.751029               0
+   25 2024-12-23 2025-03-28  0.587302  0.455452 0.788981               0
+   26 2025-03-31 2025-07-02  0.428571  0.428427 0.519565               0
+   27 2025-07-03 2025-09-29  0.412698  0.292135 0.733888               0
+   28 2025-09-30 2026-01-06  0.317460  0.314698 0.446939               0
+
+======================================================================
+=== 特征稳定性 Top 30 ===
+Empty DataFrame
+Columns: [feature, appear_in_top30, appear_ratio, avg_importance, avg_rank]
+Index: []
+
+--- 从未出现 importance>0 的特征 (280 个) ---
+  10年美债
+  1Y存单发行利率
+  1年信用利差
+  1年信用利差_chg_20d
+  1年信用利差_chg_5d
+  1年信用利差_ma_20
+  2年美债
+  30城商品房成交面积
+  3年信用利差
+  3年信用利差_chg_20d
+  3年信用利差_chg_5d
+  3年信用利差_ma_20
+  5年信用利差
+  5年信用利差_chg_20d
+  5年信用利差_chg_5d
+  5年信用利差_ma_20
+  70个大中城市:房屋销售价格指数:新建商品住宅:当月同比
+  A_modified
+  B_modified
+  COMEX金价
+  CPI同比
+  DR001
+  DR007
+  FR007:1年
+  GDP:不变价:当季同比
+  ICE布油
+  M1旧口径
+  M2同比
+  PMI-50
+  PPI同比
+  PTA负荷率
+  R001
+  R001成交量占比
+  R007
+  ar1_10
+  ar1_20
+  ar1_60
+  bb_pctb_20
+  bb_width_20
+  cn_us_spread_10d_chg
+  cn_us_spread_10y
+  cn_us_spread_20d_chg
+  corr_break_dollar
+  corr_break_usdcny
+  corr_rate_cement_20
+  corr_rate_cement_60
+  corr_rate_copper_20
+  corr_rate_copper_60
+  corr_rate_csi300_20
+  corr_rate_dollar_20
+  corr_rate_dollar_60
+  corr_rate_hsi_tech_20
+  corr_rate_nanhua_20
+  corr_rate_nanhua_60
+  corr_rate_rebar_20
+  corr_rate_rebar_60
+  corr_rate_sp500_20
+  corr_rate_usdcny_20
+  corr_rate_usdcny_60
+  corr_stock_bond_rate_20
+  corr_stock_bond_rate_60
+  credit_term_spread_5_1
+  csi300_mom_20
+  csi300_mom_5
+  curve_ma_gap_10_20
+  curve_ma_gap_5_20
+  day_of_year_cos
+  day_of_year_sin
+  days_to_month_end
+  days_to_quarter_end
+  dev_chg_20d
+  dev_from_trend
+  dev_zscore_120
+  divergence_cement
+  divergence_copper
+  divergence_nanhua
+  divergence_rebar
+  dollar_chg_20d
+  dollar_chg_5d
+  dollar_deviation_20
+  dollar_ma_20
+  dr001_dr007_spread
+  fft_max_ratio_60
+  fx_chg_20d
+  fx_chg_5d
+  fx_intervention_5d
+  gp_feature_1
+  gp_feature_2
+  gp_feature_3
+  gp_feature_4
+  gp_feature_8
+  hsi_tech_mom_20
+  hsi_tech_mom_5
+  hurst_120
+  hurst_60
+  lr_dev_from_trend_126
+  lr_dev_from_trend_252
+  lr_dev_from_trend_60
+  lr_dev_zscore_126
+  lr_dev_zscore_252
+  lr_dev_zscore_60
+  lr_trend_slope_126
+  lr_trend_slope_252
+  lr_trend_slope_60
+  macd
+  macd_hist
+  macd_signal
+  momentum_180_robust_scaled
+  momentum_1_robust_scaled
+  momentum_1_robust_scaled_lag_1
+  momentum_1_robust_scaled_lag_5
+  momentum_30_robust_scaled
+  momentum_30_robust_scaled_lag_1
+  momentum_30_robust_scaled_lag_5
+  momentum_60_robust_scaled
+  momentum_7_robust_scaled
+  momentum_7_robust_scaled_lag_1
+  momentum_7_robust_scaled_lag_5
+  month_cos
+  month_sin
+  netbuy_broker_20d
+  netbuy_broker_5d
+  netbuy_broker_chg
+  netbuy_fund_20d
+  netbuy_fund_5d
+  netbuy_fund_chg
+  netbuy_insurance_20d
+  netbuy_insurance_5d
+  netbuy_insurance_chg
+  netbuy_wealth_mgmt_20d
+  netbuy_wealth_mgmt_5d
+  netbuy_wealth_mgmt_chg
+  overnight_ratio_chg_20d
+  overnight_ratio_chg_5d
+  overnight_ratio_dev_20
+  overnight_ratio_ma_20
+  overnight_ratio_ma_5
+  quarter_cos
+  quarter_sin
+  r001_r007_spread
+  r001_r007_spread_chg_5d
+  rate
+  rate_change_10d
+  rate_change_1d
+  rate_change_5d
+  rate_chg_10d_zscore
+  rate_chg_5d_zscore
+  rate_dollar_gap
+  rate_lag_1
+  rate_lag_10
+  rate_lag_2
+  rate_lag_20
+  rate_lag_5
+  rate_ma_10
+  rate_ma_20
+  rate_ma_5
+  rate_std_10
+  rate_std_20
+  rate_std_5
+  rate_zscore_60
+  realized_vol_10
+  realized_vol_20
+  realized_vol_5
+  reversal_count_10
+  reversal_count_20
+  reversal_count_60
+  reversal_flag
+  reversal_signal
+  roc_10
+  roc_20
+  roc_5
+  rsi_14
+  rsi_24
+  rsi_6
+  season_position
+  sp500_mom_20
+  sp500_mom_5
+  stl_resid_lag_1
+  stl_resid_lag_5
+  stl_resid_ma_5
+  stl_residual
+  stl_seasonal
+  stl_trend
+  stock_bond_swing_20
+  stock_bond_swing_5
+  target_date_5d
+  tf_holdings_chg_5d
+  tf_holdings_ma_20
+  tf_price_chg_5d
+  tf_price_ma_20
+  trend_accel
+  trend_r2_20
+  trend_r2_60
+  trend_resonance
+  trend_slope_20
+  trend_slope_60
+  us_term_spread
+  vol_deviation_zscore_20
+  vol_deviation_zscore_60
+  vol_of_vol_120
+  vol_of_vol_60
+  vol_percentile_10
+  vol_percentile_20
+  vol_percentile_5
+  vol_r001_chg_20d
+  vol_r001_chg_5d
+  vol_r001_ma_20
+  vol_r001_ma_5
+  vol_ratio_20
+  vol_ratio_60
+  vol_regime
+  williams_r_14
+  williams_r_28
+  上海出口集装箱运价指数:综合指数:周:结束日5:前一个观测值
+  上证综指
+  中国:100大中城市:成交土地占地面积:当周值:周:结束日5:前一个观测值
+  中国:工业产能利用率:当季值
+  中国:开工率:汽车轮胎(半钢胎):周:结束日5:前一个观测值
+  中国:开工率:石油沥青装置:周:结束日5:前一个观测值
+  中国:日均产量:粗钢:周:结束日5:前一个观测值
+  中国各领导人时期-1
+  中国各领导人时期-2
+  中间价
+  保险托管同比
+  债券净融资
+  净买入：保险
+  净买入：券商自营
+  净买入：基金
+  净买入：理财
+  净买入：货币基金
+  出口金额:当月同比
+  十年国债活跃券成交量
+  南华工业品指数
+  即期汇率
+  唐山:高炉开工率:周:结束日5:前一个观测值
+  商业银行托管同比
+  商品房销售面积:累计同比
+  固定资产投资完成额:基础设施建设:累计同比
+  国债期货成交量：10年
+  国债期货持仓量:10年
+  国债期货收盘价(活跃合约):10年
+  基本面主题变量-1
+  基本面主题变量-2
+  基本面主题变量-3
+  基本面主题变量-4
+  工业增加值同比
+  广义基金托管同比
+  恒生科技
+  成交量:R001
+  房地产开发投资完成额:累计同比
+  期货结算价(活跃合约):焦煤
+  期货结算价(活跃合约):螺纹钢
+  标普500
+  水泥价格指数
+  沪深300
+  波罗的海
+  玻璃市场价
+  社会消费品零售总额同比
+  社融同比
+  票房收入
+  科创50
+  秦皇岛港口吞吐量
+  精对苯二甲酸开工率
+  纳斯达克
+  美元指数
+  美国各总统时期-1
+  美国各总统时期-2
+  美国各总统时期-3
+  美国各总统时期-4
+  美国各总统时期-5
+  股债相对
+  股债相对_chg_20d
+  股债相对_chg_5d
+  股债相对_deviation_20
+  股债相对_ma_20
+  股债相对_ma_5
+  证券公司托管同比
+  进口金额:当月同比
+  道琼斯
+  阴极铜价格
+
+==================================================
+=== 置信度门控评估（中信建投同款手法）===
+门控参数: prob_margin=0.15, vol_quantile=0.5 (阈值=1.011)
+弃权样本: 224 / 1764 (12.7%)
+置信覆盖率: 87.3%
+
+指标                       全量        门控后         提升
+--------------------------------------------------
+Accuracy             0.5635     0.5682    +0.0047
+Macro F1             0.5627     0.5662    +0.0035
+AUC                  0.5822     0.5846    +0.0023
