@@ -5,8 +5,16 @@ data_ori/
 data_wind/
 test_data_dir/
 test_data_dir_v2/
-model_new/
+model_new/out/
+model_new/data/
 model_question/
+
+# 新基础数据产物（特征/标签CSV可再生，仅实验文档入库）
+data_new/*
+!data_new/*.md
+
+# ZCode 会话配置
+.zcode/
 
 # 模型与实验产物
 model_nn/out/

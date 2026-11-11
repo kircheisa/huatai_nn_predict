@@ -145,10 +145,11 @@ class InceptionModule(nn.Module):
 
 
 class SelfAttention(nn.Module):
-    """单头自注意力 Q/K/V（资料2.md 同款，未除 sqrt(d)）"""
+    """单头自注意力 Q/K/V（资料2.md 同款），scores 除以 sqrt(d) 缩放"""
 
     def __init__(self, embed_size):
         super().__init__()
+        self.scale = embed_size ** -0.5
         self.query = nn.Linear(embed_size, embed_size)
         self.key = nn.Linear(embed_size, embed_size)
         self.value = nn.Linear(embed_size, embed_size)
@@ -157,7 +158,7 @@ class SelfAttention(nn.Module):
     def forward(self, x):
         # x: (batch, seq, embed)
         Q, K, V = self.query(x), self.key(x), self.value(x)
-        scores = self.softmax(torch.bmm(Q, K.transpose(1, 2)))
+        scores = self.softmax(torch.bmm(Q, K.transpose(1, 2)) * self.scale)
         return torch.bmm(scores, V)
 
 
