@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-最新时点预测：自动判数据新鲜度 -> 选口径 -> 四周期XGB预测 -> 结果落盘 -> 曲线HTML
+最新时点预测：自动判数据新鲜度 -> 选口径 -> 四周期XGB+NN融合预测 -> 结果落盘 -> 曲线HTML
 
 流程:
   1. 读 data_ori/2026_ori_data_new.xlsx:
@@ -9,17 +9,22 @@
        有 -> 用含净买入特征 43v4_features.csv；无 -> 用无净买入 43v4nb_features.csv
   2. 若 asof 晚于特征网格末日（原始数据已更新但特征未重建），自动重跑
      30(四个horizon) -> 32 -> 38 重建特征链
-  3. 四周期(h5/10/15/20) XGB 用截至asof全部标签样本(756窗口, 21协议超参)
-     现场训练后预测 asof 当日；输出概率/信号/到期日/隐含点位
+  3. 四周期(h5/10/15/20)：
+     XGB 用截至asof全部标签样本(756窗口, 21协议超参)现场训练预测；
+     NN 复用 17 脚本 BiGRU(NN_B协议, 3-seed, 训练窗内Top30特征)现场训练预测；
+     融合 = 两者概率平均
   4. 结果:
      data_new/预测记录.csv          追加式台账（同发出日覆盖旧记录）
-     data_new/out/时点预测曲线.html  自包含SVG曲线（收益率+各周期概率史+最新信号）
+     data_new/out/时点预测曲线.html  自包含SVG曲线（收益率+XGB/融合隐含点位射线
+                                    +各周期概率史+最新信号星标）
 """
 
 from __future__ import annotations
 
+import importlib.util
 import subprocess
 import sys
+from argparse import Namespace
 from pathlib import Path
 
 import numpy as np
@@ -77,7 +82,59 @@ def rebuild_features() -> None:
             raise RuntimeError(f"特征重建失败: {cmd[-1]}")
 
 
-def predict_asof(feats: pd.DataFrame, y: pd.Series, asof: pd.Timestamp):
+def _load_nn17():
+    spec = importlib.util.spec_from_file_location(
+        "nn17", BASE / "model_nn" / "17_BiGRU训练_新基础数据_二分类.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def nn_predict(nn17, feats: pd.DataFrame, lab: pd.DataFrame,
+               asof: pd.Timestamp, h: int) -> float:
+    """NN支路：训练窗内XGB重要性Top30 + 17脚本BiGRU(NN_B, 3-seed)预测asof"""
+    df = feats.join(lab, how="inner")
+    train = df[(df.index <= asof) & df["label"].notna()
+               & df["sample_weight"].notna()].iloc[-756:]
+    mi = xgb.XGBClassifier(**{**PARAMS, "n_estimators": 300})
+    mi.fit(train[feats.columns], train["label"].astype(int),
+           sample_weight=train["sample_weight"])
+    top30 = pd.Series(mi.feature_importances_, index=feats.columns)\
+        .sort_values(ascending=False).head(30).index.tolist()
+
+    import torch
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    args = Namespace(seq_len=60, purge_gap=-1, val_rate=0.2, epochs=80,
+                     lr=5e-4, weight_decay=1e-4, patience=12, min_epochs=10,
+                     label_smoothing=0.05, class_weight=True, batch_size=32,
+                     noise_std=0.0, grad_clip=1.0, min_lr=1e-5, n_blocks=1,
+                     hidden_size=64, gru_layers=2, dropout=0.5)
+    full = feats[top30]
+    y_all = lab["label"].reindex(feats.index)
+    w_all = lab["sample_weight"].reindex(feats.index)
+    asof_pos, tr_hi = len(feats) - 1, len(feats) - 1 - h
+    lo = max(0, asof_pos - 1260)
+    mu = np.nanmean(full.values[lo:tr_hi + 1], axis=0)
+    sd = np.nanstd(full.values[lo:tr_hi + 1], axis=0) + 1e-8
+    Xs = np.clip(np.nan_to_num((full.values - mu) / sd), -8, 8).astype(np.float32)
+    X_t = torch.from_numpy(Xs)
+    y_arr = np.nan_to_num(y_all.values, nan=0).astype(int)
+    w_arr = np.nan_to_num(w_all.values, nan=1.0).astype(float)
+    probas = []
+    for k in range(3):
+        model, info = nn17.train_one_fold(
+            args, X_t, y_arr, w_arr, 0, tr_hi, device,
+            input_size=len(top30), seed=42 + 1000 * k)
+        if model is None:
+            break
+        probas.append(nn17.predict_proba(model, X_t, np.array([asof_pos]),
+                                         args, device)[0])
+    return float(np.mean(probas)) if probas else float("nan")
+
+
+def predict_asof(feats: pd.DataFrame, y: pd.Series, asof: pd.Timestamp,
+                 with_nn: bool = True):
+    nn17 = _load_nn17() if with_nn else None
     bd = pd.bdate_range(asof, asof + pd.Timedelta(days=45))
     rows = []
     for h, lab_file in HORIZONS:
@@ -89,19 +146,27 @@ def predict_asof(feats: pd.DataFrame, y: pd.Series, asof: pd.Timestamp):
         m.fit(train[feats.columns], train["label"].astype(int),
               sample_weight=train["sample_weight"])
         p = float(m.predict_proba(feats.loc[[asof]])[:, 1][0])
+        p_nn = nn_predict(nn17, feats, lab, asof, h) if with_nn else float("nan")
+        p_fu = (p + p_nn) / 2
         med_bp = ((y.shift(-h) - y).abs().dropna()
                   [lambda s: s.index >= (asof - pd.Timedelta(days=730))].median() * 100)
         rows.append({"周期": f"h{h}", "到期日": bd[h].date().isoformat(),
                      "下行概率": round(p, 3),
                      "信号": "下行(债涨)" if p >= 0.5 else "上行(债跌)",
                      "隐含点位估算(%)": round(y[asof] + (1 - 2 * p) * med_bp / 100, 3),
+                     "NN概率": round(p_nn, 3),
+                     "融合概率": round(p_fu, 3),
+                     "融合信号": "下行(债涨)" if p_fu >= 0.5 else "上行(债跌)",
+                     "融合隐含点位(%)": round(y[asof] + (1 - 2 * p_fu) * med_bp / 100, 3),
                      "训练样本截至": train.index.max().date().isoformat()})
     return pd.DataFrame(rows)
 
 
 def make_html(asof, ymode: str, sig: pd.DataFrame, y: pd.Series,
-              hist: dict[str, pd.Series]) -> None:
-    """自包含SVG：上=收益率，下=各周期下行概率史+最新信号点"""
+              hist: dict[str, pd.Series], llm: dict | None = None) -> None:
+    """自包含SVG：上=收益率，下=各周期下行概率史+最新信号点
+    sig 可含 LLM 修正列（修正概率/修正信号/修正隐含点位(%)），llm 为
+    41 脚本的分析结果（情绪/要点/理由/新闻）时追加解读卡片。"""
 
     def xmap(d):  # 时间->像素（横轴延伸到最远到期日，给隐含点位留空间）
         mat_max = max(pd.Timestamp(r["到期日"]) for _, r in sig.iterrows())
@@ -126,9 +191,13 @@ def make_html(asof, ymode: str, sig: pd.DataFrame, y: pd.Series,
                        f'y2="{top + hh - 20}" stroke="#eee"/>')
         svg.append(f'<text x="{x:.0f}" y="{H1 + H2 + 58}" text-anchor="middle" '
                    f'fill="#666">{mo.month}月</text>')
-    # 面板1: 收益率 + 前向隐含点位
-    implied_min = min(r["隐含点位估算(%)"] for _, r in sig.iterrows())
-    lo, hi_ = min(y26.min(), implied_min), y26.max()
+    # 面板1: 收益率 + 前向隐含点位（XGB实心圆 / 融合空心菱形 / 修正×）
+    imp = [r["隐含点位估算(%)"] for _, r in sig.iterrows()]
+    imp += [r["融合隐含点位(%)"] for _, r in sig.iterrows()
+            if pd.notna(r.get("融合隐含点位(%)"))] or imp
+    imp += [r["修正隐含点位(%)"] for _, r in sig.iterrows()
+            if pd.notna(r.get("修正隐含点位(%)"))] or imp
+    lo, hi_ = min(y26.min(), min(imp)), y26.max()
     pad = (hi_ - lo) * 0.08
     lo, hi_ = lo - pad, hi_ + pad
 
@@ -147,6 +216,23 @@ def make_html(asof, ymode: str, sig: pd.DataFrame, y: pd.Series,
         svg.append(f'<text x="{xe - 4:.0f}" y="{ye + 18:.0f}" fill="{c}" '
                    f'font-size="11" font-weight="bold">'
                    f'{r["周期"]}→{r["隐含点位估算(%)"]:.3f}</text>')
+        # 融合隐含点位：空心菱形 + 细虚线
+        if pd.notna(r.get("融合隐含点位(%)")):
+            yf = y1(r["融合隐含点位(%)"])
+            svg.append(line([(xmap(asof), y1(y_now)), (xe, yf)], c, 1.0, "2,4"))
+            svg.append(f'<path d="M{xe:.0f},{yf - 6:.0f} l5,6 -5,6 -5,-6 z" '
+                       f'fill="white" stroke="{c}" stroke-width="1.6"/>')
+            svg.append(f'<text x="{xe + 8:.0f}" y="{yf + 4:.0f}" fill="{c}" '
+                       f'font-size="10">融{r["融合隐含点位(%)"]:.3f}</text>')
+        # LLM修正隐含点位：×标记
+        if pd.notna(r.get("修正隐含点位(%)")):
+            yc = y1(r["修正隐含点位(%)"])
+            svg.append(f'<path d="M{xe - 6:.0f},{yc - 6:.0f} l12,12 '
+                       f'm0,-12 l-12,12" stroke="{c}" stroke-width="2.4" '
+                       f'fill="none"/>')
+            svg.append(f'<text x="{xe - 4:.0f}" y="{yc - 12:.0f}" fill="{c}" '
+                       f'font-size="10" font-weight="bold">修'
+                       f'{r["修正隐含点位(%)"]:.3f}</text>')
     svg.append(f'<circle cx="{xmap(asof):.0f}" cy="{y1(y_now):.0f}" r="4" '
                f'fill="black" stroke="white" stroke-width="1"/>')
     svg.append(f'<text x="{xmap(asof) - 4:.0f}" y="{y1(y_now) - 10:.0f}" '
@@ -174,7 +260,7 @@ def make_html(asof, ymode: str, sig: pd.DataFrame, y: pd.Series,
                    f'fill="{COLORS.get(f"h{h}", "gray")}"/><text x="{lg_x + 32}" '
                    f'y="{H1 + 14}" fill="#333">{name}</text>')
         lg_x += 110
-    # 最新信号点（右侧星标）
+    # 最新信号点（右侧星标：实心=XGB，空心=融合）
     for _, r in sig.iterrows():
         c = COLORS[r["周期"]]
         xx, yy = xmap(asof), y2(r["下行概率"])
@@ -183,15 +269,66 @@ def make_html(asof, ymode: str, sig: pd.DataFrame, y: pd.Series,
                    f'fill="{c}" stroke="black" stroke-width="0.6"/>')
         svg.append(f'<text x="{xx - 6:.0f}" y="{yy - 14:.0f}" fill="{c}" '
                    f'font-weight="bold">{r["下行概率"]:.2f}</text>')
+        if pd.notna(r.get("融合概率")):
+            yf2 = y2(min(1.0, r["融合概率"] + 0.0))
+            svg.append(f'<path d="M{xx - 18:.0f},{yf2:.0f} m0,-7 l1.9,4.2 '
+                       f'4.7,0.5 -3.5,3.1 1,4.6 -4.1,-2.4 -4.1,2.4 1,-4.6 '
+                       f'-3.5,-3.1 4.7,-0.5 z" fill="white" stroke="{c}" '
+                       f'stroke-width="1.4"/>')
+            svg.append(f'<text x="{xx - 44:.0f}" y="{yf2 + 4:.0f}" fill="{c}" '
+                       f'font-size="10">融{r["融合概率"]:.2f}</text>')
     svg.append(f'<text x="76" y="{H1 + 44}" fill="black" font-weight="bold">'
                f'各周期下行概率（样本外预测史 + ★{asof.date()}最新信号）</text>')
     svg.append("</svg>")
+
+    def fmt(v, spec=".3f"):
+        if pd.isna(v):
+            return "-"
+        return v if isinstance(v, str) else f"{v:{spec}}"
+
+    has_fix = any(pd.notna(r.get("修正概率")) for _, r in sig.iterrows())
+
+    def fix_cells(r):
+        if not has_fix:
+            return ""
+        p = r.get("修正概率")
+        col = "green" if (p or 0) >= 0.5 else "red"
+        return (f"<td style='color:{col};font-weight:bold'>{fmt(p)}</td>"
+                f"<td>{fmt(r.get('修正信号'))}</td>"
+                f"<td>{fmt(r.get('修正隐含点位(%)'))}</td>")
 
     tbl = "".join(
         f"<tr><td>{r['周期']}</td><td>{r['到期日']}</td>"
         f"<td style='color:{'green' if r['下行概率'] >= 0.5 else 'red'};font-weight:bold'>"
         f"{r['下行概率']:.3f}</td><td>{r['信号']}</td><td>{r['隐含点位估算(%)']}</td>"
+        f"<td>{fmt(r.get('NN概率'))}</td>"
+        f"<td style='color:{'green' if (r.get('融合概率') or 0) >= 0.5 else 'red'};font-weight:bold'>"
+        f"{fmt(r.get('融合概率'))}</td><td>{fmt(r.get('融合信号'))}</td>"
+        f"<td>{fmt(r.get('融合隐含点位(%)'))}</td>"
+        f"{fix_cells(r)}"
         f"<td>{r['训练样本截至']}</td></tr>" for _, r in sig.iterrows())
+    fix_head = ("<th>LLM修正概率</th><th>修正信号</th><th>修正隐含点位</th>"
+                if has_fix else "")
+    llm_card = ""
+    if llm:
+        pts = "".join(f"<li>{p}</li>" for p in llm.get("信息要点", []))
+        news = llm.get("新闻样本") or []
+        news_html = "\n".join(news[:30]) if news else "（本次未命中相关快讯）"
+        senti = str(llm.get("债市情绪", "—"))
+        scolor = "green" if "偏多" in senti else ("red" if "偏空" in senti else "gray")
+        llm_card = f"""
+<div class="card"><h3>大模型信息修正（{llm.get('model','GLM')} · 有界±0.08）</h3>
+<p><b>债市情绪：</b><span style="color:{scolor};font-weight:bold">{senti}</span>
+&nbsp;|&nbsp;<b>信息质量：</b>{llm.get('信息质量','—')}
+&nbsp;|&nbsp;<b>命中快讯：</b>{len(news)} 条</p>
+<p><b>信息要点：</b></p><ul>{pts}</ul>
+<p><b>修正理由：</b>{llm.get('理由','—')}</p>
+<details><summary>查看搜集到的快讯原文</summary>
+<pre style="white-space:pre-wrap;font-size:12px;color:#555">{news_html}</pre>
+</details>
+<p style="color:#888;font-size:12px">LLM修正基于公开快讯的定性判断，
+未经历史回测验证，仅作模型信号的小幅倾斜参考。</p></div>"""
+
     html = f"""<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8">
 <title>时点预测曲线 {asof.date()}</title>
 <style>body{{font-family:'Microsoft YaHei';margin:24px;background:#fafafa}}
@@ -203,11 +340,14 @@ padding:6px 12px;text-align:center}}th{{background:#f5f7fa}}</style></head><body
 <div class="card"><b>发出日：</b>{asof.date()}（日频sheet国债10Y最新完整日）
 &nbsp;|&nbsp;<b>特征口径：</b>{ymode}
 &nbsp;|&nbsp;<b>当日收盘：</b>{y[asof]:.4f}%
-&nbsp;|&nbsp;<b>协议：</b>滚动756窗口/21脚本超参/四周期独立XGB</div>
-<div class="card"><table><tr><th>周期</th><th>到期日</th><th>下行概率</th>
-<th>信号</th><th>隐含点位(启发式)</th><th>训练样本截至</th></tr>{tbl}</table>
+&nbsp;|&nbsp;<b>协议：</b>滚动756窗口/21脚本超参/四周期XGB+NN融合</div>
+<div class="card"><table><tr><th>周期</th><th>到期日</th><th>XGB下行概率</th>
+<th>XGB信号</th><th>XGB隐含点位</th><th>NN概率</th><th>融合概率</th>
+<th>融合信号</th><th>融合隐含点位</th>{fix_head}<th>训练样本截至</th></tr>{tbl}</table>
 <p style="color:#888;font-size:12px">隐含点位=当前值±概率加权的历史该周期变动中位数，
-非模型原生输出；下行=收益率下降(债券价格上涨)。</p></div>
+非模型原生输出；融合=(XGB+NN概率平均)；下行=收益率下降(债券价格上涨)。
+图中：实心圆/实心星=XGB，空心菱形/空心星=融合，×=LLM修正。</p></div>
+{llm_card}
 <div class="card">{''.join(svg)}</div>
 </body></html>"""
     HTML.write_text(html, encoding="utf-8")
