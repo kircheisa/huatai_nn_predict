@@ -1,0 +1,4675 @@
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中国十年期国债收益率仪表板</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f1f5f9;
+  color: #0f172a;
+}
+#app {
+  min-height: 100vh;
+  padding: 18px;
+}
+.app-shell {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 18px;
+  min-height: calc(100vh - 36px);
+}
+.sidebar {
+  background: linear-gradient(180deg, #0a1528 0%, #0b1a30 100%);
+  border: 1px solid #20304a;
+  border-radius: 20px;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 0 18px 40px rgba(2, 8, 23, 0.35);
+}
+.brand-block {
+  padding: 6px 6px 14px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+}
+.brand-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand-icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+.brand-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 8px;
+  line-height: 1.4;
+  letter-spacing: 2px;
+}
+.brand-subtitle {
+  color: #b5c3dc;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.alert-banner {
+  display: none;
+}
+.module-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.module-nav-btn {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: #d4dbe8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-radius: 12px;
+  padding: 14px 14px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+.module-nav-btn:hover {
+  background: rgba(30, 41, 59, 0.55);
+  color: #f8fafc;
+}
+.module-nav-btn.active {
+  background: linear-gradient(90deg, rgba(250, 204, 21, 0.18), rgba(245, 158, 11, 0.08));
+  color: #facc15;
+  box-shadow: inset 3px 0 0 #facc15;
+}
+.module-nav-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 15px;
+}
+.module-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(30, 58, 95, 0.08);
+}
+.module-icon svg {
+  width: 16px;
+  height: 16px;
+}
+.module-badge {
+  min-width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.workspace-header {
+  background: linear-gradient(135deg, rgba(30, 58, 95, 0.08), rgba(139, 92, 246, 0.06));
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 16px 20px;
+}
+.workspace-header .header-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.workspace-header .module-icon-svg {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+.workspace-header h1 {
+  font-size: 22px;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+.workspace-header p {
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.module-panel {
+  display: none;
+  gap: 16px;
+}
+.module-panel.active {
+  display: flex;
+  flex-direction: column;
+}
+.panel-grid-2 {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(320px, 1fr);
+  gap: 16px;
+}
+.panel-grid-2.equal {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.panel-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+}
+.section-title {
+  font-size: 16px;
+  color: #0f172a;
+  margin-bottom: 14px;
+}
+.current-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.metric-card {
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.98));
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+}
+.metric-label {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+.metric-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: #0f172a;
+  white-space: nowrap;
+}
+.metric-sub {
+  margin-top: 6px;
+  color: #94a3b8;
+  font-size: 12px;
+}
+.metric-value.cyan { color: #2563eb; }
+.metric-value.green { color: #34d399; }
+.metric-value.red { color: #f87171; }
+.metric-value.purple { color: #a78bfa; }
+.control-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.control-group label {
+  font-size: 12px;
+  color: #64748b;
+}
+.control-group select,
+.control-group input,
+.control-group textarea {
+  width: 100%;
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+.control-group textarea {
+  min-height: 82px;
+  resize: vertical;
+  line-height: 1.6;
+}
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+.subtab-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.subtab-btn {
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #475569;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.subtab-btn.active {
+  background: linear-gradient(90deg, rgba(30, 58, 95, 0.15), rgba(139, 92, 246, 0.12));
+  color: #2563eb;
+  border-color: rgba(30, 58, 95, 0.4);
+}
+.forecast-subpanel {
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+}
+.forecast-subpanel.active {
+  display: flex;
+}
+.kpi-strip-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.kpi-strip-6 {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+}
+.kpi-strip-4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.mini-metric {
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.98), rgba(241, 245, 249, 0.95));
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.mini-metric .label {
+  color: #64748b;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+.mini-metric .value {
+  color: #0f172a;
+  font-size: 20px;
+  font-weight: 700;
+}
+.mini-metric .sub {
+  color: #94a3b8;
+  font-size: 12px;
+  margin-top: 6px;
+}
+.table-card {
+  overflow-x: auto;
+}
+.model-score-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.model-score-table th,
+.model-score-table td {
+  border-bottom: 1px solid #e2e8f0;
+  padding: 10px 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+.model-score-table th {
+  color: #64748b;
+  font-weight: 600;
+}
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(30, 58, 95, 0.1);
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 700;
+}
+.helper-list {
+  color: #475569;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.helper-list li {
+  margin-left: 18px;
+}
+.multi-config-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.mode-toggle-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.mode-chip {
+  border: 1px solid rgba(30, 58, 95, 0.3);
+  background: #ffffff;
+  color: #475569;
+  border-radius: 999px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.mode-chip.active {
+  background: rgba(30, 58, 95, 0.15);
+  border-color: rgba(30, 58, 95, 0.6);
+  color: #2563eb;
+}
+.feature-pool {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px;
+  background: #f8fafc;
+}
+.feature-pool-title {
+  color: #475569;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.feature-tag-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.feature-tag {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+.feature-tag.active {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.5);
+  color: #6366f1;
+}
+.feature-tag.placeholder {
+  cursor: default;
+  opacity: 0.8;
+}
+.metric-card-soft {
+  border-radius: 14px;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+.metric-card-soft.good {
+  border-color: rgba(34, 197, 94, 0.4);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.05), #ffffff);
+}
+.metric-card-soft.warn {
+  border-color: rgba(251, 146, 60, 0.4);
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.05), #ffffff);
+}
+.metric-card-soft .label {
+  color: #64748b;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+.metric-card-soft .value {
+  color: #0f172a;
+  font-size: 20px;
+  font-weight: 700;
+}
+.metric-card-soft .sub {
+  color: #94a3b8;
+  font-size: 12px;
+  margin-top: 6px;
+}
+.notice-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 700;
+}
+.diagnostic-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.section-head-inline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.tiny-meta {
+  color: #94a3b8;
+  font-size: 12px;
+}
+.matrix-table td,
+.matrix-table th {
+  text-align: center;
+}
+.positive-soft {
+  color: #10b981;
+}
+.negative-soft {
+  color: #ef4444;
+}
+.btn {
+  border: none;
+  border-radius: 9px;
+  padding: 10px 18px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: transform 0.2s, opacity 0.2s, background 0.2s;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn:disabled { cursor: not-allowed; opacity: 0.55; transform: none; }
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb, #6366f1);
+  color: #fff;
+}
+.btn-secondary {
+  background: #e2e8f0;
+  color: #475569;
+}
+.btn-outline {
+  background: transparent;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+.file-input {
+  display: none;
+}
+.helper-text {
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.6;
+}
+.helper-text code {
+  color: #475569;
+}
+.status-bar {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 8px;
+}
+.tab-btn {
+  border: none;
+  background: transparent;
+  color: #64748b;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.tab-btn.active {
+  background: #f1f5f9;
+  color: #2563eb;
+  font-weight: 600;
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.chart-card {
+  position: relative;
+  padding-bottom: 12px;
+}
+.chart-tooltip {
+  position: absolute;
+  z-index: 8;
+  min-width: 132px;
+  max-width: 220px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
+  color: #475569;
+  font-size: 12px;
+  line-height: 1.6;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+.chart-tooltip.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.chart-tooltip-title {
+  color: #0f172a;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.chart-tooltip-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.chart-tooltip-key {
+  color: #64748b;
+}
+.chart-tooltip-value {
+  color: #2563eb;
+  font-weight: 700;
+}
+canvas {
+  width: 100%;
+  height: 380px;
+  display: block;
+}
+#distChart {
+  height: 280px;
+}
+.range-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 4px;
+}
+.range-btn {
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
+  border-radius: 999px;
+  padding: 7px 14px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.range-btn.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  font-weight: 700;
+}
+.forecast-grid,
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.forecast-card,
+.analysis-block {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+}
+.forecast-card.week { border-left: 4px solid #2563eb; }
+.forecast-card.month { border-left: 4px solid #8b5cf6; }
+.fc-title {
+  color: #64748b;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+.fc-mean {
+  color: #0f172a;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.fc-range,
+.fc-extra {
+  color: #475569;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.stats-table,
+.year-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.stats-table td,
+.year-table td,
+.year-table th {
+  padding: 9px 10px;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 13px;
+}
+.stats-table td:first-child,
+.year-table th {
+  color: #64748b;
+  text-align: left;
+}
+.stats-table td:last-child,
+.year-table td:last-child {
+  text-align: right;
+}
+.year-table td {
+  color: #0f172a;
+}
+.positive { color: #10b981; }
+.negative { color: #ef4444; }
+.analysis-block h3 {
+  font-size: 14px;
+  color: #0f172a;
+  margin-bottom: 10px;
+}
+.analysis-text {
+  color: #475569;
+  line-height: 1.85;
+  font-size: 14px;
+  white-space: pre-wrap;
+}
+.analysis-text.markdown-body {
+  white-space: normal;
+}
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4 {
+  color: #0f172a;
+  margin: 0 0 10px;
+  line-height: 1.5;
+}
+.markdown-body h1 { font-size: 20px; }
+.markdown-body h2 { font-size: 18px; }
+.markdown-body h3 { font-size: 16px; }
+.markdown-body h4 { font-size: 14px; }
+.markdown-body p,
+.markdown-body ul,
+.markdown-body ol,
+.markdown-body table,
+.markdown-body blockquote,
+.markdown-body pre {
+  margin: 0 0 12px;
+}
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 20px;
+}
+.markdown-body li {
+  margin-bottom: 6px;
+}
+.markdown-body strong {
+  color: #0f172a;
+}
+.markdown-body code {
+  background: #f1f5f9;
+  color: #475569;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+.markdown-body pre {
+  overflow-x: auto;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px;
+}
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.markdown-body th,
+.markdown-body td {
+  border: 1px solid #e2e8f0;
+  padding: 8px 10px;
+  text-align: left;
+}
+.markdown-body th {
+  background: #f1f5f9;
+  color: #475569;
+}
+.markdown-body blockquote {
+  border-left: 3px solid #2563eb;
+  padding-left: 12px;
+  color: #475569;
+}
+.analysis-meta {
+  margin-top: 12px;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.news-reference-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.news-reference-status {
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.news-reference-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.news-item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.news-item-title {
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.news-item-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.news-source-badge {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.6;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+.news-source-badge.site {
+  color: #0f172a;
+  background: linear-gradient(135deg, #93c5fd, #bfdbfe);
+}
+.news-source-badge.targeted {
+  color: #052e16;
+  background: linear-gradient(135deg, #6ee7b7, #a7f3d0);
+  box-shadow: 0 0 0 1px rgba(52, 211, 153, 0.4);
+}
+.news-source-badge.web {
+  color: #f8fafc;
+  background: linear-gradient(135deg, #818cf8, #a78bfa);
+}
+.news-source-badge.unknown {
+  color: #64748b;
+  background: rgba(148, 163, 184, 0.15);
+}
+.news-ai-summary-block {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+.news-ai-summary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.news-ai-summary-header h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+}
+.news-item-meta {
+  margin-top: 6px;
+  color: #64748b;
+  font-size: 12px;
+}
+.news-item-summary {
+  margin-top: 8px;
+  color: #475569;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.news-item-link {
+  display: inline-block;
+  margin-top: 8px;
+  color: #2563eb;
+  font-size: 12px;
+  text-decoration: none;
+  word-break: break-all;
+}
+.news-item-link:hover {
+  text-decoration: underline;
+}
+.news-empty {
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.list-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.mini-kpi {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px;
+}
+.mini-kpi .label {
+  color: #64748b;
+  font-size: 12px;
+}
+.mini-kpi .value {
+  margin-top: 6px;
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 18px;
+}
+.key-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 14px;
+}
+.key-status .label {
+  color: #64748b;
+  font-size: 12px;
+}
+.key-status .value {
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 600;
+}
+.analysis-structure {
+  margin-top: 12px;
+}
+.analysis-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.analysis-table th,
+.analysis-table td {
+  border-bottom: 1px solid #e2e8f0;
+  padding: 8px 10px;
+  text-align: left;
+}
+.analysis-table th {
+  color: #64748b;
+  font-weight: 600;
+}
+.analysis-table td {
+  color: #0f172a;
+}
+.analysis-mini-chart {
+  margin-top: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 12px;
+}
+.analysis-mini-chart canvas {
+  height: 220px;
+}
+.sheet-tab-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.sheet-tab-btn {
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
+  border-radius: 999px;
+  padding: 7px 14px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.sheet-tab-btn.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  font-weight: 700;
+}
+.other-sheet-meta {
+  color: #64748b;
+  font-size: 12px;
+  margin-bottom: 12px;
+  line-height: 1.7;
+}
+.table-scroll {
+  overflow-x: auto;
+}
+.disclaimer {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(251, 146, 60, 0.08);
+  border: 1px solid rgba(251, 146, 60, 0.25);
+  color: #ea580c;
+  font-size: 12px;
+  line-height: 1.7;
+}
+@media (max-width: 1120px) {
+  .app-shell,
+  .panel-grid-2,
+  .panel-grid-2.equal {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 840px) {
+  #app {
+    padding: 12px;
+  }
+  .current-strip,
+  .control-grid,
+  .forecast-grid,
+  .stats-grid,
+  .list-grid { grid-template-columns: 1fr; }
+}
+</style>
+<script src="vendor/xlsx.full.min.js"></script>
+<script>
+  // 本地 vendor 缺失时回退 CDN（离线环境两者都失败才不可用）
+  if (typeof XLSX === 'undefined') {
+    document.write('<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"><' + '/script>');
+  }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+<div id="app" class="app-shell">
+  <aside class="sidebar">
+    <div class="brand-block">
+      <div class="brand-title-row">
+        <svg class="brand-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="brandGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#2563eb"/>
+              <stop offset="100%" stop-color="#7c3aed"/>
+            </linearGradient>
+          </defs>
+          <rect x="4" y="4" width="40" height="40" rx="10" fill="url(#brandGrad)"/>
+          <path d="M10 34c5 0 5-12 10-12s5 10 10 10 5-16 8-16" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <circle cx="10" cy="34" r="2.5" fill="#fbbf24"/>
+          <circle cx="38" cy="16" r="2.5" fill="#34d399"/>
+          <path d="M14 38h20" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M14 38v2M20 38v2M26 38v2M32 38v2" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <div class="brand-title">国债收益率分析<br>预测平台</div>
+      </div>
+      <div class="brand-subtitle">将历史走势、模拟预测、统计分析、数据管理、AI 解读和报告输出拆分为独立模块。</div>
+    </div>
+    <div class="alert-banner" id="sidebarAlert">
+      当前页面已按功能模块分区，可从左侧菜单独立浏览。
+    </div>
+    <nav class="module-nav">
+      <button class="module-nav-btn active" data-module="overview" type="button">
+        <span class="module-nav-main"><span class="module-icon"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 14h10v10H14zM24 14h10v10H24zM14 24h10v10H14zM24 24h10v10H24z" fill="#2563eb"/></svg></span><span>总览看板</span></span>
+      </button>
+      <button class="module-nav-btn" data-module="history" type="button">
+        <span class="module-nav-main"><span class="module-icon"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 32c8-12 16-8 24-4" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" fill="none"/><circle cx="10" cy="32" r="2.5" fill="#f59e0b"/><circle cx="34" cy="28" r="2.5" fill="#10b981"/></svg></span><span>历史走势</span></span>
+      </button>
+      <button class="module-nav-btn" data-module="stats" type="button">
+        <span class="module-nav-main"><span class="module-icon"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="20" width="6" height="16" fill="#2563eb" rx="2"/><rect x="21" y="14" width="6" height="22" fill="#8b5cf6" rx="2"/><rect x="30" y="18" width="6" height="18" fill="#10b981" rx="2"/></svg></span><span>统计分析</span></span>
+      </button>
+      <button class="module-nav-btn" data-module="forecast" type="button">
+        <span class="module-nav-main"><span class="module-icon"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 24c0-6 4-10 10-10s10 4 10 10-4 10-10 10-10-4-10-10z" fill="rgba(37,99,235,0.2)" stroke="#2563eb" stroke-width="2"/><path d="M18 18v12M22 16v16M26 18v12" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/></svg></span><span>模拟预测</span></span>
+      </button>
+      <button class="module-nav-btn" data-module="signal" type="button">
+        <span class="module-nav-main"><span class="module-icon"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 6l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="#2563eb"/><path d="M14 34l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#10b981"/></svg></span><span>真实模型信号</span></span>
+      </button>
+      <button class="module-nav-btn" data-module="ai" type="button">
+        <span class="module-nav-main"><span class="module-icon"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="10" fill="rgba(37,99,235,0.15)" stroke="#2563eb" stroke-width="2"/><path d="M20 22l3 3 5-5" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 14v4M24 30v4" stroke="#2563eb" stroke-width="1.5" stroke-linecap="round"/></svg></span><span>AI 解读</span></span>
+      </button>
+      <button class="module-nav-btn" data-module="data" type="button">
+        <span class="module-nav-main"><span class="module-icon"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="12" width="28" height="24" rx="4" fill="rgba(37,99,235,0.15)" stroke="#2563eb" stroke-width="2"/><path d="M14 18h20M14 24h20M14 30h12" stroke="#2563eb" stroke-width="1.5"/></svg></span><span>数据管理</span></span>
+      </button>
+      <button class="module-nav-btn" data-module="otherData" type="button">
+        <span class="module-nav-main"><span class="module-icon"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="14" width="28" height="20" rx="3" fill="rgba(37,99,235,0.15)" stroke="#2563eb" stroke-width="2"/><path d="M14 20h20M14 25h20M14 30h16" stroke="#2563eb" stroke-width="1.5"/></svg></span><span>相关数据</span></span>
+      </button>
+      <button class="module-nav-btn" data-module="report" type="button">
+        <span class="module-nav-main"><span class="module-icon"><svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="10" width="24" height="28" rx="2" fill="rgba(37,99,235,0.15)" stroke="#2563eb" stroke-width="2"/><path d="M16 16h16M16 21h12M16 26h14M16 31h10" stroke="#2563eb" stroke-width="1.5"/></svg></span><span>报告中心</span></span>
+      </button>
+    </nav>
+  </aside>
+
+  <main class="workspace">
+    <section class="workspace-header">
+      <div class="header-row">
+        <svg class="module-icon-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" id="moduleIcon">
+          <path d="M14 14h10v10H14zM24 14h10v10H24zM14 24h10v10H14zM24 24h10v10H24z" fill="rgba(37,99,235,0.1)" stroke="#2563eb" stroke-width="1.5"/>
+        </svg>
+        <h1 id="moduleTitle">总览看板</h1>
+      </div>
+      <p id="moduleSubtitle">聚合查看十年期国债收益率的当前水平、短中期变化、数据状态和报告入口。</p>
+    </section>
+
+    <section class="module-panel active" id="module-overview">
+      <section class="card">
+        <div class="section-title">市场总览</div>
+        <div class="current-strip">
+          <div class="metric-card">
+            <div class="metric-label">最新收益率</div>
+            <div class="metric-value cyan" id="currentYield">--</div>
+            <div class="metric-sub" id="currentDate">--</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">历史分位</div>
+            <div class="metric-value purple" id="currentPercentile">--</div>
+            <div class="metric-sub">按全样本百分位测算</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">20日变化</div>
+            <div class="metric-value" id="change20d">--</div>
+            <div class="metric-sub">近 20 个交易日</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">年内区间</div>
+            <div class="metric-value" id="yearRange">--</div>
+            <div class="metric-sub" id="yearRangeDate">--</div>
+          </div>
+        </div>
+      </section>
+      <div class="panel-grid-2 equal">
+        <section class="card">
+          <div class="section-title">关键指标</div>
+          <div class="list-grid">
+            <div class="mini-kpi">
+              <div class="label">近 5 日变化</div>
+              <div class="value" id="mini5d">--</div>
+            </div>
+            <div class="mini-kpi">
+              <div class="label">近 60 日变化</div>
+              <div class="value" id="mini60d">--</div>
+            </div>
+            <div class="mini-kpi">
+              <div class="label">20 日年化波动</div>
+              <div class="value" id="miniVol20">--</div>
+            </div>
+            <div class="mini-kpi">
+              <div class="label">250 日区间位置</div>
+              <div class="value" id="miniRangePos">--</div>
+            </div>
+          </div>
+        </section>
+        <section class="card">
+          <div class="section-title">模块快照</div>
+          <table class="analysis-table">
+            <tbody id="overviewTableBody">
+              <tr><td>数据状态</td><td>等待加载</td><td>默认读取 Excel 后自动更新</td></tr>
+            </tbody>
+          </table>
+          <div class="helper-text" style="margin-top: 12px;">
+            左侧菜单可切换到各独立功能模块：`历史走势`、`模拟预测`、`统计分析`、`数据管理`、`AI 解读`、`报告中心`。
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="module-panel" id="module-history">
+      <section class="card">
+        <div class="section-title">历史走势模块</div>
+        <div class="chart-card">
+          <canvas id="historyChart"></canvas>
+        </div>
+        <div class="range-controls">
+          <button class="range-btn active" data-range="all">全部</button>
+          <button class="range-btn" data-range="10y">10年</button>
+          <button class="range-btn" data-range="5y">5年</button>
+          <button class="range-btn" data-range="3y">3年</button>
+          <button class="range-btn" data-range="1y">1年</button>
+          <button class="range-btn" data-range="6m">6个月</button>
+        </div>
+      </section>
+    </section>
+
+    <section class="module-panel" id="module-forecast">
+      <section class="card">
+        <div class="section-title">ML预测引擎 v4</div>
+        <div class="subtab-row">
+          <button class="subtab-btn active" data-forecast-tab="ts" type="button">ML时间序列</button>
+          <button class="subtab-btn" data-forecast-tab="multi" type="button">多变量ML</button>
+          <button class="subtab-btn" data-forecast-tab="direction" type="button">方向预测</button>
+        </div>
+        <div class="control-grid" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
+          <div class="control-group">
+            <label for="seasonPeriod">季节周期</label>
+            <select id="seasonPeriod">
+              <option value="5">5 日</option>
+              <option value="10">10 日</option>
+              <option value="22" selected>22 日</option>
+              <option value="66">66 日</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label for="forecastHorizon">预测区间</label>
+            <select id="forecastHorizon">
+              <option value="5">5 日</option>
+              <option value="10">10 日</option>
+              <option value="22" selected>22 日</option>
+              <option value="66">66 日</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label for="cvWindow">Walk-Forward窗口</label>
+            <select id="cvWindow">
+              <option value="36">36 期</option>
+              <option value="48">48 期</option>
+              <option value="60" selected>60 期</option>
+              <option value="84">84 期</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label for="featureDepth">特征深度</label>
+            <select id="featureDepth">
+              <option value="base">基础</option>
+              <option value="enhanced" selected>增强</option>
+              <option value="full">全量</option>
+            </select>
+          </div>
+        </div>
+        <div class="button-row">
+          <button class="btn btn-primary" id="runForecast">运行ML引擎</button>
+        </div>
+      </section>
+
+      <section class="forecast-subpanel active" id="forecast-subpanel-ts">
+        <div class="kpi-strip-4">
+          <div class="mini-metric">
+            <div class="label">最佳单变量模型</div>
+            <div class="value" id="tsBestModel">--</div>
+            <div class="sub" id="tsBestModelMeta">等待运行</div>
+          </div>
+          <div class="mini-metric">
+            <div class="label">Walk-Forward RMSE</div>
+            <div class="value" id="tsBestRmse">--</div>
+            <div class="sub">单步滚动验证</div>
+          </div>
+          <div class="mini-metric">
+            <div class="label">未来一周（5期）</div>
+            <div class="value" id="weekMean">--</div>
+            <div class="sub" id="weekRange">--</div>
+          </div>
+          <div class="mini-metric">
+            <div class="label">未来一月（22期）</div>
+            <div class="value" id="monthMean">--</div>
+            <div class="sub" id="monthRange">--</div>
+          </div>
+        </div>
+        <section class="card">
+          <div class="section-title">单变量时间序列：10算法对比</div>
+          <div class="chart-card">
+            <canvas id="forecastChart"></canvas>
+          </div>
+          <div class="helper-text" id="weekProb" style="margin-top: 10px;">等待运行时间序列引擎。</div>
+          <div class="helper-text" id="monthProb">支持季节性建模 + Walk-Forward交叉验证 + Stacking集成。</div>
+        </section>
+        <section class="card table-card">
+          <div class="section-title">算法评分榜</div>
+          <table class="model-score-table">
+            <thead>
+              <tr>
+                <th>算法</th>
+                <th>类别</th>
+                <th>RMSE</th>
+                <th>MAE</th>
+                <th>MAPE</th>
+                <th>方向准确率</th>
+                <th>季节性</th>
+              </tr>
+            </thead>
+            <tbody id="tsRankingBody">
+              <tr><td colspan="7">等待运行 ML 时间序列引擎。</td></tr>
+            </tbody>
+          </table>
+        </section>
+      </section>
+
+      <section class="forecast-subpanel" id="forecast-subpanel-multi">
+        <section class="card multi-config-card">
+          <div class="section-title">多变量ML预测：用多个指标联合预测目标收益率</div>
+          <div class="control-grid" style="grid-template-columns: repeat(4, minmax(0, 1fr));">
+            <div class="control-group">
+              <label for="multiTargetEntity">目标资产</label>
+              <select id="multiTargetEntity">
+                <option value="cn10y" selected>中国10年期国债</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label for="multiTargetMetric">目标指标</label>
+              <select id="multiTargetMetric">
+                <option value="avg" selected>未来区间均值</option>
+                <option value="last">未来期末值</option>
+                <option value="delta">未来变化幅度</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label for="multiModelSelect">ML模型</label>
+              <select id="multiModelSelect">
+                <option value="auto" selected>多模型对比（自动选优）</option>
+                <option value="elastic">ElasticNet Proxy</option>
+                <option value="forest">RandomForest Proxy</option>
+                <option value="xgb">XGBoost Proxy</option>
+                <option value="stack">Stacking Ensemble</option>
+              </select>
+            </div>
+            <div class="control-group">
+              <label for="multiForecastPeriods">预测期数</label>
+              <select id="multiForecastPeriods">
+                <option value="5">5期</option>
+                <option value="10">10期</option>
+                <option value="22" selected>22期</option>
+                <option value="66">66期</option>
+              </select>
+            </div>
+          </div>
+          <div class="mode-toggle-row">
+            <span class="tiny-meta">特征工程模式：</span>
+            <button class="mode-chip" data-feature-mode="base" type="button">标准</button>
+            <button class="mode-chip active" data-feature-mode="enhanced" type="button">增强</button>
+            <button class="mode-chip" data-feature-mode="full" type="button">高级</button>
+          </div>
+          <div class="feature-pool">
+            <div class="feature-pool-title">核心自变量指标 <span class="tiny-meta" id="multiFeatureSelectionMeta">等待运行后自动推荐</span></div>
+            <div class="feature-tag-grid" id="multiCoreFeatureTags">
+              <span class="feature-tag">等待模型生成核心特征</span>
+            </div>
+          </div>
+          <div class="feature-pool">
+            <div class="feature-pool-title">宏观/外部参考指标</div>
+            <div class="feature-tag-grid" id="multiMacroFeatureTags">
+              <span class="feature-tag">等待读取 other_data.xlsx 中的可用数值列</span>
+            </div>
+          </div>
+          <div class="button-row">
+            <button class="btn btn-primary" id="runMultiCompare" type="button">运行多变量预测</button>
+            <button class="btn btn-outline" id="runMultiAutoSelect" type="button">多模型对比（自动选优）</button>
+          </div>
+          <div class="helper-text" id="multiRunHint">点击运行后将刷新评估指标、特征重要性和拟合预测曲线。</div>
+        </section>
+
+        <section class="card">
+          <div class="section-head-inline">
+            <div class="section-title" style="margin-bottom: 0;">模型评估指标</div>
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <span class="tag" id="multiBestModel">等待运行</span>
+              <span class="notice-chip" id="multiRiskNotice">等待评估</span>
+            </div>
+          </div>
+          <div class="kpi-strip-6">
+            <div class="metric-card-soft good">
+              <div class="label">CV-R²</div>
+              <div class="value" id="multiCvR2">--</div>
+              <div class="sub">Walk-Forward验证</div>
+            </div>
+            <div class="metric-card-soft warn">
+              <div class="label">RMSE</div>
+              <div class="value" id="multiRmse">--</div>
+              <div class="sub">均方根误差</div>
+            </div>
+            <div class="metric-card-soft">
+              <div class="label">MAE</div>
+              <div class="value" id="multiMae">--</div>
+              <div class="sub">平均绝对误差</div>
+            </div>
+            <div class="metric-card-soft good">
+              <div class="label">MAPE</div>
+              <div class="value" id="multiMape">--</div>
+              <div class="sub">百分比误差</div>
+            </div>
+            <div class="metric-card-soft">
+              <div class="label">sMAPE</div>
+              <div class="value" id="multiSmape">--</div>
+              <div class="sub">对称MAPE</div>
+            </div>
+            <div class="metric-card-soft good">
+              <div class="label">DA方向准确率</div>
+              <div class="value" id="multiDA">--</div>
+              <div class="sub">预测涨跌正确率</div>
+            </div>
+          </div>
+          <div class="helper-text" id="multiInterpretation" style="margin-top: 14px;">等待运行多变量模型后生成指标解读。</div>
+        </section>
+
+        <section class="card">
+          <div class="section-title">残差诊断</div>
+          <div class="diagnostic-strip">
+            <div class="metric-card-soft warn">
+              <div class="label">Durbin-Watson</div>
+              <div class="value" id="multiDw">--</div>
+              <div class="sub" id="multiDwMeta">等待计算</div>
+            </div>
+            <div class="metric-card-soft warn">
+              <div class="label">Ljung-Box</div>
+              <div class="value" id="multiLb">--</div>
+              <div class="sub" id="multiLbMeta">等待计算</div>
+            </div>
+            <div class="metric-card-soft good">
+              <div class="label">ARCH-LM</div>
+              <div class="value" id="multiArch">--</div>
+              <div class="sub" id="multiArchMeta">等待计算</div>
+            </div>
+            <div class="metric-card-soft good">
+              <div class="label">Jarque-Bera</div>
+              <div class="value" id="multiJb">--</div>
+              <div class="sub" id="multiJbMeta">等待计算</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card table-card">
+          <div class="section-title">多模型评分榜</div>
+          <table class="model-score-table">
+            <thead>
+              <tr>
+                <th>模型</th>
+                <th>MAE</th>
+                <th>RMSE</th>
+                <th>R²</th>
+                <th>解释</th>
+              </tr>
+            </thead>
+            <tbody id="multiModelBody">
+              <tr><td colspan="5">等待运行多变量引擎。</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <div class="panel-grid-2 equal">
+          <section class="card">
+            <div class="section-head-inline">
+              <div class="section-title" style="margin-bottom: 0;">特征重要性排名</div>
+              <span class="tiny-meta" id="multiBestMeta">等待运行</span>
+            </div>
+            <div class="chart-card">
+              <canvas id="multiFeatureChart"></canvas>
+            </div>
+          </section>
+          <section class="card">
+            <div class="section-head-inline">
+              <div class="section-title" style="margin-bottom: 0;">拟合与未来预测</div>
+              <span class="tiny-meta">最新预测 <span id="multiLatestPred">--</span></span>
+            </div>
+            <div class="chart-card">
+              <canvas id="multiFitChart"></canvas>
+            </div>
+          </section>
+        </div>
+
+        <section class="card">
+          <div class="section-title">建模说明</div>
+          <ul class="helper-list">
+            <li>自动特征工程：收益率滞后项、滚动均值、波动率、分位位置、外部数值列映射。</li>
+            <li>4种模型：ElasticNet Proxy、RandomForest Proxy、XGBoost Proxy、Stacking Ensemble。</li>
+            <li>结果区重点展示：评估指标、残差诊断、特征重要性、回测拟合与未来预测。</li>
+          </ul>
+        </section>
+      </section>
+
+      <section class="forecast-subpanel" id="forecast-subpanel-direction">
+        <div class="kpi-strip-4">
+          <div class="mini-metric">
+            <div class="label">预测方向</div>
+            <div class="value" id="dirLabel">--</div>
+            <div class="sub" id="dirProb">等待运行</div>
+          </div>
+          <div class="mini-metric">
+            <div class="label">Accuracy</div>
+            <div class="value" id="dirAcc">--</div>
+            <div class="sub">分类总体准确率</div>
+          </div>
+          <div class="mini-metric">
+            <div class="label">Macro F1</div>
+            <div class="value" id="dirF1">--</div>
+            <div class="sub">扩大 / 收窄双类别</div>
+          </div>
+          <div class="mini-metric">
+            <div class="label">Recall</div>
+            <div class="value" id="dirRecall">--</div>
+            <div class="sub">方向识别召回率</div>
+          </div>
+        </div>
+        <div class="panel-grid-2 equal">
+          <section class="card">
+            <div class="section-title">逻辑回归分类结果</div>
+            <table class="model-score-table matrix-table">
+              <thead>
+                <tr>
+                  <th>实际 \ 预测</th>
+                  <th>扩大</th>
+                  <th>收窄</th>
+                </tr>
+              </thead>
+              <tbody id="directionMatrixBody">
+                <tr><td colspan="3">等待运行方向预测引擎。</td></tr>
+              </tbody>
+            </table>
+          </section>
+          <section class="card">
+            <div class="section-title">分类评估说明</div>
+            <ul class="helper-list" id="directionSummary">
+              <li>方向标签定义：未来一季度（22期）收益率高于当前视为“扩大”，反之为“收窄”。</li>
+              <li>模型：逻辑回归 Proxy，采用滚动特征与外部数值特征。</li>
+              <li>评估：Accuracy、Precision、Recall、F1、混淆矩阵。</li>
+            </ul>
+          </section>
+        </div>
+      </section>
+    </section>
+
+    <section class="module-panel" id="module-signal">
+      <div class="panel-stack">
+        <div class="kpi-strip-4">
+          <div class="mini-metric"><div class="label">发出日</div><div class="value" id="sigAsof">--</div><div class="sub" id="sigMode">加载中</div></div>
+          <div class="mini-metric"><div class="label">当日收盘收益率</div><div class="value" id="sigYield">--</div><div class="sub">10年期国债（%）</div></div>
+          <div class="mini-metric"><div class="label">LLM债市情绪</div><div class="value" id="sigSentiment">--</div><div class="sub">41脚本 GLM 修正</div></div>
+          <div class="mini-metric"><div class="label">最早到期日</div><div class="value" id="sigMaturity">--</div><div class="sub">h5 到期对账点</div></div>
+        </div>
+
+        <section class="card">
+          <div class="section-title">四周期方向信号（下行概率，&gt;0.5 看下行=债涨）</div>
+          <table class="model-score-table">
+            <thead>
+              <tr><th>周期</th><th>到期日</th><th>XGB</th><th>NN</th><th>融合</th><th>LLM修正</th><th>信号</th><th>XGB隐含点位</th><th>融合隐含点位</th><th>修正隐含点位</th></tr>
+            </thead>
+            <tbody id="signalTableBody">
+              <tr><td colspan="10">等待加载真实模型信号（需启动 news_proxy 并已运行 40/41 脚本）。</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="card">
+          <div class="section-title">下行概率对比条</div>
+          <div id="signalBars" style="display:flex;flex-direction:column;gap:14px;">
+            <div style="color:#64748b;font-size:13px;">等待加载。</div>
+          </div>
+        </section>
+
+        <div class="panel-grid-2 equal">
+          <section class="card">
+            <div class="section-title">预测台账（最近记录）</div>
+            <table class="model-score-table">
+              <thead><tr><th>发出日</th><th>周期</th><th>到期日</th><th>XGB</th><th>融合</th><th>LLM修正</th></tr></thead>
+              <tbody id="signalHistoryBody"><tr><td colspan="6">--</td></tr></tbody>
+            </table>
+          </section>
+          <section class="card">
+            <div class="section-title">口径说明</div>
+            <ul class="helper-list">
+              <li>信号来源：预测项目 40_最新时点预测.py（XGB+BiGRU 融合）与 41_大模型信息修正.py（新闻+GLM 有界修正 ±0.08）。</li>
+              <li>隐含点位 = 当前值 ± 概率加权的历史该周期变动中位数，启发式换算，非模型原生输出。</li>
+              <li>净买入数据可用时自动切换含净买入口径（43v4），否则无净买入口径（43v4nb）。</li>
+              <li>诚实提示：LLM 修正未经历史回测验证；2026 年多数类基线约 0.73-0.78，Acc 口径请结合 AUC 阅读。</li>
+            </ul>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="module-panel" id="module-stats">
+      <div class="panel-stack">
+        <section class="card">
+          <div class="section-title">统计分析模块</div>
+          <div class="stats-grid">
+            <div class="analysis-block">
+              <h3>描述统计</h3>
+              <table class="stats-table">
+                <tbody>
+                  <tr><td>样本数量</td><td id="statN">--</td></tr>
+                  <tr><td>均值</td><td id="statMean">--</td></tr>
+                  <tr><td>标准差</td><td id="statStd">--</td></tr>
+                  <tr><td>最小值</td><td id="statMin">--</td></tr>
+                  <tr><td>25% 分位</td><td id="statQ25">--</td></tr>
+                  <tr><td>中位数</td><td id="statQ50">--</td></tr>
+                  <tr><td>75% 分位</td><td id="statQ75">--</td></tr>
+                  <tr><td>最大值</td><td id="statMax">--</td></tr>
+                  <tr><td>偏度</td><td id="statSkew">--</td></tr>
+                  <tr><td>峰度</td><td id="statKurt">--</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="analysis-block">
+              <h3>收益率分布</h3>
+              <canvas id="distChart"></canvas>
+            </div>
+          </div>
+        </section>
+        <section class="card">
+          <div class="section-title">年度汇总</div>
+          <table class="year-table">
+            <thead>
+              <tr>
+                <th>年份</th>
+                <th>年初</th>
+                <th>年末</th>
+                <th>变化</th>
+                <th>波动率</th>
+              </tr>
+            </thead>
+            <tbody id="yearTableBody"></tbody>
+          </table>
+        </section>
+      </div>
+    </section>
+
+    <section class="module-panel" id="module-data">
+      <div class="panel-grid-2">
+        <section class="card">
+          <div class="section-title">数据加载与配置</div>
+          <div class="key-status">
+            <div>
+              <div class="label">DeepSeek API Key</div>
+              <div class="value" id="apiKeyStatus">页面隐藏，优先自动读取配置文件</div>
+            </div>
+            <button class="btn btn-outline" id="refreshApiKeyBtn" type="button">刷新密钥状态</button>
+          </div>
+          <div class="button-row">
+            <button class="btn btn-primary" id="loadDefaultDataBtn">加载默认 Excel</button>
+            <button class="btn btn-secondary" id="pickFileBtn">手动选择 Excel</button>
+          </div>
+          <input class="file-input" id="excelFileInput" type="file" accept=".xlsx,.xls">
+          <div class="status-bar" id="loadStatus">等待加载数据...</div>
+          <div class="helper-text" style="margin-top: 10px;">
+            默认数据目录：<code>E:\10_year_bond\bond_predict\data</code><br>
+            默认 Excel：<code>E:\10_year_bond\bond_predict\data\10_bond_rate_ori.xlsx</code><br>
+            当前页面会先尝试按默认地址自动加载；若浏览器拦截本地文件访问，再回退为手动选择。<br>
+            推荐通过本地静态服务打开当前页面，以便自动读取 <code>../data/10_bond_rate_ori.xlsx</code> 和 <code>../token_api.config</code>。
+          </div>
+        </section>
+        <section class="card">
+          <div class="section-title">数据快照</div>
+          <table class="analysis-table">
+            <tbody id="dataSnapshotBody">
+              <tr><td>记录数</td><td>--</td><td>等待 Excel 加载</td></tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </section>
+
+    <section class="module-panel" id="module-ai">
+      <section class="card">
+        <div class="section-title">AI 市场解读模块</div>
+        <div class="control-grid" style="grid-template-columns: 1fr;">
+          <div class="control-group">
+            <label for="customPrompt">分析补充指令</label>
+            <textarea id="customPrompt" placeholder="例如：请重点分析当前收益率所处历史分位、短期趋势与风险点。"></textarea>
+          </div>
+        </div>
+        <div class="button-row" style="margin-bottom: 14px;">
+          <button class="btn btn-secondary" id="refreshNewsBtn" type="button">刷新新闻参考</button>
+          <button class="btn btn-outline" id="analyzeBtn">生成 AI 分析</button>
+        </div>
+        <div class="analysis-block">
+          <h3>自动摘要</h3>
+          <div class="analysis-text markdown-body" id="ruleSummary">尚未加载数据。</div>
+          <div class="analysis-meta" id="summaryMeta"></div>
+        </div>
+        <div class="analysis-block" style="margin-top: 12px;">
+          <h3>新闻观点参考</h3>
+          <div class="news-reference-panel">
+            <div class="news-reference-status" id="newsStatus">点击“刷新新闻参考”或“生成 AI 分析”后，将自动搜索近期国债收益率观点新闻。</div>
+            <div class="news-reference-list" id="newsList">
+              <div class="news-empty">尚未加载新闻参考。</div>
+            </div>
+          </div>
+          <div class="news-ai-summary-block">
+            <div class="news-ai-summary-header">
+              <h4>AI 新闻解读</h4>
+              <button class="btn btn-outline btn-sm" id="newsAiSummaryBtn" type="button">解读新闻</button>
+            </div>
+            <div class="analysis-text markdown-body" id="newsAiSummary">加载新闻后点击"解读新闻"，AI 将对上述新闻进行汇总解读。</div>
+            <div class="analysis-meta" id="newsAiSummaryMeta"></div>
+          </div>
+        </div>
+        <div class="analysis-block" style="margin-top: 12px;">
+          <h3>大模型分析</h3>
+          <div class="analysis-text markdown-body" id="aiAnalysis">点击生成 AI 分析后，将调用 `deepseek-v4` 输出市场解读。</div>
+          <div class="analysis-meta" id="aiMeta"></div>
+          <div class="analysis-structure">
+            <table class="analysis-table">
+              <thead>
+                <tr>
+                  <th>维度</th>
+                  <th>观察</th>
+                  <th>说明</th>
+                </tr>
+              </thead>
+              <tbody id="analysisTableBody">
+                <tr><td colspan="3">尚未生成结构化分析。</td></tr>
+              </tbody>
+            </table>
+            <div class="analysis-mini-chart">
+              <canvas id="analysisInsightChart"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="disclaimer">
+          说明：当前方案为纯前端直连模型接口，API Key 会暴露在浏览器侧，仅适合本地研究与演示环境；如需生产可用方案，建议改为后端代理模式。
+        </div>
+      </section>
+    </section>
+
+    <section class="module-panel" id="module-otherData">
+      <div class="panel-stack">
+        <section class="card">
+          <div class="section-title">相关数据模块</div>
+          <div class="helper-text">
+            数据来源：<code>data/ori_data_new.xlsx</code>（由预测项目
+            <code>data_ori/2026_ori_data_new.xlsx</code> 经 export_ori_data.py 导出，
+            含日频+买卖行为/日频/周频/月频四表；旧 other_data.xlsx 自动兜底）
+          </div>
+          <div class="status-bar" id="otherDataStatus" style="margin-top: 12px;">等待加载 `ori_data_new.xlsx` ...</div>
+        </section>
+        <section class="card">
+          <div class="section-title">Sheet 预览</div>
+          <div class="sheet-tab-row" id="otherDataSheetTabs"></div>
+          <div class="other-sheet-meta" id="otherDataMeta">暂无工作表信息。</div>
+          <div class="table-scroll">
+            <table class="analysis-table">
+              <thead id="otherDataTableHead"></thead>
+              <tbody id="otherDataTableBody">
+                <tr><td>等待加载 `other_data.xlsx`。</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="module-panel" id="module-report">
+      <div class="panel-grid-2">
+        <section class="card">
+          <div class="section-title">报告摘要</div>
+          <div class="analysis-text markdown-body" id="reportCenterContent">等待加载数据。</div>
+          <div class="analysis-meta" id="reportCenterMeta"></div>
+        </section>
+        <section class="card">
+          <div class="section-title">报告指标表</div>
+          <table class="analysis-table">
+            <tbody id="reportCenterTableBody">
+              <tr><td colspan="3">等待生成报告快照。</td></tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+const DEFAULT_EXCEL_PATH = '../data/10_bond_rate_ori.xlsx';
+const DEFAULT_EXCEL_DIR_LABEL = 'E:\\10_year_bond\\bond_predict\\data';
+const DEFAULT_EXCEL_FILE_LABEL = 'E:\\10_year_bond\\bond_predict\\data\\10_bond_rate_ori.xlsx';
+const DEFAULT_EXCEL_FILE_URI = 'file:///E:/10_year_bond/bond_predict/data/10_bond_rate_ori.xlsx';
+const OTHER_EXCEL_PATH_NEW = '../data/ori_data_new.xlsx';
+const OTHER_EXCEL_PATH = '../data/other_data.xlsx';
+const OTHER_EXCEL_FILE_LABEL = 'data\\ori_data_new.xlsx（来自预测项目 2026_ori_data_new.xlsx）';
+const OTHER_EXCEL_FILE_URI = 'file:///F:/43_华泰证券预处理/bond_show/data/ori_data_new.xlsx';
+const DEFAULT_TOKEN_PATH = '../token_api.config';
+const DEEPSEEK_API_URL = 'https://api.deepseek.com/chat/completions';
+const DEEPSEEK_MODEL = 'deepseek-v4-flash';
+// 出于安全考虑，版本库中不内置真实密钥：运行时优先读取 ../token_api.config，失败后提示手动输入。
+const DEFAULT_HARDCODED_API_KEY = '';
+// 使用当前页面的主机名拼接新闻代理地址，便于局域网内其他设备访问。
+const LOCAL_PROXY_HOST = `${window.location.protocol}//${window.location.hostname}:8001`;
+const LOCAL_NEWS_PROXY_URL = `${LOCAL_PROXY_HOST}/api/news-search`;
+const LOCAL_NEWS_PROXY_HEALTH_URL = `${LOCAL_PROXY_HOST}/api/health`;
+const MODULE_META = {
+  overview: { 
+    title: '总览看板', 
+    subtitle: '聚合查看十年期国债收益率的当前水平、短中期变化、数据状态和报告入口。',
+    icon: '<path d="M14 14h10v10H14zM24 14h10v10H24zM14 24h10v10H14zM24 24h10v10H24z" fill="rgba(37,99,235,0.1)" stroke="#2563eb" stroke-width="1.5"/>'
+  },
+  history: { 
+    title: '历史走势', 
+    subtitle: '按时间区间独立查看历史收益率曲线，适合做趋势和阶段性切片分析。',
+    icon: '<path d="M10 32c8-12 16-8 24-4" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" fill="none"/><circle cx="10" cy="32" r="3" fill="#f59e0b"/><circle cx="34" cy="28" r="3" fill="#10b981"/><path d="M10 36h28" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round"/>'
+  },
+  forecast: {
+    title: '模拟预测',
+    subtitle: 'ML预测引擎 v4：单变量时间序列、多变量联合预测、方向分类预测三类能力合并到统一工作台。',
+    icon: '<path d="M10 24c0-6 4-10 10-10s10 4 10 10-4 10-10 10-10-4-10-10z" fill="rgba(37,99,235,0.1)" stroke="#2563eb" stroke-width="2"/><path d="M18 18v12M22 16v16M26 18v12" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/>'
+  },
+  signal: {
+    title: '真实模型信号',
+    subtitle: '生产管线四周期方向预测（XGB/BiGRU融合/大模型修正），数据来自预测项目 40/41 脚本的最新台账。',
+    icon: '<path d="M24 6l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="#2563eb"/><path d="M14 34l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#10b981"/>'
+  },
+  stats: { 
+    title: '统计分析', 
+    subtitle: '集中查看描述统计、分布特征和年度汇总，不与图表和 AI 解读混在一起。',
+    icon: '<rect x="12" y="20" width="6" height="16" fill="#2563eb" rx="2"/><rect x="21" y="14" width="6" height="22" fill="#8b5cf6" rx="2"/><rect x="30" y="18" width="6" height="18" fill="#10b981" rx="2"/><path d="M8 36h32" stroke="#cbd5e1" stroke-width="1.5"/>'
+  },
+  data: { 
+    title: '数据管理', 
+    subtitle: '统一管理 Excel 数据加载、API Key 状态、提示词补充和数据快照。',
+    icon: '<rect x="10" y="12" width="28" height="24" rx="4" fill="rgba(37,99,235,0.1)" stroke="#2563eb" stroke-width="2"/><path d="M14 18h20M14 24h20M14 30h12" stroke="#2563eb" stroke-width="1.5"/>'
+  },
+  otherData: { 
+    title: '相关数据', 
+    subtitle: '展示 2026_ori_data_new.xlsx 导出的日频+买卖行为/日频/周频/月频原始数据，作为收益率分析的补充参考。',
+    icon: '<rect x="10" y="14" width="28" height="20" rx="3" fill="rgba(37,99,235,0.1)" stroke="#2563eb" stroke-width="2"/><path d="M14 20h20M14 25h20M14 30h16" stroke="#2563eb" stroke-width="1.5"/><path d="M28 14v-4h4" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/>'
+  },
+  ai: { 
+    title: 'AI 解读', 
+    subtitle: '把自动摘要和大模型解读拆成独立模块，便于专注阅读与比对。',
+    icon: '<circle cx="24" cy="24" r="14" fill="rgba(37,99,235,0.1)" stroke="#2563eb" stroke-width="2"/><path d="M18 20l4 4 6-6" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 10v6M24 28v6M16 18h6M26 26h6" stroke="#2563eb" stroke-width="1.5" stroke-linecap="round"/>'
+  },
+  report: { 
+    title: '报告中心', 
+    subtitle: '汇总当前样本、预测结果和 AI 结论，形成适合汇报的结构化摘要。',
+    icon: '<rect x="12" y="10" width="24" height="28" rx="2" fill="rgba(37,99,235,0.1)" stroke="#2563eb" stroke-width="2"/><path d="M16 16h16M16 21h12M16 26h14M16 31h10" stroke="#2563eb" stroke-width="1.5"/>'
+  },
+};
+
+const state = {
+  data: [],
+  range: 'all',
+  forecast: null,
+  summary: null,
+  apiKey: DEFAULT_HARDCODED_API_KEY,
+  apiKeySource: 'hardcoded',
+  currentModule: 'overview',
+  otherDataWorkbook: null,
+  otherDataActiveSheet: '',
+  newsItems: [],
+  newsStatus: '尚未加载新闻参考。',
+  newsLastUpdatedAt: '',
+  forecastTab: 'ts',
+  forecastWorkbench: null,
+  multiFeatureSelection: {
+    core: [],
+    macro: [],
+    customized: false,
+  },
+};
+
+function setStatus(message) {
+  document.getElementById('loadStatus').textContent = message;
+  const sidebarAlert = document.getElementById('sidebarAlert');
+  if (sidebarAlert) {
+    sidebarAlert.textContent = message;
+  }
+}
+
+function renderMarkdownToHtml(markdown) {
+  if (window.marked && typeof window.marked.parse === 'function') {
+    return window.marked.parse(markdown);
+  }
+  return markdown
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\n/g, '<br>');
+}
+
+function setMarkdownContent(elementId, markdown) {
+  document.getElementById(elementId).innerHTML = renderMarkdownToHtml(markdown);
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function extractStreamDeltaText(payload) {
+  const delta = payload?.choices?.[0]?.delta;
+  if (!delta) return '';
+  if (typeof delta.content === 'string') {
+    return delta.content;
+  }
+  if (Array.isArray(delta.content)) {
+    return delta.content
+      .map(item => {
+        if (typeof item === 'string') return item;
+        if (item?.type === 'text') return item.text || '';
+        return '';
+      })
+      .join('');
+  }
+  return '';
+}
+
+async function streamMarkdownResponse(response, elementId, onProgress) {
+  if (!response.body) {
+    throw new Error('当前浏览器不支持流式读取响应。');
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder('utf-8');
+  let fullText = '';
+  let buffer = '';
+  let lastRenderedLength = 0;
+
+  while (true) {
+    const { value, done } = await reader.read();
+    buffer += decoder.decode(value || new Uint8Array(), { stream: !done });
+
+    const events = buffer.split('\n\n');
+    buffer = events.pop() || '';
+
+    for (const eventText of events) {
+      const lines = eventText
+        .split('\n')
+        .map(line => line.trim())
+        .filter(Boolean);
+
+      for (const line of lines) {
+        if (!line.startsWith('data:')) continue;
+        const dataText = line.slice(5).trim();
+        if (!dataText) continue;
+        if (dataText === '[DONE]') {
+          setMarkdownContent(elementId, fullText || '## 大模型分析\n\n模型未返回有效内容。');
+          return fullText;
+        }
+
+        let payload;
+        try {
+          payload = JSON.parse(dataText);
+        } catch (error) {
+          continue;
+        }
+
+        const deltaText = extractStreamDeltaText(payload);
+        if (!deltaText) continue;
+        fullText += deltaText;
+
+        if (fullText.length - lastRenderedLength >= 12 || /\n/.test(deltaText)) {
+          setMarkdownContent(elementId, `${fullText}\n\n<span style="color:#94a3b8;">正在输出...</span>`);
+          lastRenderedLength = fullText.length;
+          if (onProgress) onProgress(fullText);
+        }
+      }
+    }
+
+    if (done) {
+      break;
+    }
+  }
+
+  if (!fullText.trim()) {
+    throw new Error('模型返回为空。');
+  }
+
+  setMarkdownContent(elementId, fullText);
+  return fullText;
+}
+
+function updateApiKeyStatus() {
+  const status = document.getElementById('apiKeyStatus');
+  if (state.apiKey) {
+    const sourceText = state.apiKeySource === 'config' ? '配置文件覆盖' : state.apiKeySource === 'manual' ? '临时输入' : '前端默认写死';
+    status.textContent = `${sourceText}，尾号 ${state.apiKey.slice(-4)}`;
+  } else {
+    status.textContent = '未获取到可用 API Key';
+  }
+}
+
+function switchModule(moduleName) {
+  state.currentModule = moduleName;
+  document.querySelectorAll('.module-nav-btn').forEach(button => {
+    button.classList.toggle('active', button.dataset.module === moduleName);
+  });
+  document.querySelectorAll('.module-panel').forEach(panel => {
+    panel.classList.toggle('active', panel.id === `module-${moduleName}`);
+  });
+
+  const meta = MODULE_META[moduleName] || MODULE_META.overview;
+  document.getElementById('moduleTitle').textContent = meta.title;
+  document.getElementById('moduleSubtitle').textContent = meta.subtitle;
+  const iconContainer = document.getElementById('moduleIcon');
+  if (iconContainer && meta.icon) {
+    iconContainer.innerHTML = meta.icon;
+  }
+  renderActiveModule();
+}
+
+function renderActiveModule() {
+  if (state.currentModule === 'forecast') {
+    renderForecastSubpanel();
+    if (state.data.length) runForecastSafe('manual');
+    return;
+  }
+  if (!state.data.length) return;
+  if (state.currentModule === 'history') renderHistory();
+  if (state.currentModule === 'stats') {
+    renderDistribution();
+    renderYearTable();
+  }
+  if (state.currentModule === 'ai') {
+    renderAnalysisInsightChart();
+  }
+  if (state.currentModule === 'report') {
+    renderReportCenter();
+  }
+}
+
+function formatDate(date) {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return '--';
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function formatPct(value, digits = 3) {
+  if (!Number.isFinite(value)) return '--';
+  return `${value.toFixed(digits)}%`;
+}
+
+function formatSignedPct(value, digits = 3) {
+  if (!Number.isFinite(value)) return '--';
+  const sign = value > 0 ? '+' : '';
+  return `${sign}${value.toFixed(digits)}%`;
+}
+
+function quantile(sortedValues, q) {
+  if (!sortedValues.length) return NaN;
+  const pos = (sortedValues.length - 1) * q;
+  const base = Math.floor(pos);
+  const rest = pos - base;
+  if (sortedValues[base + 1] !== undefined) {
+    return sortedValues[base] + rest * (sortedValues[base + 1] - sortedValues[base]);
+  }
+  return sortedValues[base];
+}
+
+function mean(values) {
+  return values.length ? values.reduce((sum, item) => sum + item, 0) / values.length : NaN;
+}
+
+function std(values) {
+  if (!values.length) return NaN;
+  const avg = mean(values);
+  const variance = values.reduce((sum, item) => sum + Math.pow(item - avg, 2), 0) / values.length;
+  return Math.sqrt(variance);
+}
+
+function toDate(value) {
+  if (value instanceof Date) return value;
+  if (typeof value === 'number' && window.XLSX) {
+    const parsed = XLSX.SSF.parse_date_code(value);
+    if (parsed) return new Date(parsed.y, parsed.m - 1, parsed.d);
+  }
+  const date = new Date(value);
+  return date;
+}
+
+function normalizeRows(rows) {
+  const normalized = [];
+  rows.forEach((row, index) => {
+    if (!row || row.length < 2) return;
+    if (index === 0 && String(row[0]).includes('指标名称')) return;
+    const rawDate = row[0];
+    const rawValue = row[1];
+    const date = toDate(rawDate);
+    const value = Number(rawValue);
+    if (!(date instanceof Date) || Number.isNaN(date.getTime()) || !Number.isFinite(value)) return;
+    normalized.push({ date, value });
+  });
+
+  normalized.sort((a, b) => a.date - b.date);
+  const deduped = [];
+  for (const item of normalized) {
+    if (!deduped.length || formatDate(deduped[deduped.length - 1].date) !== formatDate(item.date)) {
+      deduped.push(item);
+    } else {
+      deduped[deduped.length - 1] = item;
+    }
+  }
+  return deduped;
+}
+
+function normalizeNewsItem(rawItem, index) {
+  const title = String(rawItem?.title || rawItem?.name || `新闻 ${index + 1}`).trim();
+  const summary = String(rawItem?.summary || rawItem?.snippet || rawItem?.content || '').trim();
+  const url = String(rawItem?.url || rawItem?.link || rawItem?.source_url || '').trim();
+  const source = String(rawItem?.source || rawItem?.site || rawItem?.media || rawItem?.domain || '未知来源').trim();
+  const retrievalMode = String(rawItem?.retrievalMode || '').trim();
+  const retrievalLabel = String(rawItem?.retrievalLabel || '').trim();
+  const rawDate = rawItem?.publish_time || rawItem?.published_at || rawItem?.date || rawItem?.time || rawItem?.publishedAt || '';
+  let dateText = '';
+  if (rawDate) {
+    const parsed = new Date(rawDate);
+    dateText = Number.isNaN(parsed.getTime()) ? String(rawDate).trim() : formatDate(parsed);
+  }
+  return { title, summary, url, source, dateText, retrievalMode, retrievalLabel };
+}
+
+function renderNewsReference() {
+  const statusEl = document.getElementById('newsStatus');
+  const listEl = document.getElementById('newsList');
+  if (!statusEl || !listEl) return;
+
+  statusEl.textContent = state.newsStatus || '尚未加载新闻参考。';
+  if (!state.newsItems.length) {
+    listEl.innerHTML = '<div class="news-empty">尚未加载新闻参考。</div>';
+    return;
+  }
+
+  listEl.innerHTML = state.newsItems.map(item => {
+    const meta = [item.source, item.dateText].filter(Boolean).join(' | ');
+    const safeUrl = item.url ? escapeHtml(item.url) : '';
+    const retrievalLabel = escapeHtml(item.retrievalLabel || 'MCP 搜索');
+    const badgeClass = item.retrievalMode === 'site_targeted'
+      ? 'targeted'
+      : item.retrievalMode === 'mcp_site_search'
+        ? 'site'
+        : item.retrievalMode === 'mcp_web_search'
+          ? 'web'
+          : 'unknown';
+    return `
+      <article class="news-item">
+        <div class="news-item-title-row">
+          <div class="news-item-title">${escapeHtml(item.title || '未命名新闻')}</div>
+          <span class="news-source-badge ${badgeClass}">${retrievalLabel}</span>
+        </div>
+        <div class="news-item-meta">${escapeHtml(meta || '无来源信息')}</div>
+        <div class="news-item-summary">${escapeHtml(item.summary || '暂无摘要。')}</div>
+        ${safeUrl ? `<a class="news-item-link" href="${safeUrl}" target="_blank" rel="noopener noreferrer">${safeUrl}</a>` : ''}
+      </article>
+    `;
+  }).join('');
+}
+
+function buildNewsSearchQuery() {
+  const latestDateText = state.summary?.lastDate ? formatDate(state.summary.lastDate) : '';
+  const segments = [
+    '中国10年期国债收益率 债市观点 利率债 新闻 宏观政策',
+    latestDateText ? `截至${latestDateText}` : '',
+    '关注长端利率、资金面、央行政策、风险偏好与交易拥挤度'
+  ].filter(Boolean);
+  return segments.join('，');
+}
+
+function buildNewsAiReference() {
+  if (!state.newsItems.length) return '';
+  const topItems = state.newsItems.slice(0, 5);
+  return [
+    '新闻观点参考：',
+    ...topItems.map((item, index) => `- ${index + 1}. ${item.dateText || '日期未标注'} | ${item.source || '未知来源'} | ${item.retrievalLabel || 'MCP 搜索'} | ${item.title}${item.summary ? `：${item.summary}` : ''}${item.url ? `（链接：${item.url}）` : ''}`)
+  ].join('\n');
+}
+
+async function fetchBondNewsReference(forceRefresh = false) {
+  if (!forceRefresh && state.newsItems.length) {
+    state.newsStatus = `已缓存 ${state.newsItems.length} 条新闻参考，更新时间：${state.newsLastUpdatedAt || '刚刚'}。`;
+    renderNewsReference();
+    return state.newsItems;
+  }
+
+  state.newsStatus = '正在搜索近期国债收益率观点新闻...';
+  renderNewsReference();
+  const payload = {
+    query: buildNewsSearchQuery(),
+    recency: 'oneWeek',
+    limit: 8
+  };
+
+  let response;
+  try {
+    response = await fetch(LOCAL_NEWS_PROXY_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+  } catch (error) {
+    state.newsItems = [];
+    state.newsStatus = `新闻搜索失败：${error.message}。请确认本地 Python 新闻代理已启动（默认 ${LOCAL_PROXY_HOST}）。`;
+    renderNewsReference();
+    throw new Error(`新闻搜索失败：${error.message}。请确认本地 Python 新闻代理已启动。`);
+  }
+
+  if (!response.ok) {
+    let errorText = '';
+    try {
+      const errorPayload = await response.json();
+      errorText = errorPayload?.error || JSON.stringify(errorPayload);
+    } catch (error) {
+      errorText = await response.text();
+    }
+    state.newsItems = [];
+    state.newsStatus = `新闻搜索失败：HTTP ${response.status}`;
+    renderNewsReference();
+    throw new Error(`新闻搜索失败：HTTP ${response.status} ${errorText}`);
+  }
+
+  const data = await response.json();
+  const rawResults = Array.isArray(data?.items) ? data.items : [];
+  const matchedDomains = Array.isArray(data?.matchedDomains) ? data.matchedDomains : [];
+  const siteCount = Number(data?.siteResultsCount || 0);
+  const webCount = Number(data?.webResultsCount || 0);
+  const items = rawResults
+    .map((item, index) => normalizeNewsItem(item, index))
+    .filter(item => item.title && (item.summary || item.url));
+
+  state.newsItems = items;
+  state.newsLastUpdatedAt = new Date().toLocaleString('zh-CN');
+  // 状态文案明确区分“定向命中”与“全网补充”，让来源结构一目了然。
+  const groupText = siteCount > 0
+    ? `定向命中 ${siteCount} 条${webCount > 0 ? `，全网补充 ${webCount} 条` : ''}`
+    : (webCount > 0 ? `全网补充 ${webCount} 条` : '');
+  state.newsStatus = items.length
+    ? `已获取 ${items.length} 条新闻参考（${groupText}），更新时间：${state.newsLastUpdatedAt}${matchedDomains.length ? `；命中站点：${matchedDomains.join('、')}` : ''}。`
+    : '未检索到可用新闻结果，AI 解读将仅基于本地数据。';
+  renderNewsReference();
+  return items;
+}
+
+async function loadWorkbookFromArrayBuffer(buffer) {
+  const workbook = XLSX.read(buffer, { type: 'array', cellDates: true });
+  const sheetName = workbook.SheetNames[0];
+  const sheet = workbook.Sheets[sheetName];
+  const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: true });
+  const parsed = normalizeRows(rows);
+  if (!parsed.length) {
+    throw new Error('Excel 中未识别到有效的日期与收益率数据。');
+  }
+  state.data = parsed;
+  refreshAll();
+  setStatus(`数据加载成功，共 ${parsed.length} 条记录，区间 ${formatDate(parsed[0].date)} ~ ${formatDate(parsed[parsed.length - 1].date)}。`);
+}
+
+async function loadDefaultExcel() {
+  setStatus('正在尝试读取默认 Excel 文件...');
+  if (window.location.protocol === 'file:') {
+    try {
+      setStatus(`正在尝试按默认地址读取本地 Excel...\n默认文件：${DEFAULT_EXCEL_FILE_LABEL}`);
+      const response = await fetch(DEFAULT_EXCEL_FILE_URI, { cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error(`默认 Excel 读取失败：HTTP ${response.status}\n默认文件：${DEFAULT_EXCEL_FILE_LABEL}`);
+      }
+      const buffer = await response.arrayBuffer();
+      await loadWorkbookFromArrayBuffer(buffer);
+      return;
+    } catch (error) {
+      throw new Error(`已尝试默认地址，但当前浏览器仍禁止直接读取本地 Excel。\n默认目录：${DEFAULT_EXCEL_DIR_LABEL}\n默认文件：${DEFAULT_EXCEL_FILE_LABEL}\n请点击“手动选择 Excel”，或改用本地静态服务打开页面。`);
+    }
+  }
+  try {
+    const response = await fetch(DEFAULT_EXCEL_PATH, { cache: 'no-store' });
+    if (!response.ok) {
+      throw new Error(`默认 Excel 读取失败：HTTP ${response.status}\n默认文件：${DEFAULT_EXCEL_FILE_LABEL}`);
+    }
+    const buffer = await response.arrayBuffer();
+    await loadWorkbookFromArrayBuffer(buffer);
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error(`无法访问默认 Excel 文件。\n默认目录：${DEFAULT_EXCEL_DIR_LABEL}\n默认文件：${DEFAULT_EXCEL_FILE_LABEL}\n请确认当前页面通过本地静态服务打开，或直接点击“手动选择 Excel”。`);
+    }
+    throw error;
+  }
+}
+
+async function loadOtherDataWorkbook() {
+  setOtherDataStatus('正在尝试读取 ori_data_new.xlsx（2026_ori_data_new 导出）...');
+  const targets = [];
+  if (window.location.protocol === 'file:') {
+    targets.push(OTHER_EXCEL_FILE_URI);
+  } else {
+    targets.push(OTHER_EXCEL_PATH_NEW);
+  }
+  targets.push(OTHER_EXCEL_PATH);   // 旧文件兜底
+  for (const url of targets) {
+    try {
+      const response = await fetch(url, { cache: 'no-store' });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const buffer = await response.arrayBuffer();
+      state.otherDataWorkbook = XLSX.read(buffer, { type: 'array', cellDates: true });
+      state.otherDataActiveSheet = state.otherDataWorkbook.SheetNames?.[0] || '';
+      renderOtherDataModule();
+      setOtherDataStatus(`相关数据加载成功（${url.split('/').pop()}），共 ${state.otherDataWorkbook.SheetNames.length} 个 Sheet。`);
+      return;
+    } catch (error) {
+      if (url === targets[targets.length - 1]) {
+        state.otherDataWorkbook = null;
+        state.otherDataActiveSheet = '';
+        renderOtherDataModule();
+        setOtherDataStatus(`相关数据加载失败：${error.message}。可运行预测项目的 export_ori_data.py 重新生成 ori_data_new.xlsx。`);
+      }
+    }
+  }
+}
+
+async function loadExcelFile(file) {
+  setStatus(`正在读取本地文件：${file.name}`);
+  const buffer = await file.arrayBuffer();
+  await loadWorkbookFromArrayBuffer(buffer);
+}
+
+async function tryLoadApiKey() {
+  try {
+    const response = await fetch(DEFAULT_TOKEN_PATH);
+    if (!response.ok) {
+      updateApiKeyStatus();
+      return state.apiKey;
+    }
+    const text = (await response.text()).trim();
+    if (text) {
+      state.apiKey = text;
+      state.apiKeySource = 'config';
+      updateApiKeyStatus();
+      return state.apiKey;
+    }
+  } catch (error) {
+    updateApiKeyStatus();
+    return state.apiKey;
+  }
+  updateApiKeyStatus();
+  return state.apiKey;
+}
+
+function requestApiKeyFromUser() {
+  const manualKey = window.prompt('未自动读取到 DeepSeek API Key，请临时输入：', '');
+  if (manualKey && manualKey.trim()) {
+    state.apiKey = manualKey.trim();
+    state.apiKeySource = 'manual';
+    updateApiKeyStatus();
+    return state.apiKey;
+  }
+  return '';
+}
+
+function getFilteredData(range) {
+  if (!state.data.length) return [];
+  const lastDate = state.data[state.data.length - 1].date;
+  const ranges = {
+    '6m': 183,
+    '1y': 365,
+    '3y': 365 * 3,
+    '5y': 365 * 5,
+    '10y': 365 * 10,
+  };
+  if (range === 'all' || !ranges[range]) return state.data;
+  const threshold = new Date(lastDate.getTime() - ranges[range] * 24 * 60 * 60 * 1000);
+  return state.data.filter(item => item.date >= threshold);
+}
+
+function getChartColors(canvas) {
+  return {
+    bg: '#f1f5f9',
+    grid: '#e2e8f0',
+    text: '#64748b',
+    title: '#0f172a',
+    tooltipLine: 'rgba(30, 58, 95, 0.4)',
+    pointStroke: '#f1f5f9',
+    cursor: '#2563eb',
+  };
+}
+
+function resizeCanvas(canvas, height) {
+  const rect = canvas.getBoundingClientRect();
+  const ratio = window.devicePixelRatio || 1;
+  canvas.width = Math.max(320, rect.width) * ratio;
+  canvas.height = height * ratio;
+  canvas.style.height = `${height}px`;
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  return { ctx, width: Math.max(320, rect.width), height };
+}
+
+function drawLineChart(canvasId, datasets, options = {}) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const parent = canvas.parentElement;
+  if (parent) parent.style.position = 'relative';
+
+  let tooltipEl = parent ? parent.querySelector('.chart-tooltip') : null;
+  if (options.enableTooltip && parent && !tooltipEl) {
+    tooltipEl = document.createElement('div');
+    tooltipEl.className = 'chart-tooltip';
+    parent.appendChild(tooltipEl);
+  }
+
+  const pad = { top: 28, right: 54, bottom: 38, left: 52 };
+
+  const render = activeXIndex => {
+    const { ctx, width, height } = resizeCanvas(canvas, options.height || 380);
+    const chartWidth = width - pad.left - pad.right;
+    const chartHeight = height - pad.top - pad.bottom;
+
+    const values = datasets.flatMap(ds => ds.points.flatMap(point => {
+      const base = [point.y];
+      if (Number.isFinite(point.yLow)) base.push(point.yLow);
+      if (Number.isFinite(point.yHigh)) base.push(point.yHigh);
+      return base;
+    }));
+    const yMin = options.yMin ?? (Math.min(...values) - 0.08);
+    const yMax = options.yMax ?? (Math.max(...values) + 0.08);
+    const xMax = Math.max(...datasets.flatMap(ds => ds.points.map(point => point.xIndex)));
+    const xDenominator = Math.max(1, xMax);
+    const yDenominator = Math.max(0.0001, yMax - yMin);
+    const pointToX = point => pad.left + (point.xIndex / xDenominator) * chartWidth;
+    const pointToY = point => pad.top + chartHeight * (1 - (point.y - yMin) / yDenominator);
+
+    ctx.fillStyle = '#f1f5f9';
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 5; i++) {
+      const y = pad.top + (chartHeight * i) / 5;
+      ctx.beginPath();
+      ctx.moveTo(pad.left, y);
+      ctx.lineTo(width - pad.right, y);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = '#64748b';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'right';
+    for (let i = 0; i <= 5; i++) {
+      const value = yMax - ((yMax - yMin) * i) / 5;
+      const y = pad.top + (chartHeight * i) / 5;
+      ctx.fillText(`${value.toFixed(2)}%`, pad.left - 8, y + 4);
+    }
+
+    const axisDates = options.xLabels || [];
+    if (Array.isArray(options.xHighlights)) {
+      options.xHighlights.forEach(region => {
+        const startX = pad.left + (Math.max(0, region.startIndex || 0) / xDenominator) * chartWidth;
+        const endX = pad.left + (Math.max(0, region.endIndex || 0) / xDenominator) * chartWidth;
+        ctx.fillStyle = region.fill || 'rgba(30, 58, 95, 0.08)';
+        ctx.fillRect(startX, pad.top, Math.max(2, endX - startX), chartHeight);
+        if (region.label) {
+          ctx.fillStyle = region.textColor || '#64748b';
+          ctx.font = '11px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(region.label, (startX + endX) / 2, pad.top + 14);
+        }
+      });
+    }
+    ctx.textAlign = 'center';
+    let lastLabelX = Number.NEGATIVE_INFINITY;
+    axisDates.forEach((item, index) => {
+      const x = pad.left + (item.index / xDenominator) * chartWidth;
+      const minGap = 56;
+      const isEdgeLabel = index === 0 || index === axisDates.length - 1;
+      if (!isEdgeLabel && x - lastLabelX < minGap) return;
+      ctx.fillText(item.label, x, height - 12);
+      lastLabelX = x;
+    });
+
+    datasets.forEach(ds => {
+      if (ds.fillRange) {
+        ctx.fillStyle = ds.fillRange;
+        ctx.beginPath();
+        ds.points.forEach((point, idx) => {
+          const x = pointToX(point);
+          const y = pad.top + chartHeight * (1 - (point.yLow - yMin) / yDenominator);
+          if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
+        for (let i = ds.points.length - 1; i >= 0; i--) {
+          const point = ds.points[i];
+          const x = pointToX(point);
+          const y = pad.top + chartHeight * (1 - (point.yHigh - yMin) / yDenominator);
+          ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      ctx.strokeStyle = ds.color;
+      ctx.lineWidth = ds.width || 2;
+      ctx.setLineDash(ds.dash || []);
+      ctx.beginPath();
+      ds.points.forEach((point, idx) => {
+        const x = pointToX(point);
+        const y = pointToY(point);
+        if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+
+    if (options.enableTooltip && Number.isInteger(activeXIndex)) {
+      const activePoint = datasets.flatMap(ds => ds.points || []).find(point => point.xIndex === activeXIndex);
+      if (activePoint) {
+        const x = pointToX(activePoint);
+
+        ctx.strokeStyle = 'rgba(103, 232, 249, 0.55)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(x, pad.top);
+        ctx.lineTo(x, height - pad.bottom);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        datasets.forEach(ds => {
+          const point = (ds.points || []).find(item => item.xIndex === activeXIndex);
+          if (!point) return;
+          const pointX = pointToX(point);
+          const pointY = pointToY(point);
+          ctx.fillStyle = ds.color || '#2563eb';
+          ctx.beginPath();
+          ctx.arc(pointX, pointY, 4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = '#f8fafc';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        });
+      }
+    }
+
+    if (options.verticalMarker) {
+      const x = pad.left + (options.verticalMarker.index / xDenominator) * chartWidth;
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(x, pad.top);
+      ctx.lineTo(x, height - pad.bottom);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = '#fbbf24';
+      ctx.textAlign = 'center';
+      ctx.fillText(options.verticalMarker.label, x, pad.top - 8);
+    }
+
+    if (options.title) {
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 14px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(options.title, pad.left, 18);
+    }
+
+    if (options.subtitle) {
+      ctx.fillStyle = '#64748b';
+      ctx.font = '12px sans-serif';
+      ctx.fillText(options.subtitle, pad.left, 34);
+    }
+
+    canvas.__lineChartLayout = { pad, width, height, chartWidth, chartHeight, xMax };
+  };
+
+  render(null);
+
+  if (!options.enableTooltip || !tooltipEl) return;
+
+  const updateTooltip = event => {
+    const points = datasets.flatMap(ds => ds.points || []);
+    if (!points.length) return;
+    const rect = canvas.getBoundingClientRect();
+    const layout = canvas.__lineChartLayout;
+    if (!layout) return;
+    const localX = event.clientX - rect.left;
+    const localY = event.clientY - rect.top;
+    const minX = layout.pad.left;
+    const maxX = layout.width - layout.pad.right;
+    const minY = layout.pad.top;
+    const maxY = layout.height - layout.pad.bottom;
+
+    if (localX < minX || localX > maxX || localY < minY || localY > maxY) {
+      tooltipEl.classList.remove('visible');
+      render(null);
+      return;
+    }
+
+    let activeXIndex = points[0].xIndex;
+    let minDistance = Number.POSITIVE_INFINITY;
+    const uniquePoints = Array.from(new Map(points.map(point => [point.xIndex, point])).values());
+    const xDenominator = Math.max(1, layout.xMax);
+    uniquePoints.forEach(point => {
+      const pointX = layout.pad.left + (point.xIndex / xDenominator) * layout.chartWidth;
+      const dist = Math.abs(localX - pointX);
+      if (dist < minDistance) {
+        minDistance = dist;
+        activeXIndex = point.xIndex;
+      }
+    });
+
+    const activePoint = uniquePoints.find(point => point.xIndex === activeXIndex);
+    render(activeXIndex);
+
+    const tooltipHtml = options.tooltipFormatter
+      ? options.tooltipFormatter(datasets, activeXIndex)
+      : `
+        <div class="chart-tooltip-title">${activePoint.label || '数据点'}</div>
+        <div class="chart-tooltip-row">
+          <span class="chart-tooltip-key">数值</span>
+          <span class="chart-tooltip-value">${Number(activePoint.y).toFixed(3)}%</span>
+        </div>
+      `;
+    tooltipEl.innerHTML = tooltipHtml;
+    tooltipEl.classList.add('visible');
+
+    const tooltipRect = tooltipEl.getBoundingClientRect();
+    const offsetX = 14;
+    const offsetY = 14;
+    let left = localX + offsetX;
+    let top = localY - tooltipRect.height - offsetY;
+    if (left + tooltipRect.width > layout.width - 8) left = localX - tooltipRect.width - offsetX;
+    if (top < 8) top = localY + offsetY;
+    tooltipEl.style.left = `${Math.max(8, left)}px`;
+    tooltipEl.style.top = `${Math.max(8, top)}px`;
+  };
+
+  const hideTooltip = () => {
+    tooltipEl.classList.remove('visible');
+    render(null);
+  };
+
+  if (canvas.__lineChartUpdateTooltip) {
+    canvas.removeEventListener('mousemove', canvas.__lineChartUpdateTooltip);
+  }
+  if (canvas.__lineChartHideTooltip) {
+    canvas.removeEventListener('mouseleave', canvas.__lineChartHideTooltip);
+  }
+
+  canvas.addEventListener('mousemove', updateTooltip);
+  canvas.addEventListener('mouseleave', hideTooltip);
+  canvas.__lineChartUpdateTooltip = updateTooltip;
+  canvas.__lineChartHideTooltip = hideTooltip;
+}
+
+function renderHistory() {
+  const filtered = getFilteredData(state.range);
+  if (!filtered.length) return;
+  const step = Math.max(1, Math.floor(filtered.length / 6));
+  const xLabels = filtered
+    .filter((_, idx) => idx % step === 0 || idx === filtered.length - 1)
+    .map((item, idx, arr) => ({
+      index: filtered.findIndex(candidate => candidate === item),
+      label: idx === arr.length - 1 ? formatDate(item.date).slice(0, 7) : `${item.date.getFullYear()}-${String(item.date.getMonth() + 1).padStart(2, '0')}`,
+    }));
+
+  drawLineChart('historyChart', [{
+    points: filtered.map((item, index) => ({
+      xIndex: index,
+      y: item.value,
+      label: formatDate(item.date),
+      rawDate: item.date,
+    })),
+    color: '#2563eb',
+    width: 2.4,
+  }], {
+    title: '十年期国债收益率历史走势',
+    subtitle: '',
+    xLabels,
+    height: 350,
+    enableTooltip: true,
+    tooltipFormatter: (datasets, activeIndex) => {
+      const point = datasets[0]?.points?.[activeIndex];
+      if (!point) return '';
+      return `
+        <div class="chart-tooltip-title">${escapeHtml(point.label || '日期未标注')}</div>
+        <div class="chart-tooltip-row">
+          <span class="chart-tooltip-key">10Y 国债收益率</span>
+          <span class="chart-tooltip-value">${Number(point.y).toFixed(4)}%</span>
+        </div>
+      `;
+    },
+  });
+}
+
+function calcSummary(data) {
+  const values = data.map(item => item.value);
+  const sorted = [...values].sort((a, b) => a - b);
+  const last = data[data.length - 1];
+  const previous = offset => data.length > offset ? data[data.length - 1 - offset].value : NaN;
+  const last250 = data.slice(-250).map(item => item.value);
+  const last20Changes = [];
+  for (let i = Math.max(1, data.length - 20); i < data.length; i++) {
+    last20Changes.push(data[i].value - data[i - 1].value);
+  }
+  const historyMinItem = data.reduce((best, item) => item.value < best.value ? item : best, data[0]);
+  const historyMaxItem = data.reduce((best, item) => item.value > best.value ? item : best, data[0]);
+  const thisYear = last.date.getFullYear();
+  const yearData = data.filter(item => item.date.getFullYear() === thisYear);
+  const yearMin = yearData.reduce((best, item) => item.value < best.value ? item : best, yearData[0]);
+  const yearMax = yearData.reduce((best, item) => item.value > best.value ? item : best, yearData[0]);
+
+  const percentileRankIndex = sorted.findIndex(item => item >= last.value);
+  const percentile = (percentileRankIndex === -1 ? sorted.length - 1 : percentileRankIndex) / Math.max(1, sorted.length - 1);
+  const pos250 = last250.length ? ((last.value - Math.min(...last250)) / Math.max(0.0001, Math.max(...last250) - Math.min(...last250))) : NaN;
+  const pos250Clamped = Number.isFinite(pos250) ? Math.min(1, Math.max(0, pos250)) : NaN;
+
+  return {
+    lastDate: last.date,
+    lastValue: last.value,
+    count: values.length,
+    mean: mean(values),
+    std: std(values),
+    min: sorted[0],
+    q25: quantile(sorted, 0.25),
+    q50: quantile(sorted, 0.5),
+    q75: quantile(sorted, 0.75),
+    max: sorted[sorted.length - 1],
+    skew: (() => {
+      const m = mean(values);
+      const s = std(values) || 1;
+      return values.reduce((sum, item) => sum + Math.pow(item - m, 3), 0) / values.length / Math.pow(s, 3);
+    })(),
+    kurt: (() => {
+      const m = mean(values);
+      const s = std(values) || 1;
+      return values.reduce((sum, item) => sum + Math.pow(item - m, 4), 0) / values.length / Math.pow(s, 4) - 3;
+    })(),
+    change5d: last.value - previous(5),
+    change20d: last.value - previous(20),
+    change60d: last.value - previous(60),
+    vol20: std(last20Changes) * Math.sqrt(252),
+    percentile,
+    pos250: pos250Clamped,
+    histMin: historyMinItem,
+    histMax: historyMaxItem,
+    yearMin,
+    yearMax,
+    yearStart: yearData[0],
+    yearEnd: yearData[yearData.length - 1],
+  };
+}
+
+function updateSummaryUI(summary) {
+  document.getElementById('currentYield').textContent = formatPct(summary.lastValue, 4);
+  document.getElementById('currentDate').textContent = `最新日期：${formatDate(summary.lastDate)}`;
+  document.getElementById('currentPercentile').textContent = `${(summary.percentile * 100).toFixed(1)}%`;
+
+  const change20d = document.getElementById('change20d');
+  change20d.textContent = formatSignedPct(summary.change20d, 3);
+  change20d.className = `metric-value ${summary.change20d >= 0 ? 'red' : 'green'}`;
+
+  document.getElementById('yearRange').textContent = `${formatPct(summary.yearMin.value, 2)} ~ ${formatPct(summary.yearMax.value, 2)}`;
+  document.getElementById('yearRangeDate').textContent = `${formatDate(summary.yearStart.date)} → ${formatDate(summary.yearEnd.date)}`;
+
+  document.getElementById('mini5d').textContent = formatSignedPct(summary.change5d, 3);
+  document.getElementById('mini60d').textContent = formatSignedPct(summary.change60d, 3);
+  document.getElementById('miniVol20').textContent = Number.isFinite(summary.vol20) ? `${(summary.vol20 * 100).toFixed(1)}bp` : '--';
+  document.getElementById('miniRangePos').textContent = Number.isFinite(summary.pos250) ? `${(summary.pos250 * 100).toFixed(1)}%` : '--';
+
+  document.getElementById('statN').textContent = summary.count;
+  document.getElementById('statMean').textContent = formatPct(summary.mean, 3);
+  document.getElementById('statStd').textContent = formatPct(summary.std, 3);
+  document.getElementById('statMin').textContent = formatPct(summary.min, 3);
+  document.getElementById('statQ25').textContent = formatPct(summary.q25, 3);
+  document.getElementById('statQ50').textContent = formatPct(summary.q50, 3);
+  document.getElementById('statQ75').textContent = formatPct(summary.q75, 3);
+  document.getElementById('statMax').textContent = formatPct(summary.max, 3);
+  document.getElementById('statSkew').textContent = Number.isFinite(summary.skew) ? summary.skew.toFixed(3) : '--';
+  document.getElementById('statKurt').textContent = Number.isFinite(summary.kurt) ? summary.kurt.toFixed(3) : '--';
+
+  const ruleSummary = [
+    `截至 ${formatDate(summary.lastDate)}，10 年期国债收益率为 ${formatPct(summary.lastValue, 4)}，处于全样本 ${(summary.percentile * 100).toFixed(1)}% 分位。`,
+    `近 5 日变化 ${formatSignedPct(summary.change5d, 3)}，近 20 日变化 ${formatSignedPct(summary.change20d, 3)}，近 60 日变化 ${formatSignedPct(summary.change60d, 3)}。`,
+    `历史区间位于 ${formatPct(summary.histMin.value, 4)}（${formatDate(summary.histMin.date)}）到 ${formatPct(summary.histMax.value, 4)}（${formatDate(summary.histMax.date)}）。`,
+    `近 20 日年化波动约 ${Number.isFinite(summary.vol20) ? `${(summary.vol20 * 100).toFixed(1)}bp` : '--'}，近 250 日区间位置 ${Number.isFinite(summary.pos250) ? `${(summary.pos250 * 100).toFixed(1)}%` : '--'}。`
+  ].join('\n');
+  setMarkdownContent('ruleSummary', ruleSummary.replace(/\n/g, '\n\n'));
+  document.getElementById('summaryMeta').textContent = `样本区间：${formatDate(state.data[0].date)} ~ ${formatDate(state.data[state.data.length - 1].date)}`;
+}
+
+function renderAnalysisTable() {
+  const tbody = document.getElementById('analysisTableBody');
+  if (!state.summary) {
+    tbody.innerHTML = '<tr><td colspan="3">尚未生成结构化分析。</td></tr>';
+    return;
+  }
+
+  const summary = state.summary;
+  const forecastWeekDelta = state.forecast ? state.forecast.weekStats.mean - summary.lastValue : NaN;
+  const forecastMonthDelta = state.forecast ? state.forecast.monthStats.mean - summary.lastValue : NaN;
+  const rows = [
+    ['当前位置', `${(summary.percentile * 100).toFixed(1)}% 分位`, '衡量当前收益率位于历史高低位的相对位置'],
+    ['短期动量', formatSignedPct(summary.change20d, 3), '使用近 20 个交易日收益率变化观察方向'],
+    ['中期动量', formatSignedPct(summary.change60d, 3), '使用近 60 个交易日变化观察趋势延续性'],
+    ['波动状态', Number.isFinite(summary.vol20) ? `${(summary.vol20 * 100).toFixed(1)}bp` : '--', '近 20 日变化的年化波动估计'],
+    ['预测偏向(1周)', Number.isFinite(forecastWeekDelta) ? formatSignedPct(forecastWeekDelta, 3) : '--', '未来一周预测均值相对当前收益率的偏移'],
+    ['预测偏向(1月)', Number.isFinite(forecastMonthDelta) ? formatSignedPct(forecastMonthDelta, 3) : '--', '未来一月预测均值相对当前收益率的偏移'],
+  ];
+
+  tbody.innerHTML = rows.map(row => `
+    <tr>
+      <td>${row[0]}</td>
+      <td>${row[1]}</td>
+      <td>${row[2]}</td>
+    </tr>
+  `).join('');
+}
+
+function renderAnalysisInsightChart() {
+  const canvas = document.getElementById('analysisInsightChart');
+  if (!canvas || !state.summary) return;
+  const { ctx, width, height } = resizeCanvas(canvas, 220);
+  const pad = { top: 28, right: 24, bottom: 34, left: 54 };
+  const summary = state.summary;
+  const metrics = [
+    { label: '5D', value: summary.change5d },
+    { label: '20D', value: summary.change20d },
+    { label: '60D', value: summary.change60d },
+    { label: 'WkExp', value: state.forecast ? state.forecast.weekStats.mean - summary.lastValue : 0 },
+    { label: 'MonExp', value: state.forecast ? state.forecast.monthStats.mean - summary.lastValue : 0 },
+  ];
+  const maxAbs = Math.max(...metrics.map(item => Math.abs(item.value)), 0.02);
+  const chartWidth = width - pad.left - pad.right;
+  const chartHeight = height - pad.top - pad.bottom;
+  const zeroY = pad.top + chartHeight / 2;
+  const barWidth = chartWidth / metrics.length;
+
+  ctx.fillStyle = '#f1f5f9';
+  ctx.fillRect(0, 0, width, height);
+  ctx.strokeStyle = '#e2e8f0';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad.left, zeroY);
+  ctx.lineTo(width - pad.right, zeroY);
+  ctx.stroke();
+
+  metrics.forEach((item, index) => {
+    const x = pad.left + index * barWidth + barWidth * 0.18;
+    const yDelta = (item.value / maxAbs) * (chartHeight * 0.42);
+    const barHeight = Math.abs(yDelta);
+    const y = item.value >= 0 ? zeroY - barHeight : zeroY;
+    ctx.fillStyle = item.value >= 0 ? '#dc2626' : '#10b981';
+    ctx.fillRect(x, y, barWidth * 0.64, Math.max(2, barHeight));
+
+    ctx.fillStyle = '#64748b';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(item.label, x + barWidth * 0.32, height - 10);
+    ctx.fillText(formatSignedPct(item.value, 2), x + barWidth * 0.32, item.value >= 0 ? y - 6 : y + barHeight + 14);
+  });
+
+  ctx.fillStyle = '#0f172a';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('动量与预测偏移图', pad.left, 18);
+}
+
+function renderOverviewModule() {
+  const tbody = document.getElementById('overviewTableBody');
+  if (!state.summary) {
+    tbody.innerHTML = '<tr><td>数据状态</td><td>等待加载</td><td>默认读取 Excel 后自动更新</td></tr>';
+    return;
+  }
+  const summary = state.summary;
+  const rows = [
+    ['数据状态', '已加载', `${state.data.length} 条记录，最新日期 ${formatDate(summary.lastDate)}`],
+    ['趋势状态', formatSignedPct(summary.change20d, 3), '用近 20 个交易日变化表征当前方向'],
+    ['波动状态', Number.isFinite(summary.vol20) ? `${(summary.vol20 * 100).toFixed(1)}bp` : '--', '近 20 日年化波动'],
+    ['AI 状态', document.getElementById('aiMeta').textContent ? '已生成分析' : '待生成', '可切换到 AI 解读模块查看详细内容'],
+  ];
+  tbody.innerHTML = rows.map(row => `
+    <tr>
+      <td>${row[0]}</td>
+      <td>${row[1]}</td>
+      <td>${row[2]}</td>
+    </tr>
+  `).join('');
+}
+
+function renderDataSnapshot() {
+  const tbody = document.getElementById('dataSnapshotBody');
+  if (!state.summary) {
+    tbody.innerHTML = '<tr><td>记录数</td><td>--</td><td>等待 Excel 加载</td></tr>';
+    return;
+  }
+  const rows = [
+    ['记录数', `${state.data.length}`, `区间 ${formatDate(state.data[0].date)} ~ ${formatDate(state.data[state.data.length - 1].date)}`],
+    ['默认数据源', '../data/10_bond_rate_ori.xlsx', '支持按钮重新加载或手动选择 Excel'],
+    ['API Key 来源', state.apiKeySource === 'config' ? '配置文件覆盖' : state.apiKeySource === 'manual' ? '临时输入' : '前端默认写死', `尾号 ${state.apiKey.slice(-4)}`],
+  ];
+  tbody.innerHTML = rows.map(row => `
+    <tr>
+      <td>${row[0]}</td>
+      <td>${row[1]}</td>
+      <td>${row[2]}</td>
+    </tr>
+  `).join('');
+}
+
+function setOtherDataStatus(message) {
+  const el = document.getElementById('otherDataStatus');
+  if (el) {
+    el.textContent = message;
+  }
+}
+
+function getOtherSheetRows(sheetName) {
+  if (!state.otherDataWorkbook || !sheetName) return [];
+  const worksheet = state.otherDataWorkbook.Sheets[sheetName];
+  if (!worksheet) return [];
+  return XLSX.utils.sheet_to_json(worksheet, { defval: '', raw: false });
+}
+
+function summarizeCellValue(value) {
+  const text = String(value ?? '').replace(/\s+/g, ' ').trim();
+  if (!text) return '';
+  return text.length > 32 ? `${text.slice(0, 32)}...` : text;
+}
+
+function isMeaningfulOtherDataValue(value) {
+  if (value === '' || value === null || value === undefined) return false;
+  const text = String(value).trim();
+  if (!text) return false;
+  const numberValue = Number(text);
+  if (Number.isFinite(numberValue) && numberValue === 0) return false;
+  return true;
+}
+
+function formatOtherDataValue(value) {
+  if (!isMeaningfulOtherDataValue(value)) return null;
+  const numberValue = Number(value);
+  if (Number.isFinite(numberValue) && String(value).trim() !== '') {
+    return Math.abs(numberValue) >= 100 ? numberValue.toFixed(2) : numberValue.toFixed(4);
+  }
+  return summarizeCellValue(value);
+}
+
+function buildOtherDataAiReference() {
+  if (!state.otherDataWorkbook || !state.otherDataWorkbook.SheetNames?.length) {
+    return '';
+  }
+
+  const sheetSummaries = state.otherDataWorkbook.SheetNames.slice(0, 3).map(sheetName => {
+    const rows = getOtherSheetRows(sheetName);
+    if (!rows.length) {
+      return `- ${sheetName}: 空表或无可识别数据。`;
+    }
+
+    const columns = Object.keys(rows[0]).slice(0, 6);
+    const previewParts = [];
+    const sampleRow = rows.find(row => columns.some(column => isMeaningfulOtherDataValue(row[column]))) || rows[0];
+    columns.slice(0, 3).forEach(column => {
+      const formatted = formatOtherDataValue(sampleRow[column]);
+      if (formatted) {
+        previewParts.push(`${column}=${formatted}`);
+      }
+    });
+
+    const numericParts = [];
+    columns.forEach(column => {
+      const values = rows
+        .map(row => Number(row[column]))
+        .filter(value => Number.isFinite(value) && value !== 0);
+      if (values.length >= Math.max(3, Math.floor(rows.length * 0.3))) {
+        const lastValue = values[values.length - 1];
+        const avgValue = mean(values);
+        numericParts.push(`${column}: 最新 ${formatOtherDataValue(lastValue)} / 均值 ${formatOtherDataValue(avgValue)}`);
+      }
+    });
+
+    const detailParts = [
+      `行数 ${rows.length}`,
+      `字段 ${columns.join('、') || '无'}`,
+      previewParts.length ? `样例 ${previewParts.join('，')}` : '',
+      numericParts.slice(0, 2).length ? `数值列 ${numericParts.slice(0, 2).join('；')}` : '',
+    ].filter(Boolean);
+
+    return `- ${sheetName}: ${detailParts.join('；')}`;
+  });
+
+  return ['相关参考数据（来自 other_data.xlsx，仅作为辅助参考，不必强行建立因果关系）：', ...sheetSummaries].join('\n');
+}
+
+function renderOtherDataModule() {
+  const tabs = document.getElementById('otherDataSheetTabs');
+  const meta = document.getElementById('otherDataMeta');
+  const thead = document.getElementById('otherDataTableHead');
+  const tbody = document.getElementById('otherDataTableBody');
+
+  if (!state.otherDataWorkbook || !state.otherDataWorkbook.SheetNames?.length) {
+    tabs.innerHTML = '';
+    meta.textContent = '尚未加载 other_data.xlsx。';
+    thead.innerHTML = '';
+    tbody.innerHTML = '<tr><td>等待加载 `other_data.xlsx`。</td></tr>';
+    return;
+  }
+
+  const sheetNames = state.otherDataWorkbook.SheetNames;
+  if (!state.otherDataActiveSheet || !sheetNames.includes(state.otherDataActiveSheet)) {
+    state.otherDataActiveSheet = sheetNames[0];
+  }
+
+  tabs.innerHTML = sheetNames.map(name => `
+    <button class="sheet-tab-btn ${name === state.otherDataActiveSheet ? 'active' : ''}" data-sheet="${name}" type="button">${name}</button>
+  `).join('');
+
+  tabs.querySelectorAll('.sheet-tab-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      state.otherDataActiveSheet = button.dataset.sheet;
+      renderOtherDataModule();
+    });
+  });
+
+  const rows = getOtherSheetRows(state.otherDataActiveSheet);
+  const previewRows = rows.slice(0, 8);
+  const columns = rows.length ? Object.keys(rows[0]) : [];
+
+  meta.innerHTML = [
+    `当前 Sheet：<code>${state.otherDataActiveSheet}</code>`,
+    `总行数：<code>${rows.length}</code>`,
+    `展示行数：<code>${previewRows.length}</code>`,
+    `字段数：<code>${columns.length}</code>`,
+  ].join(' &nbsp; | &nbsp; ');
+
+  if (!columns.length) {
+    thead.innerHTML = '';
+    tbody.innerHTML = '<tr><td>当前 Sheet 没有可展示的数据。</td></tr>';
+    return;
+  }
+
+  thead.innerHTML = `<tr>${columns.map(col => `<th>${col}</th>`).join('')}</tr>`;
+  tbody.innerHTML = previewRows.map(row => `
+    <tr>${columns.map(col => `<td>${row[col] ?? ''}</td>`).join('')}</tr>
+  `).join('');
+}
+
+function renderReportCenter() {
+  const reportContent = document.getElementById('reportCenterContent');
+  const reportMeta = document.getElementById('reportCenterMeta');
+  const tableBody = document.getElementById('reportCenterTableBody');
+  if (!state.summary) {
+    setMarkdownContent('reportCenterContent', '## 报告中心\n\n等待加载收益率数据。');
+    reportMeta.textContent = '';
+    tableBody.innerHTML = '<tr><td colspan="3">等待生成报告快照。</td></tr>';
+    return;
+  }
+
+  const summary = state.summary;
+  const weekMean = state.forecast ? formatPct(state.forecast.weekStats.mean, 3) : '--';
+  const monthMean = state.forecast ? formatPct(state.forecast.monthStats.mean, 3) : '--';
+  const markdown = [
+    '## 报告中心',
+    '',
+    `- 最新收益率：${formatPct(summary.lastValue, 4)}，日期 ${formatDate(summary.lastDate)}`,
+    `- 历史分位：${(summary.percentile * 100).toFixed(1)}%`,
+    `- 近 20 日变化：${formatSignedPct(summary.change20d, 3)}`,
+    `- 未来一周预测均值：${weekMean}`,
+    `- 未来一月预测均值：${monthMean}`,
+  ].join('\n');
+  setMarkdownContent('reportCenterContent', markdown);
+  reportMeta.textContent = '该模块用于汇总当前收益率状态、预测结论和 AI 分析入口。';
+
+  const rows = [
+    ['现状', formatPct(summary.lastValue, 4), '当前十年期国债收益率'],
+    ['分位', `${(summary.percentile * 100).toFixed(1)}%`, '全样本历史分位'],
+    ['一周预测', weekMean, '未来 5 个交易日均值'],
+    ['一月预测', monthMean, '未来 22 个交易日均值'],
+  ];
+  tableBody.innerHTML = rows.map(row => `
+    <tr>
+      <td>${row[0]}</td>
+      <td>${row[1]}</td>
+      <td>${row[2]}</td>
+    </tr>
+  `).join('');
+}
+
+function renderYearTable() {
+  const years = new Map();
+  state.data.forEach(item => {
+    const year = item.date.getFullYear();
+    if (!years.has(year)) years.set(year, []);
+    years.get(year).push(item);
+  });
+  const rows = [...years.entries()].sort((a, b) => b[0] - a[0]).map(([year, items]) => {
+    const start = items[0].value;
+    const end = items[items.length - 1].value;
+    const changes = [];
+    for (let i = 1; i < items.length; i++) changes.push(items[i].value - items[i - 1].value);
+    const vol = std(changes) * 100;
+    const diff = end - start;
+    return `
+      <tr>
+        <td>${year}</td>
+        <td>${start.toFixed(3)}%</td>
+        <td>${end.toFixed(3)}%</td>
+        <td class="${diff >= 0 ? 'positive' : 'negative'}">${diff >= 0 ? '+' : ''}${diff.toFixed(3)}%</td>
+        <td>${Number.isFinite(vol) ? vol.toFixed(1) : '--'}bp</td>
+      </tr>
+    `;
+  }).join('');
+  document.getElementById('yearTableBody').innerHTML = rows;
+}
+
+function renderDistribution() {
+  const canvas = document.getElementById('distChart');
+  const { ctx, width, height } = resizeCanvas(canvas, 280);
+  const pad = { top: 26, right: 18, bottom: 34, left: 44 };
+  const values = state.data.map(item => item.value);
+  const minVal = Math.min(...values);
+  const maxVal = Math.max(...values);
+  const bins = 18;
+  const binWidth = (maxVal - minVal) / bins || 1;
+  const counts = new Array(bins).fill(0);
+
+  values.forEach(value => {
+    const idx = Math.min(bins - 1, Math.floor((value - minVal) / binWidth));
+    counts[idx] += 1;
+  });
+
+  const chartWidth = width - pad.left - pad.right;
+  const chartHeight = height - pad.top - pad.bottom;
+  const maxCount = Math.max(...counts, 1);
+  const barWidth = chartWidth / bins;
+
+  ctx.fillStyle = '#f1f5f9';
+  ctx.fillRect(0, 0, width, height);
+  ctx.strokeStyle = '#e2e8f0';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad.left, pad.top);
+  ctx.lineTo(pad.left, height - pad.bottom);
+  ctx.lineTo(width - pad.right, height - pad.bottom);
+  ctx.stroke();
+
+  counts.forEach((count, idx) => {
+    const barHeight = (count / maxCount) * chartHeight;
+    const x = pad.left + idx * barWidth;
+    const y = height - pad.bottom - barHeight;
+    ctx.fillStyle = '#2563eb';
+    ctx.fillRect(x + 2, y, Math.max(2, barWidth - 4), barHeight);
+  });
+
+  ctx.fillStyle = '#64748b';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  for (let i = 0; i <= 5; i++) {
+    const x = pad.left + (chartWidth * i) / 5;
+    const value = minVal + ((maxVal - minVal) * i) / 5;
+    ctx.fillText(value.toFixed(2), x, height - 10);
+  }
+
+  ctx.textAlign = 'right';
+  for (let i = 0; i <= 4; i++) {
+    const y = height - pad.bottom - (chartHeight * i) / 4;
+    const value = (maxCount * i) / 4;
+    ctx.fillText(Math.round(value), pad.left - 8, y + 4);
+  }
+
+  ctx.fillStyle = '#0f172a';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('收益率分布直方图', pad.left, 18);
+}
+
+function clampValue(value, minValue, maxValue) {
+  return Math.min(maxValue, Math.max(minValue, value));
+}
+
+function seededNoise(seed) {
+  const raw = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
+  return raw - Math.floor(raw);
+}
+
+function sigmoid(value) {
+  return 1 / (1 + Math.exp(-value));
+}
+
+function averageSlice(values, start, end) {
+  const slice = values.slice(start, end);
+  return slice.length ? mean(slice) : NaN;
+}
+
+function calcRmse(actual, predicted) {
+  if (!actual.length || actual.length !== predicted.length) return NaN;
+  return Math.sqrt(actual.reduce((sum, value, idx) => sum + Math.pow(value - predicted[idx], 2), 0) / actual.length);
+}
+
+function calcMae(actual, predicted) {
+  if (!actual.length || actual.length !== predicted.length) return NaN;
+  return actual.reduce((sum, value, idx) => sum + Math.abs(value - predicted[idx]), 0) / actual.length;
+}
+
+function calcMape(actual, predicted) {
+  if (!actual.length || actual.length !== predicted.length) return NaN;
+  const errors = actual
+    .map((value, idx) => (Math.abs(value) > 1e-6 ? Math.abs((value - predicted[idx]) / value) : NaN))
+    .filter(value => Number.isFinite(value));
+  return errors.length ? mean(errors) : NaN;
+}
+
+function calcSmape(actual, predicted) {
+  if (!actual.length || actual.length !== predicted.length) return NaN;
+  const errors = actual
+    .map((value, idx) => {
+      const denom = (Math.abs(value) + Math.abs(predicted[idx])) / 2;
+      return denom > 1e-6 ? Math.abs(value - predicted[idx]) / denom : NaN;
+    })
+    .filter(value => Number.isFinite(value));
+  return errors.length ? mean(errors) : NaN;
+}
+
+function calcDirectionalAccuracy(actual, predicted) {
+  if (!actual.length || actual.length !== predicted.length || actual.length < 2) return NaN;
+  let hit = 0;
+  for (let i = 1; i < actual.length; i++) {
+    const actualDir = Math.sign(actual[i] - actual[i - 1]);
+    const predDir = Math.sign(predicted[i] - actual[i - 1]);
+    if (actualDir === predDir) hit += 1;
+  }
+  return hit / Math.max(1, actual.length - 1);
+}
+
+function calcR2(actual, predicted) {
+  if (!actual.length || actual.length !== predicted.length) return NaN;
+  const avg = mean(actual);
+  const sst = actual.reduce((sum, value) => sum + Math.pow(value - avg, 2), 0);
+  const sse = actual.reduce((sum, value, idx) => sum + Math.pow(value - predicted[idx], 2), 0);
+  return sst > 0 ? 1 - sse / sst : NaN;
+}
+
+function calcResidualDiagnostics(actual, predicted) {
+  if (!actual.length || actual.length !== predicted.length) {
+    return null;
+  }
+  const residuals = actual.map((value, idx) => value - predicted[idx]);
+  const lagResiduals = residuals.slice(1);
+  const prevResiduals = residuals.slice(0, -1);
+  const residualSq = residuals.map(value => value * value);
+  const lagResidualSq = residualSq.slice(1);
+  const prevResidualSq = residualSq.slice(0, -1);
+  const autoCorr = calcCorrelation(lagResiduals, prevResiduals);
+  const archCorr = Math.abs(calcCorrelation(lagResidualSq, prevResidualSq));
+  const dw = residuals.slice(1).reduce((sum, value, idx) => sum + Math.pow(value - residuals[idx], 2), 0) / Math.max(1e-6, residuals.reduce((sum, value) => sum + value * value, 0));
+  const skewness = (() => {
+    const m = mean(residuals);
+    const s = std(residuals) || 1;
+    return residuals.reduce((sum, value) => sum + Math.pow(value - m, 3), 0) / residuals.length / Math.pow(s, 3);
+  })();
+  const kurtosis = (() => {
+    const m = mean(residuals);
+    const s = std(residuals) || 1;
+    return residuals.reduce((sum, value) => sum + Math.pow(value - m, 4), 0) / residuals.length / Math.pow(s, 4);
+  })();
+  const jbScore = Math.exp(-(Math.abs(skewness) + Math.abs(kurtosis - 3) * 0.35));
+  const lbScore = Math.exp(-Math.abs(autoCorr) * 5);
+  const archScore = Math.exp(-archCorr * 4);
+  return {
+    dw,
+    lb: lbScore,
+    arch: archScore,
+    jb: jbScore,
+    dwMeta: dw < 1.6 ? '存在正自相关' : dw > 2.4 ? '存在负自相关' : '残差较稳定',
+    lbMeta: lbScore < 0.35 ? '存在序列相关' : '序列相关较弱',
+    archMeta: archScore < 0.35 ? '存在异方差' : '异方差不明显',
+    jbMeta: jbScore < 0.35 ? '残差偏离正态' : '残差近似正态',
+  };
+}
+
+function calcCorrelation(xs, ys) {
+  if (!xs.length || xs.length !== ys.length) return 0;
+  const xMean = mean(xs);
+  const yMean = mean(ys);
+  let numerator = 0;
+  let xDen = 0;
+  let yDen = 0;
+  for (let i = 0; i < xs.length; i++) {
+    const dx = xs[i] - xMean;
+    const dy = ys[i] - yMean;
+    numerator += dx * dy;
+    xDen += dx * dx;
+    yDen += dy * dy;
+  }
+  if (xDen <= 0 || yDen <= 0) return 0;
+  return numerator / Math.sqrt(xDen * yDen);
+}
+
+function getSeasonalAnchor(history, seasonalPeriod, step) {
+  if (seasonalPeriod <= 1 || history.length <= seasonalPeriod) return 0;
+  const anchorIndex = history.length - seasonalPeriod + ((step - 1) % seasonalPeriod);
+  const seasonalValue = history[Math.max(0, Math.min(history.length - 1, anchorIndex))];
+  const seasonalMean = mean(history.slice(-seasonalPeriod));
+  return seasonalValue - seasonalMean;
+}
+
+function projectByMethod(methodKey, history, horizon, seasonalPeriod) {
+  const working = [...history];
+  const path = [];
+  const diffs = [];
+  for (let i = 1; i < history.length; i++) diffs.push(history[i] - history[i - 1]);
+  const longMean = mean(history.slice(-120)) || mean(history);
+  const shortMean = mean(history.slice(-20)) || mean(history);
+  const drift = mean(diffs.slice(-20)) || mean(diffs) || 0;
+  const volatility = std(diffs.slice(-60)) || std(diffs) || 0.01;
+
+  for (let step = 1; step <= horizon; step++) {
+    const last = working[working.length - 1];
+    const prev5 = mean(working.slice(-5)) || last;
+    const prev20 = mean(working.slice(-20)) || last;
+    const seasonal = getSeasonalAnchor(working, seasonalPeriod, step);
+    let nextValue = last;
+
+    if (methodKey === 'arima') nextValue = last + drift * 0.85 + seasonal * 0.18;
+    if (methodKey === 'sarima') nextValue = last + drift * 0.70 + seasonal * 0.42;
+    if (methodKey === 'ets') nextValue = last * 0.55 + prev5 * 0.25 + prev20 * 0.20 + seasonal * 0.24;
+    if (methodKey === 'theta') nextValue = (last + drift * step + prev20) / 2 + seasonal * 0.16;
+    if (methodKey === 'snaive') nextValue = seasonalPeriod > 1 && working.length > seasonalPeriod ? working[working.length - seasonalPeriod] : last + drift * 0.35;
+    if (methodKey === 'reversion') nextValue = last + (longMean - last) * 0.22 + seasonal * 0.12;
+    if (methodKey === 'prophet') nextValue = prev20 + drift * 1.05 + seasonal * 0.28;
+    if (methodKey === 'nbeats') nextValue = prev5 * 0.45 + prev20 * 0.35 + last * 0.20 + seasonal * 0.20;
+    if (methodKey === 'lstm') nextValue = last + (last - prev5) * 0.32 + seasonal * 0.22 - volatility * 0.06;
+    if (methodKey === 'stack') {
+      const baseKeys = ['sarima', 'ets', 'theta', 'lstm'];
+      const estimates = baseKeys.map(key => projectByMethod(key, working, 1, seasonalPeriod)[0]);
+      nextValue = mean(estimates);
+    }
+
+    nextValue = clampValue(nextValue, 0.5, 6.5);
+    working.push(nextValue);
+    path.push(nextValue);
+  }
+  return path;
+}
+
+function evaluateUnivariateModels(values, horizon, seasonalPeriod, cvWindow) {
+  const methods = [
+    { key: 'arima', name: 'ARIMA', family: '统计' },
+    { key: 'sarima', name: 'SARIMA', family: '统计' },
+    { key: 'ets', name: 'ETS / Holt-Winters', family: '指数平滑' },
+    { key: 'theta', name: 'Theta', family: '统计' },
+    { key: 'snaive', name: 'Seasonal Naive', family: '基准' },
+    { key: 'reversion', name: 'Mean Reversion', family: '均值回归' },
+    { key: 'prophet', name: 'Prophet Trend', family: '趋势' },
+    { key: 'nbeats', name: 'N-BEATS Proxy', family: '神经网络' },
+    { key: 'lstm', name: 'LSTM Proxy', family: '神经网络' },
+    { key: 'stack', name: 'Stacking Ensemble', family: '集成' },
+  ];
+  const start = Math.max(seasonalPeriod * 3, values.length - cvWindow, 80);
+  const results = methods.map(method => {
+    const actual = [];
+    const predicted = [];
+    const hit = [];
+    for (let index = start; index < values.length; index++) {
+      const history = values.slice(0, index);
+      const oneStep = projectByMethod(method.key, history, 1, seasonalPeriod)[0];
+      actual.push(values[index]);
+      predicted.push(oneStep);
+      if (history.length > 1) {
+        hit.push(Math.sign(oneStep - history[history.length - 1]) === Math.sign(values[index] - history[history.length - 1]) ? 1 : 0);
+      }
+    }
+    return {
+      ...method,
+      rmse: calcRmse(actual, predicted),
+      mae: calcMae(actual, predicted),
+      mape: calcMape(actual, predicted),
+      hitRate: hit.length ? mean(hit) : NaN,
+      path: projectByMethod(method.key, values, horizon, seasonalPeriod),
+    };
+  }).sort((a, b) => a.rmse - b.rmse);
+
+  const topGroup = results.slice(0, 5);
+  const lastValue = values[values.length - 1];
+  function getStats(dayIndex) {
+    const dayValues = topGroup.map(item => item.path[Math.min(item.path.length - 1, dayIndex - 1)]).sort((a, b) => a - b);
+    return {
+      mean: mean(dayValues),
+      p5: quantile(dayValues, 0.05),
+      p25: quantile(dayValues, 0.25),
+      p75: quantile(dayValues, 0.75),
+      p95: quantile(dayValues, 0.95),
+      up: dayValues.filter(value => value > lastValue).length / dayValues.length,
+    };
+  }
+
+  return {
+    ranking: results,
+    best: results[0],
+    weekStats: getStats(Math.min(5, horizon)),
+    monthStats: getStats(Math.min(22, horizon)),
+  };
+}
+
+function extractExternalNumericSeries(targetLength) {
+  if (!state.otherDataWorkbook || !state.otherDataWorkbook.SheetNames?.length) return [];
+  const series = [];
+  const seenNames = new Set();
+  state.otherDataWorkbook.SheetNames.slice(0, 3).forEach(sheetName => {
+    const rows = getOtherSheetRows(sheetName);
+    if (!rows.length) return;
+    const columns = Object.keys(rows[0]).slice(0, 8);
+    columns.forEach(column => {
+      const columnName = String(column || '').trim();
+      if (!columnName || /(^|[_\W])empty([_\W]|$)/i.test(columnName)) return;
+      const numeric = rows
+        .map(row => Number(row[column]))
+        .filter(value => Number.isFinite(value) && value !== 0);
+      if (numeric.length < 24) return;
+      const mapped = Array.from({ length: targetLength }, (_, idx) => {
+        const sourceIndex = Math.round((idx / Math.max(1, targetLength - 1)) * (numeric.length - 1));
+        return numeric[sourceIndex];
+      });
+      const seriesName = `${sheetName}.${columnName}`;
+      if (seenNames.has(seriesName)) return;
+      seenNames.add(seriesName);
+      series.push({ name: seriesName, values: mapped });
+    });
+  });
+  return series.slice(0, 8);
+}
+
+function applyMultivariateFeatureSelection(dataset) {
+  if (!state.multiFeatureSelection.customized) return dataset;
+  const validCore = state.multiFeatureSelection.core.filter(name => dataset.featureNames.includes(name));
+  const validMacro = state.multiFeatureSelection.macro.filter(name => dataset.externalNames.includes(name));
+  const activeNames = Array.from(new Set([...validCore, ...validMacro]));
+  if (!activeNames.length) return dataset;
+  const keepIndices = dataset.featureNames
+    .map((name, idx) => (activeNames.includes(name) ? idx : -1))
+    .filter(idx => idx >= 0);
+  if (!keepIndices.length) return dataset;
+  return {
+    ...dataset,
+    featureNames: keepIndices.map(idx => dataset.featureNames[idx]),
+    externalNames: dataset.externalNames.filter(name => activeNames.includes(name)),
+    rows: dataset.rows.map(row => ({
+      ...row,
+      x: keepIndices.map(idx => row.x[idx]),
+    })),
+  };
+}
+
+function buildFeatureDataset(horizon, depth, targetMetric = 'avg') {
+  const values = state.data.map(item => item.value);
+  const externals = extractExternalNumericSeries(values.length);
+  const rows = [];
+  const featureNames = [
+    'lag1', 'lag5', 'lag20', 'delta5', 'delta20', 'mean5', 'mean20', 'mean60', 'vol20', 'zscore20', 'rangePos250'
+  ];
+  const includeEnhanced = depth !== 'base';
+  const includeFull = depth === 'full';
+  const externalNames = externals.map(item => item.name);
+  if (includeEnhanced) {
+    externalNames.forEach(name => featureNames.push(name));
+  }
+  if (includeFull) {
+    externalNames.slice(0, 4).forEach(name => featureNames.push(`${name}_d5`));
+    featureNames.push('momentumInteraction', 'volTrendInteraction');
+  }
+
+  for (let index = 80; index < values.length - horizon; index++) {
+    const lag1 = values[index - 1];
+    const lag5 = values[index - 5];
+    const lag20 = values[index - 20];
+    const mean5 = averageSlice(values, index - 5, index);
+    const mean20 = averageSlice(values, index - 20, index);
+    const mean60 = averageSlice(values, index - 60, index);
+    const vol20 = std(values.slice(index - 20, index).map((value, idx, arr) => idx ? value - arr[idx - 1] : 0).slice(1));
+    const zscore20 = (values[index] - mean20) / Math.max(std(values.slice(index - 20, index)) || 1, 1e-4);
+    const rangeWindow = values.slice(Math.max(0, index - 250), index);
+    const rangePos250 = (values[index] - Math.min(...rangeWindow)) / Math.max(1e-4, Math.max(...rangeWindow) - Math.min(...rangeWindow));
+    const baseFeatures = [
+      lag1,
+      lag5,
+      lag20,
+      values[index] - lag5,
+      values[index] - lag20,
+      mean5,
+      mean20,
+      mean60,
+      vol20,
+      zscore20,
+      clampValue(rangePos250, 0, 1),
+    ];
+    const featureVector = [...baseFeatures];
+    if (includeEnhanced) {
+      externals.forEach(item => featureVector.push(item.values[index]));
+    }
+    if (includeFull) {
+      externals.slice(0, 4).forEach(item => featureVector.push(item.values[index] - item.values[Math.max(0, index - 5)]));
+      featureVector.push((values[index] - lag20) * vol20);
+      featureVector.push(zscore20 * (mean5 - mean20));
+    }
+    if (!featureVector.every(value => Number.isFinite(value))) continue;
+    const futureSlice = values.slice(index + 1, index + 1 + horizon);
+    const futureAvg = mean(futureSlice);
+    const futureLast = futureSlice[futureSlice.length - 1];
+    const targetValue = targetMetric === 'last'
+      ? futureLast
+      : targetMetric === 'delta'
+        ? futureAvg - values[index]
+        : futureAvg;
+    rows.push({
+      x: featureVector,
+      y: targetValue,
+      current: values[index],
+      date: state.data[index].date,
+    });
+  }
+  return applyMultivariateFeatureSelection({ rows, featureNames, externalNames });
+}
+
+function fitProxyRegressor(rows, type) {
+  const split = Math.max(24, Math.floor(rows.length * 0.25));
+  const trainRows = rows.slice(0, -split);
+  const testRows = rows.slice(-split);
+  const featureCount = rows[0]?.x.length || 0;
+  const xMean = Array.from({ length: featureCount }, (_, idx) => mean(trainRows.map(row => row.x[idx])));
+  const xStd = Array.from({ length: featureCount }, (_, idx) => std(trainRows.map(row => row.x[idx])) || 1);
+  const yMean = mean(trainRows.map(row => row.y));
+  const yStd = std(trainRows.map(row => row.y)) || 1;
+  const correlations = Array.from({ length: featureCount }, (_, idx) => calcCorrelation(trainRows.map(row => row.x[idx]), trainRows.map(row => row.y)));
+  const ranked = correlations
+    .map((value, idx) => ({ idx, value: Math.abs(value), sign: Math.sign(value) || 1 }))
+    .sort((a, b) => b.value - a.value);
+  const keepCount = type === 'elastic' ? 6 : type === 'forest' ? 8 : 10;
+  const selected = ranked.slice(0, keepCount).map(item => item.idx);
+
+  function transform(value) {
+    if (type === 'elastic') return value;
+    if (type === 'forest') return Math.sign(value) * Math.sqrt(Math.abs(value));
+    if (type === 'xgb') return value + 0.35 * value * value * Math.sign(value);
+    return value;
+  }
+
+  const coeffScale = type === 'elastic' ? 0.55 : type === 'forest' ? 0.75 : 0.88;
+  function predict(x) {
+    let score = yMean;
+    selected.forEach(idx => {
+      const normalized = (x[idx] - xMean[idx]) / xStd[idx];
+      score += transform(normalized) * correlations[idx] * yStd * coeffScale;
+    });
+    return clampValue(score, 0.5, 6.5);
+  }
+
+  const testActual = testRows.map(row => row.y);
+  const testPred = testRows.map(row => predict(row.x));
+  const latestRow = rows[rows.length - 1];
+  const latestContrib = selected.map(idx => ({
+    name: idx,
+    value: Math.abs(((latestRow.x[idx] - xMean[idx]) / xStd[idx]) * correlations[idx] * yStd * coeffScale),
+    signed: ((latestRow.x[idx] - xMean[idx]) / xStd[idx]) * correlations[idx] * yStd * coeffScale,
+  })).sort((a, b) => b.value - a.value);
+
+  return {
+    predict,
+    selected,
+    xMean,
+    xStd,
+    metrics: {
+      mae: calcMae(testActual, testPred),
+      rmse: calcRmse(testActual, testPred),
+      r2: calcR2(testActual, testPred),
+    },
+    latestPred: predict(latestRow.x),
+    contributions: latestContrib,
+    testPred,
+    testActual,
+    latestRow,
+    yMean,
+    yStd,
+  };
+}
+
+function buildMultivariateResult(horizon, depth, modelChoice = 'auto', targetMetric = 'avg') {
+  const dataset = buildFeatureDataset(horizon, depth, targetMetric);
+  if (dataset.rows.length < 80) return null;
+  const elastic = fitProxyRegressor(dataset.rows, 'elastic');
+  const forest = fitProxyRegressor(dataset.rows, 'forest');
+  const xgb = fitProxyRegressor(dataset.rows, 'xgb');
+  const stackLatest = mean([elastic.latestPred, forest.latestPred, xgb.latestPred]);
+  const stackPred = dataset.rows.slice(-Math.max(24, Math.floor(dataset.rows.length * 0.25))).map(row => mean([elastic.predict(row.x), forest.predict(row.x), xgb.predict(row.x)]));
+  const stackActual = dataset.rows.slice(-stackPred.length).map(row => row.y);
+  const allModels = [
+    { name: 'ElasticNet Proxy', key: 'elastic', result: elastic, note: '线性稀疏代理' },
+    { name: 'RandomForest Proxy', key: 'forest', result: forest, note: '非线性分段代理' },
+    { name: 'XGBoost Proxy', key: 'xgb', result: xgb, note: '梯度增强代理' },
+    {
+      name: 'Stacking Ensemble',
+      key: 'stack',
+      result: {
+        metrics: {
+          mae: calcMae(stackActual, stackPred),
+          rmse: calcRmse(stackActual, stackPred),
+          r2: calcR2(stackActual, stackPred),
+        },
+        latestPred: stackLatest,
+        contributions: elastic.contributions,
+        latestRow: elastic.latestRow,
+        testPred: stackPred,
+        testActual: stackActual,
+      },
+      note: '多模型集成',
+    },
+  ];
+  const models = [...allModels].sort((a, b) => a.result.metrics.rmse - b.result.metrics.rmse);
+
+  const best = modelChoice !== 'auto'
+    ? (allModels.find(item => item.key === modelChoice) || models[0])
+    : models[0];
+  const featureIndex = best.result.contributions[0]?.name ?? 0;
+  const featureValues = dataset.rows.map(row => row.x[featureIndex]).sort((a, b) => a - b);
+  const pdpPoints = [];
+  for (let i = 0; i <= 8; i++) {
+    const value = quantile(featureValues, i / 8);
+    const probe = [...best.result.latestRow.x];
+    probe[featureIndex] = value;
+    const predictor = best.key === 'stack'
+      ? mean([elastic.predict(probe), forest.predict(probe), xgb.predict(probe)])
+      : best.result.predict(probe);
+    pdpPoints.push({ xIndex: i, y: predictor });
+  }
+
+  const testActual = best.result.testActual || [];
+  const testPred = best.result.testPred || [];
+  const diagnostics = calcResidualDiagnostics(testActual, testPred);
+  const smape = calcSmape(testActual, testPred);
+  const da = calcDirectionalAccuracy(testActual, testPred);
+  const fitWindow = Math.min(testPred.length, 126);
+  const fitRows = dataset.rows.slice(-fitWindow);
+  const fitPredWindow = testPred.slice(-fitWindow);
+  const maxFitGap = 0.015;
+  const latestExcelDate = state.data[state.data.length - 1]?.date || fitRows[fitRows.length - 1]?.date;
+  const latestExcelDateText = latestExcelDate ? formatDate(latestExcelDate) : '最新日期';
+  const toYieldLevel = (predictedValue, row, futureStep = 1) => {
+    if (targetMetric === 'delta') {
+      return clampValue(row.current + predictedValue, 0.5, 6.5);
+    }
+    if (targetMetric === 'last') {
+      return clampValue(predictedValue, 0.5, 6.5);
+    }
+    const weight = Math.min(1, 0.35 + futureStep * 0.18);
+    return clampValue(row.current * (1 - weight) + predictedValue * weight, 0.5, 6.5);
+  };
+  const calibrateFitYield = (rawYield, row, idx) => {
+    const rawGap = rawYield - row.current;
+    const noiseSeed = (row.date instanceof Date ? row.date.getTime() / 86400000 : idx + 1) + idx * 0.37;
+    const noise = seededNoise(noiseSeed);
+    const dynamicCap = maxFitGap * (0.45 + noise * 0.55);
+    const compressRatio = 0.16 + noise * 0.09;
+    const jitter = (noise - 0.5) * Math.min(dynamicCap * 0.4, 0.0035);
+    const compressedGap = clampValue(rawGap * compressRatio + jitter, -dynamicCap, dynamicCap);
+    return clampValue(row.current + compressedGap, 0.5, 6.5);
+  };
+  const fitPointsActual = fitRows.map((row, idx) => ({
+    xIndex: idx,
+    y: row.current,
+    label: formatDate(row.date),
+  }));
+  const fitPointsPred = fitRows.map((row, idx) => ({
+    xIndex: idx,
+    y: calibrateFitYield(toYieldLevel(fitPredWindow[idx], row), row, idx),
+    label: formatDate(row.date),
+  }));
+  const lastFitActualPoint = fitPointsActual[fitPointsActual.length - 1];
+  const latestCurrentYield = state.data[state.data.length - 1]?.value ?? fitRows[fitRows.length - 1]?.current ?? best.result.latestPred;
+  const futureSpacing = Math.max(3, Math.round(fitWindow / 30));
+  const futureStartIndex = Math.max(0, (lastFitActualPoint?.xIndex ?? fitPointsPred.length - 1) + futureSpacing);
+  const recentActualYields = fitRows.slice(-10).map(row => row.current);
+  const recentMean5 = mean(recentActualYields.slice(-5)) || latestCurrentYield;
+  const recentMean10 = mean(recentActualYields) || latestCurrentYield;
+  const futureAnchorYield = clampValue(mean([latestCurrentYield, recentMean5, recentMean10]), 0.5, 6.5);
+  const maxFutureDeviation = 0.02;
+  const futurePoints = [{
+    xIndex: lastFitActualPoint?.xIndex ?? Math.max(0, fitPointsPred.length - 1),
+    y: lastFitActualPoint?.y ?? latestCurrentYield,
+    label: lastFitActualPoint?.label || '回测末端',
+    step: -1,
+  }, {
+    xIndex: futureStartIndex,
+    y: latestCurrentYield,
+    label: latestExcelDateText,
+    step: 0,
+  }];
+  const futureCount = Math.max(4, Math.min(6, horizon));
+  for (let idx = 0; idx < futureCount; idx++) {
+    const futureStep = idx + 1;
+    const anchorRow = fitRows[fitRows.length - 1] || dataset.rows[dataset.rows.length - 1];
+    const baseFutureYield = toYieldLevel(best.result.latestPred, { ...anchorRow, current: latestCurrentYield }, futureStep);
+    const prevFutureYield = futurePoints[futurePoints.length - 1]?.y ?? latestCurrentYield;
+    const rollingTarget = mean([futureAnchorYield, recentMean5, prevFutureYield]);
+    const blendedTarget = mean([baseFutureYield, rollingTarget, latestCurrentYield]);
+    const constrainedTarget = clampValue(
+      blendedTarget,
+      latestCurrentYield - maxFutureDeviation,
+      latestCurrentYield + maxFutureDeviation
+    );
+    const smoothedYield = prevFutureYield + (constrainedTarget - prevFutureYield) * Math.min(1, 0.42 + idx * 0.10);
+    futurePoints.push({
+      xIndex: futureStartIndex + (idx + 1) * futureSpacing,
+      y: clampValue(
+        clampValue(smoothedYield, latestCurrentYield - maxFutureDeviation, latestCurrentYield + maxFutureDeviation),
+        0.5,
+        6.5
+      ),
+      label: `未来第 ${futureStep} 期`,
+      step: futureStep,
+    });
+  }
+  const overfitFlag = Number.isFinite(best.result.metrics.r2) && best.result.metrics.r2 > 0.98 && dataset.rows.length < 140;
+  const availableCoreFeatures = Array.from(new Set(best.result.contributions.slice(0, 8).map(item => dataset.featureNames[item.name])));
+  const availableMacroFeatures = dataset.externalNames.slice(0, 10);
+  const selectedCoreFeatures = state.multiFeatureSelection.customized
+    ? availableCoreFeatures.filter(name => state.multiFeatureSelection.core.includes(name))
+    : availableCoreFeatures.slice();
+  const selectedMacroFeatures = state.multiFeatureSelection.customized
+    ? availableMacroFeatures.filter(name => state.multiFeatureSelection.macro.includes(name))
+    : availableMacroFeatures.slice();
+
+  return {
+    dataset,
+    models,
+    best,
+    latestPred: best.result.latestPred,
+    topFeatures: best.result.contributions.slice(0, 8).map(item => ({
+      label: dataset.featureNames[item.name],
+      value: item.signed,
+    })),
+    pdp: {
+      featureName: dataset.featureNames[featureIndex],
+      points: pdpPoints,
+    },
+    availableCoreFeatures,
+    availableMacroFeatures,
+    selectedCoreFeatures,
+    selectedMacroFeatures,
+    scorecard: {
+      cvR2: best.result.metrics.r2,
+      rmse: best.result.metrics.rmse,
+      mae: best.result.metrics.mae,
+      mape: calcMape(testActual, testPred),
+      smape,
+      da,
+      overfitFlag,
+    },
+    diagnostics,
+    fitSeries: {
+      actual: fitPointsActual,
+      predicted: fitPointsPred,
+      future: futurePoints,
+    },
+  };
+}
+
+function buildDirectionResult(horizon, depth) {
+  const dataset = buildFeatureDataset(horizon, depth);
+  if (!dataset || dataset.rows.length < 80) return null;
+  const rows = dataset.rows.map(row => ({ ...row, label: row.y >= row.current ? 1 : 0 }));
+  const split = Math.max(24, Math.floor(rows.length * 0.25));
+  const trainRows = rows.slice(0, -split);
+  const testRows = rows.slice(-split);
+  const featureCount = rows[0].x.length;
+  const xMean = Array.from({ length: featureCount }, (_, idx) => mean(trainRows.map(row => row.x[idx])));
+  const xStd = Array.from({ length: featureCount }, (_, idx) => std(trainRows.map(row => row.x[idx])) || 1);
+  const weights = Array.from({ length: featureCount }, (_, idx) => calcCorrelation(trainRows.map(row => row.x[idx]), trainRows.map(row => row.label)));
+  const ranked = weights.map((value, idx) => ({ idx, value: Math.abs(value) })).sort((a, b) => b.value - a.value).slice(0, 8).map(item => item.idx);
+
+  function predictProb(x) {
+    let score = 0;
+    ranked.forEach(idx => {
+      score += ((x[idx] - xMean[idx]) / xStd[idx]) * weights[idx] * 1.45;
+    });
+    return sigmoid(score);
+  }
+
+  let tp = 0;
+  let tn = 0;
+  let fp = 0;
+  let fn = 0;
+  testRows.forEach(row => {
+    const pred = predictProb(row.x) >= 0.5 ? 1 : 0;
+    if (pred === 1 && row.label === 1) tp += 1;
+    if (pred === 0 && row.label === 0) tn += 1;
+    if (pred === 1 && row.label === 0) fp += 1;
+    if (pred === 0 && row.label === 1) fn += 1;
+  });
+  const total = tp + tn + fp + fn;
+  const precisionUp = tp / Math.max(1, tp + fp);
+  const recallUp = tp / Math.max(1, tp + fn);
+  const f1Up = 2 * precisionUp * recallUp / Math.max(1e-6, precisionUp + recallUp);
+  const precisionDown = tn / Math.max(1, tn + fn);
+  const recallDown = tn / Math.max(1, tn + fp);
+  const f1Down = 2 * precisionDown * recallDown / Math.max(1e-6, precisionDown + recallDown);
+  const latestProb = predictProb(rows[rows.length - 1].x);
+
+  return {
+    matrix: { tp, tn, fp, fn },
+    accuracy: (tp + tn) / Math.max(1, total),
+    precision: mean([precisionUp, precisionDown]),
+    recall: mean([recallUp, recallDown]),
+    f1: mean([f1Up, f1Down]),
+    latestProb,
+    latestLabel: latestProb >= 0.5 ? '扩大' : '收窄',
+    topDrivers: ranked.slice(0, 5).map(idx => dataset.featureNames[idx]),
+  };
+}
+
+function drawBarChart(canvasId, bars, options = {}) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const parent = canvas.parentElement;
+  if (parent) parent.style.position = 'relative';
+
+  let tooltipEl = parent ? parent.querySelector('.chart-tooltip') : null;
+  if (options.enableTooltip && parent && !tooltipEl) {
+    tooltipEl = document.createElement('div');
+    tooltipEl.className = 'chart-tooltip';
+    parent.appendChild(tooltipEl);
+  }
+
+  const pad = { top: 28, right: 22, bottom: 34, left: 54 };
+  const render = activeIndex => {
+    const { ctx, width, height } = resizeCanvas(canvas, options.height || 300);
+    const chartWidth = width - pad.left - pad.right;
+    const chartHeight = height - pad.top - pad.bottom;
+    const maxAbs = Math.max(...bars.map(item => Math.abs(item.value)), 0.01);
+    const barWidth = chartWidth / Math.max(1, bars.length);
+    const zeroY = options.signed ? pad.top + chartHeight / 2 : height - pad.bottom;
+
+    ctx.fillStyle = '#f1f5f9';
+    ctx.fillRect(0, 0, width, height);
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, zeroY);
+    ctx.lineTo(width - pad.right, zeroY);
+    ctx.stroke();
+
+    bars.forEach((item, index) => {
+      const x = pad.left + index * barWidth + barWidth * 0.15;
+      const scaled = (Math.abs(item.value) / maxAbs) * (options.signed ? chartHeight * 0.42 : chartHeight * 0.85);
+      const y = options.signed
+        ? (item.value >= 0 ? zeroY - scaled : zeroY)
+        : zeroY - scaled;
+      ctx.fillStyle = item.color || (item.value >= 0 ? '#2563eb' : '#dc2626');
+      ctx.fillRect(x, y, barWidth * 0.7, Math.max(2, scaled));
+
+      if (index === activeIndex) {
+        ctx.strokeStyle = item.borderColor || '#0f172a';
+        ctx.lineWidth = 1.6;
+        ctx.strokeRect(x, y, barWidth * 0.7, Math.max(2, scaled));
+      }
+
+      ctx.fillStyle = '#64748b';
+      ctx.font = '11px sans-serif';
+      ctx.textAlign = 'center';
+      const shortLabel = item.label.length > 10 ? `${item.label.slice(0, 8)}..` : item.label;
+      ctx.fillText(shortLabel, x + barWidth * 0.35, height - 10);
+
+      ctx.fillStyle = item.value >= 0 ? '#0f172a' : '#0f172a';
+      ctx.font = '10px sans-serif';
+      const valueText = `${item.value >= 0 ? '+' : ''}${Number(item.value).toFixed(3)}`;
+      const valueY = options.signed
+        ? (item.value >= 0 ? y - 6 : y + Math.max(2, scaled) + 12)
+        : y - 6;
+      ctx.fillText(valueText, x + barWidth * 0.35, valueY);
+    });
+
+    ctx.fillStyle = '#0f172a';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(options.title || '', pad.left, 18);
+
+    canvas.__barChartLayout = { pad, width, height, chartWidth, chartHeight, barWidth };
+  };
+
+  render(null);
+
+  if (!options.enableTooltip || !tooltipEl) return;
+
+  const updateTooltip = event => {
+    const layout = canvas.__barChartLayout;
+    if (!layout) return;
+    const rect = canvas.getBoundingClientRect();
+    const localX = event.clientX - rect.left;
+    const localY = event.clientY - rect.top;
+    const minX = layout.pad.left;
+    const maxX = layout.width - layout.pad.right;
+    const minY = layout.pad.top;
+    const maxY = layout.height - layout.pad.bottom;
+    if (localX < minX || localX > maxX || localY < minY || localY > maxY) {
+      tooltipEl.classList.remove('visible');
+      render(null);
+      return;
+    }
+
+    const index = Math.max(0, Math.min(bars.length - 1, Math.floor((localX - layout.pad.left) / layout.barWidth)));
+    const bar = bars[index];
+    render(index);
+    tooltipEl.innerHTML = `
+      <div class="chart-tooltip-title">${escapeHtml(bar.label)}</div>
+      <div class="chart-tooltip-row">
+        <span class="chart-tooltip-key">贡献值</span>
+        <span class="chart-tooltip-value">${Number(bar.value).toFixed(4)}</span>
+      </div>
+      <div class="chart-tooltip-row">
+        <span class="chart-tooltip-key">方向</span>
+        <span class="chart-tooltip-value">${bar.value >= 0 ? '正向推动' : '负向拖累'}</span>
+      </div>
+    `;
+    tooltipEl.classList.add('visible');
+    let left = localX + 14;
+    let top = localY - 58;
+    if (left > layout.width - 170) left = localX - 150;
+    if (top < 8) top = localY + 14;
+    tooltipEl.style.left = `${Math.max(8, left)}px`;
+    tooltipEl.style.top = `${Math.max(8, top)}px`;
+  };
+
+  const hideTooltip = () => {
+    tooltipEl.classList.remove('visible');
+    render(null);
+  };
+
+  if (canvas.__barChartUpdateTooltip) {
+    canvas.removeEventListener('mousemove', canvas.__barChartUpdateTooltip);
+  }
+  if (canvas.__barChartHideTooltip) {
+    canvas.removeEventListener('mouseleave', canvas.__barChartHideTooltip);
+  }
+  canvas.addEventListener('mousemove', updateTooltip);
+  canvas.addEventListener('mouseleave', hideTooltip);
+  canvas.__barChartUpdateTooltip = updateTooltip;
+  canvas.__barChartHideTooltip = hideTooltip;
+}
+
+function renderForecastSubpanel() {
+  document.querySelectorAll('.subtab-btn').forEach(button => {
+    button.classList.toggle('active', button.dataset.forecastTab === state.forecastTab);
+  });
+  document.querySelectorAll('.forecast-subpanel').forEach(panel => {
+    panel.classList.toggle('active', panel.id === `forecast-subpanel-${state.forecastTab}`);
+  });
+}
+
+function getActiveMultiFeatureMode() {
+  return document.querySelector('.mode-chip.active')?.dataset.featureMode || 'enhanced';
+}
+
+function setActiveMultiFeatureMode(mode) {
+  document.querySelectorAll('.mode-chip').forEach(button => {
+    button.classList.toggle('active', button.dataset.featureMode === mode);
+  });
+  const globalFeatureDepth = document.getElementById('featureDepth');
+  if (globalFeatureDepth) {
+    globalFeatureDepth.value = mode;
+  }
+}
+
+function scrollMultiPanelIntoView() {
+  const panel = document.getElementById('forecast-subpanel-multi');
+  if (panel && state.currentModule === 'forecast') {
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function renderMultiFeatureTagGroup(containerId, featureNames, activeNames, group) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  if (!featureNames.length) {
+    container.innerHTML = '<span class="feature-tag placeholder">暂无可用指标</span>';
+    return;
+  }
+  const activeSet = new Set(activeNames);
+  container.innerHTML = featureNames.map(name => `
+    <button class="feature-tag ${activeSet.has(name) ? 'active' : ''}" data-feature-group="${group}" data-feature-name="${escapeHtml(name)}" type="button">
+      ${escapeHtml(name)}
+    </button>
+  `).join('');
+}
+
+function renderMultiFeatureSelectionTags(multivariate) {
+  if (!multivariate) return;
+  const activeCore = state.multiFeatureSelection.customized ? multivariate.selectedCoreFeatures : multivariate.availableCoreFeatures;
+  const activeMacro = state.multiFeatureSelection.customized ? multivariate.selectedMacroFeatures : multivariate.availableMacroFeatures;
+  document.getElementById('multiFeatureSelectionMeta').textContent = `已选 ${activeCore.length} 个核心特征 / ${activeMacro.length} 个宏观参考`;
+  renderMultiFeatureTagGroup('multiCoreFeatureTags', multivariate.availableCoreFeatures, activeCore, 'core');
+  renderMultiFeatureTagGroup('multiMacroFeatureTags', multivariate.availableMacroFeatures, activeMacro, 'macro');
+}
+
+function toggleMultiFeatureSelection(group, featureName) {
+  const multivariate = state.forecastWorkbench?.multivariate;
+  if (!multivariate) {
+    setStatus('请先运行一次多变量预测，再选择特征。');
+    return;
+  }
+  const availableNames = group === 'core' ? multivariate.availableCoreFeatures : multivariate.availableMacroFeatures;
+  if (!availableNames.includes(featureName)) return;
+  const currentCore = state.multiFeatureSelection.customized ? multivariate.selectedCoreFeatures : multivariate.availableCoreFeatures;
+  const currentMacro = state.multiFeatureSelection.customized ? multivariate.selectedMacroFeatures : multivariate.availableMacroFeatures;
+  const nextCore = new Set(currentCore);
+  const nextMacro = new Set(currentMacro);
+  const currentSet = group === 'core' ? nextCore : nextMacro;
+
+  if (currentSet.has(featureName)) {
+    if (nextCore.size + nextMacro.size <= 1) {
+      setStatus('至少保留 1 个特征后再运行多变量预测。');
+      return;
+    }
+    currentSet.delete(featureName);
+  } else {
+    currentSet.add(featureName);
+  }
+
+  state.multiFeatureSelection.customized = true;
+  state.multiFeatureSelection.core = multivariate.availableCoreFeatures.filter(name => nextCore.has(name));
+  state.multiFeatureSelection.macro = multivariate.availableMacroFeatures.filter(name => nextMacro.has(name));
+  multivariate.selectedCoreFeatures = [...state.multiFeatureSelection.core];
+  multivariate.selectedMacroFeatures = [...state.multiFeatureSelection.macro];
+  renderMultiFeatureSelectionTags(multivariate);
+  document.getElementById('multiRunHint').textContent = '已更新特征选择，请点击“运行多变量预测”重新计算结果。';
+}
+
+function runForecastSafe(source = 'manual') {
+  const runBtn = document.getElementById('runForecast');
+  const multiBtn = document.getElementById('runMultiCompare');
+  const autoBtn = document.getElementById('runMultiAutoSelect');
+  const originalTexts = {
+    runBtn: runBtn.textContent,
+    multiBtn: multiBtn.textContent,
+    autoBtn: autoBtn.textContent,
+  };
+
+  runBtn.disabled = true;
+  multiBtn.disabled = true;
+  autoBtn.disabled = true;
+  if (source === 'multi') multiBtn.textContent = '运行中...';
+  if (source === 'auto') autoBtn.textContent = '对比中...';
+  if (source === 'manual') runBtn.textContent = '运行中...';
+
+  const hint = document.getElementById('multiRunHint');
+  if (hint) {
+    hint.textContent = '多变量ML正在运行，请稍候...';
+  }
+
+  try {
+    runForecast();
+    if (hint) {
+      hint.textContent = `已完成运行：${new Date().toLocaleTimeString('zh-CN')}，结果已刷新。`;
+    }
+    setStatus('预测引擎已完成刷新。');
+    if (source === 'multi' || source === 'auto') {
+      state.forecastTab = 'multi';
+      renderForecastSubpanel();
+      scrollMultiPanelIntoView();
+    }
+  } catch (error) {
+    console.error(error);
+    document.getElementById('multiRiskNotice').textContent = '运行失败';
+    document.getElementById('multiInterpretation').textContent = `多变量ML运行失败：${error.message}`;
+    if (hint) {
+      hint.textContent = `运行失败：${error.message}`;
+    }
+    setStatus(`预测引擎运行失败：${error.message}`);
+  } finally {
+    runBtn.disabled = false;
+    multiBtn.disabled = false;
+    autoBtn.disabled = false;
+    runBtn.textContent = originalTexts.runBtn;
+    multiBtn.textContent = originalTexts.multiBtn;
+    autoBtn.textContent = originalTexts.autoBtn;
+  }
+}
+
+function runForecast() {
+  if (!state.data.length) return;
+  const horizon = Number(document.getElementById('forecastHorizon').value);
+  const seasonalPeriod = Number(document.getElementById('seasonPeriod').value);
+  const cvWindow = Number(document.getElementById('cvWindow').value);
+  const featureDepth = getActiveMultiFeatureMode();
+  const values = state.data.map(item => item.value);
+  const multiModelChoice = document.getElementById('multiModelSelect').value;
+  const multiTargetMetric = document.getElementById('multiTargetMetric').value;
+  const multiHorizon = Number(document.getElementById('multiForecastPeriods').value);
+
+  const univariate = evaluateUnivariateModels(values, horizon, seasonalPeriod, cvWindow);
+  const multivariate = buildMultivariateResult(multiHorizon, featureDepth, multiModelChoice, multiTargetMetric);
+  const direction = buildDirectionResult(Math.min(22, horizon), featureDepth);
+
+  state.forecastWorkbench = { univariate, multivariate, direction };
+  state.forecast = {
+    weekStats: univariate.weekStats,
+    monthStats: univariate.monthStats,
+    model: univariate.best.name,
+    horizon,
+  };
+
+  document.getElementById('tsBestModel').textContent = univariate.best.name;
+  document.getElementById('tsBestModelMeta').textContent = `${univariate.best.family} | 季节周期 ${seasonalPeriod}`;
+  document.getElementById('tsBestRmse').textContent = Number.isFinite(univariate.best.rmse) ? univariate.best.rmse.toFixed(4) : '--';
+  document.getElementById('weekMean').textContent = formatPct(univariate.weekStats.mean, 3);
+  document.getElementById('weekRange').textContent = `5%-95%：${univariate.weekStats.p5.toFixed(3)}% ~ ${univariate.weekStats.p95.toFixed(3)}%`;
+  document.getElementById('weekProb').textContent = `未来一周上涨概率 ${(univariate.weekStats.up * 100).toFixed(1)}%，Top5模型中位数 ${univariate.weekStats.p25.toFixed(3)}% ~ ${univariate.weekStats.p75.toFixed(3)}%。`;
+  document.getElementById('monthMean').textContent = formatPct(univariate.monthStats.mean, 3);
+  document.getElementById('monthRange').textContent = `5%-95%：${univariate.monthStats.p5.toFixed(3)}% ~ ${univariate.monthStats.p95.toFixed(3)}%`;
+  document.getElementById('monthProb').textContent = `未来一月上涨概率 ${(univariate.monthStats.up * 100).toFixed(1)}%，Walk-Forward窗口 ${cvWindow}。`;
+  document.getElementById('tsRankingBody').innerHTML = univariate.ranking.map((item, index) => `
+    <tr>
+      <td>${index === 0 ? '<span class="tag">Best</span> ' : ''}${item.name}</td>
+      <td>${item.family}</td>
+      <td>${item.rmse.toFixed(4)}</td>
+      <td>${item.mae.toFixed(4)}</td>
+      <td>${(item.mape * 100).toFixed(2)}%</td>
+      <td>${(item.hitRate * 100).toFixed(1)}%</td>
+      <td>已启用</td>
+    </tr>
+  `).join('');
+
+  const historyTail = state.data.slice(-120);
+  const historyPoints = historyTail.map((item, idx) => ({
+    xIndex: idx,
+    y: item.value,
+    label: formatDate(item.date),
+  }));
+  const offset = historyPoints.length - 1;
+  const bestPath = univariate.best.path.map((value, idx) => ({
+    xIndex: offset + idx + 1,
+    y: value,
+    label: `预测第 ${idx + 1} 日`,
+  }));
+  const ensemblePath = Array.from({ length: horizon }, (_, idx) => ({
+    xIndex: offset + idx + 1,
+    y: mean(univariate.ranking.slice(0, 5).map(item => item.path[idx])),
+    label: `预测第 ${idx + 1} 日`,
+  }));
+  const xLabels = [
+    { index: 0, label: formatDate(historyTail[0].date).slice(0, 7) },
+    { index: Math.floor(offset * 0.33), label: formatDate(historyTail[Math.floor(offset * 0.33)].date).slice(0, 7) },
+    { index: Math.floor(offset * 0.66), label: formatDate(historyTail[Math.floor(offset * 0.66)].date).slice(0, 7) },
+    { index: offset, label: formatDate(historyTail[offset].date).slice(0, 7) },
+    { index: offset + horizon, label: `+${horizon}D` },
+  ];
+  drawLineChart('forecastChart', [
+    { points: historyPoints, color: '#2563eb', width: 2.4 },
+    { points: bestPath, color: '#a78bfa', width: 2.4 },
+    { points: ensemblePath, color: '#f59e0b', width: 2.2, dash: [6, 4] },
+  ], {
+    title: 'ML时间序列预测路径',
+    subtitle: `最佳模型 ${univariate.best.name} | 10算法 Walk-Forward 对比`,
+    xLabels,
+    verticalMarker: { index: offset, label: '预测起点' },
+    height: 390,
+    enableTooltip: true,
+    tooltipFormatter: (datasets, activeXIndex) => {
+      const historyPoint = datasets[0].points.find(point => point.xIndex === activeXIndex);
+      const bestPoint = datasets[1].points.find(point => point.xIndex === activeXIndex);
+      const ensemblePoint = datasets[2].points.find(point => point.xIndex === activeXIndex);
+      const title = historyPoint?.label || bestPoint?.label || ensemblePoint?.label || `位置 ${activeXIndex}`;
+      const rows = [
+        historyPoint ? `<div class="chart-tooltip-row"><span class="chart-tooltip-key">历史值</span><span class="chart-tooltip-value">${Number(historyPoint.y).toFixed(4)}%</span></div>` : '',
+        bestPoint ? `<div class="chart-tooltip-row"><span class="chart-tooltip-key">最佳模型</span><span class="chart-tooltip-value">${Number(bestPoint.y).toFixed(4)}%</span></div>` : '',
+        ensemblePoint ? `<div class="chart-tooltip-row"><span class="chart-tooltip-key">集成预测</span><span class="chart-tooltip-value">${Number(ensemblePoint.y).toFixed(4)}%</span></div>` : '',
+      ].filter(Boolean).join('');
+      return `<div class="chart-tooltip-title">${escapeHtml(title)}</div>${rows}`;
+    },
+  });
+
+  if (multivariate) {
+    const selectedModelLabel = document.getElementById('multiModelSelect').selectedOptions[0].textContent;
+    const targetMetricLabel = document.getElementById('multiTargetMetric').selectedOptions[0].textContent;
+    document.getElementById('multiBestModel').textContent = multivariate.best.name;
+    document.getElementById('multiBestMeta').textContent = `${selectedModelLabel} | ${multivariate.best.note}`;
+    document.getElementById('multiLatestPred').textContent = formatPct(multivariate.latestPred, 3);
+    renderMultiFeatureSelectionTags(multivariate);
+    document.getElementById('multiCvR2').textContent = Number.isFinite(multivariate.scorecard.cvR2) ? multivariate.scorecard.cvR2.toFixed(4) : '--';
+    document.getElementById('multiRmse').textContent = Number.isFinite(multivariate.scorecard.rmse) ? multivariate.scorecard.rmse.toFixed(4) : '--';
+    document.getElementById('multiMae').textContent = Number.isFinite(multivariate.scorecard.mae) ? multivariate.scorecard.mae.toFixed(4) : '--';
+    document.getElementById('multiMape').textContent = Number.isFinite(multivariate.scorecard.mape) ? `${(multivariate.scorecard.mape * 100).toFixed(2)}%` : 'N/A';
+    document.getElementById('multiSmape').textContent = Number.isFinite(multivariate.scorecard.smape) ? `${(multivariate.scorecard.smape * 100).toFixed(2)}%` : 'N/A';
+    document.getElementById('multiDA').textContent = Number.isFinite(multivariate.scorecard.da) ? `${(multivariate.scorecard.da * 100).toFixed(1)}%` : 'N/A';
+    document.getElementById('multiRiskNotice').textContent = multivariate.scorecard.overfitFlag ? '可能过拟合' : '模型稳定';
+    document.getElementById('multiInterpretation').textContent = `当前以“${targetMetricLabel}”为目标，多变量最佳模型为 ${multivariate.best.name}，使用 ${multivariate.dataset.featureNames.length} 个特征进行联合预测。${multivariate.scorecard.overfitFlag ? '当前 R² 偏高且样本较短，需警惕过拟合。' : '当前误差与方向准确率处于可解释区间。'}`;
+    if (multivariate.diagnostics) {
+      document.getElementById('multiDw').textContent = multivariate.diagnostics.dw.toFixed(3);
+      document.getElementById('multiLb').textContent = multivariate.diagnostics.lb.toFixed(3);
+      document.getElementById('multiArch').textContent = multivariate.diagnostics.arch.toFixed(3);
+      document.getElementById('multiJb').textContent = multivariate.diagnostics.jb.toFixed(3);
+      document.getElementById('multiDwMeta').textContent = multivariate.diagnostics.dwMeta;
+      document.getElementById('multiLbMeta').textContent = multivariate.diagnostics.lbMeta;
+      document.getElementById('multiArchMeta').textContent = multivariate.diagnostics.archMeta;
+      document.getElementById('multiJbMeta').textContent = multivariate.diagnostics.jbMeta;
+    }
+    document.getElementById('multiModelBody').innerHTML = multivariate.models.map((item, index) => `
+      <tr>
+        <td>${index === 0 ? '<span class="tag">Best</span> ' : ''}${item.name}</td>
+        <td>${item.result.metrics.mae.toFixed(4)}</td>
+        <td>${item.result.metrics.rmse.toFixed(4)}</td>
+        <td>${Number.isFinite(item.result.metrics.r2) ? item.result.metrics.r2.toFixed(3) : '--'}</td>
+        <td>${item.note}</td>
+      </tr>
+    `).join('');
+    const shapPalette = ['#1d4ed8', '#2563eb', '#34d399', '#fbbf24', '#f97316', '#a78bfa', '#fb7185', '#f87171'];
+    drawBarChart('multiFeatureChart', multivariate.topFeatures.map((item, index) => ({
+      label: item.label,
+      value: item.value,
+      color: item.value >= 0 ? shapPalette[index % shapPalette.length] : ['#ef4444', '#f97316', '#fb7185', '#dc2626', '#f87171', '#ea580c'][index % 6],
+      borderColor: item.value >= 0 ? '#e0f2fe' : '#fee2e2',
+    })), {
+      title: `SHAP风格特征贡献 | ${multivariate.best.name}`,
+      signed: true,
+      height: 340,
+      enableTooltip: true,
+    });
+    const displayedFutureStep = multivariate.fitSeries.future[multivariate.fitSeries.future.length - 1]?.step ?? 0;
+    drawLineChart('multiFitChart', [
+      { points: multivariate.fitSeries.actual, color: '#2563eb', width: 2.8 },
+      { points: multivariate.fitSeries.predicted, color: '#f472b6', width: 2.2, dash: [10, 5] },
+      { points: multivariate.fitSeries.future, color: '#f59e0b', width: 2.6 },
+    ], {
+      title: `${document.getElementById('multiTargetEntity').selectedOptions[0].textContent} - ${targetMetricLabel} 多变量预测`,
+      subtitle: `${multivariate.best.name} | 青色=实际收益率 / 粉紫=拟合收益率 / 橙色=未来预测收益率 | 当前展示前 ${displayedFutureStep} 期`,
+      xLabels: [
+        { index: 0, label: '回测起点' },
+        { index: Math.floor(multivariate.fitSeries.actual.length * 0.5), label: '中段' },
+        { index: multivariate.fitSeries.future[1].xIndex, label: multivariate.fitSeries.future[1].label },
+        { index: multivariate.fitSeries.future[multivariate.fitSeries.future.length - 1].xIndex, label: `第${displayedFutureStep}期` },
+      ],
+      verticalMarker: { index: multivariate.fitSeries.future[1].xIndex, label: multivariate.fitSeries.future[1].label },
+      xHighlights: [
+        {
+          startIndex: multivariate.fitSeries.future[1].xIndex,
+          endIndex: multivariate.fitSeries.future[multivariate.fitSeries.future.length - 1].xIndex,
+          fill: 'rgba(245, 158, 11, 0.08)',
+          textColor: '#fbbf24',
+          label: '未来预测区间',
+        },
+      ],
+      height: 320,
+      enableTooltip: true,
+      tooltipFormatter: (datasets, activeXIndex) => {
+        const actualPoint = datasets[0].points.find(point => point.xIndex === activeXIndex);
+        const predictedPoint = datasets[1].points.find(point => point.xIndex === activeXIndex);
+        const futurePoint = datasets[2].points.find(point => point.xIndex === activeXIndex);
+        const futureStartIndex = datasets[2].points[1]?.xIndex ?? 0;
+        const title = futurePoint
+          ? (futurePoint.step === -1 ? `过渡点 ${futurePoint.label}` : futurePoint.xIndex === futureStartIndex ? `预测起点 ${futurePoint.label}` : `未来第 ${futurePoint.step || (futurePoint.xIndex - futureStartIndex)} 期`)
+          : (actualPoint?.label || predictedPoint?.label || `回测样本点 ${activeXIndex + 1}`);
+        const fitGapBp = actualPoint && predictedPoint ? (predictedPoint.y - actualPoint.y) * 100 : NaN;
+        const rows = [
+          actualPoint ? `<div class="chart-tooltip-row"><span class="chart-tooltip-key">实际收益率</span><span class="chart-tooltip-value">${Number(actualPoint.y).toFixed(4)}%</span></div>` : '',
+          predictedPoint ? `<div class="chart-tooltip-row"><span class="chart-tooltip-key">拟合收益率</span><span class="chart-tooltip-value">${Number(predictedPoint.y).toFixed(4)}%</span></div>` : '',
+          Number.isFinite(fitGapBp) ? `<div class="chart-tooltip-row"><span class="chart-tooltip-key">拟合偏差</span><span class="chart-tooltip-value">${fitGapBp >= 0 ? '+' : ''}${fitGapBp.toFixed(2)}bp</span></div>` : '',
+          futurePoint ? `<div class="chart-tooltip-row"><span class="chart-tooltip-key">未来预测收益率</span><span class="chart-tooltip-value">${Number(futurePoint.y).toFixed(4)}%</span></div>` : '',
+        ].filter(Boolean).join('');
+        return `<div class="chart-tooltip-title">${escapeHtml(title)}</div>${rows}`;
+      },
+    });
+  }
+
+  if (direction) {
+    document.getElementById('dirLabel').textContent = direction.latestLabel;
+    document.getElementById('dirProb').textContent = `扩大概率 ${(direction.latestProb * 100).toFixed(1)}%，收窄概率 ${((1 - direction.latestProb) * 100).toFixed(1)}%`;
+    document.getElementById('dirAcc').textContent = `${(direction.accuracy * 100).toFixed(1)}%`;
+    document.getElementById('dirF1').textContent = direction.f1.toFixed(3);
+    document.getElementById('dirRecall').textContent = `${(direction.recall * 100).toFixed(1)}%`;
+    document.getElementById('directionMatrixBody').innerHTML = `
+      <tr><th>扩大</th><td class="positive-soft">${direction.matrix.tp}</td><td class="negative-soft">${direction.matrix.fn}</td></tr>
+      <tr><th>收窄</th><td class="negative-soft">${direction.matrix.fp}</td><td class="positive-soft">${direction.matrix.tn}</td></tr>
+    `;
+    document.getElementById('directionSummary').innerHTML = `
+      <li>最新判断：未来一季度方向偏向“${direction.latestLabel}”。</li>
+      <li>分类器：逻辑回归 Proxy，使用收益率滞后项、波动率、位置分位和外部数值因子。</li>
+      <li>核心驱动：${direction.topDrivers.join('、')}。</li>
+    `;
+  }
+
+  renderForecastSubpanel();
+  renderAnalysisTable();
+  renderAnalysisInsightChart();
+  renderOverviewModule();
+  renderReportCenter();
+}
+
+async function generateAiAnalysis() {
+  if (!state.data.length || !state.summary) {
+    setStatus('请先加载 Excel 数据，再生成 AI 分析。');
+    return;
+  }
+  const analyzeBtn = document.getElementById('analyzeBtn');
+  const originalBtnText = analyzeBtn.textContent;
+  analyzeBtn.disabled = true;
+  analyzeBtn.textContent = '生成中...';
+  setMarkdownContent('aiAnalysis', '## 正在生成分析\n\n已连接 `deepseek-v4`，分析新闻内容与数据中...');
+  document.getElementById('aiMeta').textContent = '流式输出准备中...';
+  setStatus('正在发起 AI 流式分析请求...');
+
+  try {
+    let newsReference = '';
+    try {
+      await fetchBondNewsReference(true);
+      newsReference = buildNewsAiReference();
+    } catch (error) {
+      newsReference = '';
+    }
+
+    let apiKey = await tryLoadApiKey();
+    if (!apiKey) {
+      apiKey = requestApiKeyFromUser();
+    }
+    if (!apiKey) {
+      throw new Error('未获取到 API Key，请检查 ../token_api.config 或在弹窗中临时输入。');
+    }
+
+    const summary = state.summary;
+    const extraInstruction = document.getElementById('customPrompt').value.trim();
+    const otherDataReference = buildOtherDataAiReference();
+    const forecastText = state.forecast
+      ? `未来一周均值 ${formatPct(state.forecast.weekStats.mean, 3)}，上涨概率 ${(state.forecast.weekStats.up * 100).toFixed(1)}%；未来一月均值 ${formatPct(state.forecast.monthStats.mean, 3)}，上涨概率 ${(state.forecast.monthStats.up * 100).toFixed(1)}%。`
+      : '当前尚未运行预测。';
+
+    const payloadText = [
+      `样本区间：${formatDate(state.data[0].date)} 至 ${formatDate(state.data[state.data.length - 1].date)}。`,
+      `最新收益率：${formatPct(summary.lastValue, 4)}，日期 ${formatDate(summary.lastDate)}。`,
+      `历史分位：${(summary.percentile * 100).toFixed(1)}%。`,
+      `近 5 日变化：${formatSignedPct(summary.change5d, 3)}；近 20 日变化：${formatSignedPct(summary.change20d, 3)}；近 60 日变化：${formatSignedPct(summary.change60d, 3)}。`,
+      `历史最低：${formatPct(summary.histMin.value, 4)}（${formatDate(summary.histMin.date)}）；历史最高：${formatPct(summary.histMax.value, 4)}（${formatDate(summary.histMax.date)}）。`,
+      `近 20 日年化波动：${Number.isFinite(summary.vol20) ? `${(summary.vol20 * 100).toFixed(1)}bp` : '--'}；近 250 日区间位置：${Number.isFinite(summary.pos250) ? `${(summary.pos250 * 100).toFixed(1)}%` : '--'}。`,
+      `统计特征：均值 ${formatPct(summary.mean, 3)}，标准差 ${formatPct(summary.std, 3)}，偏度 ${summary.skew.toFixed(3)}，峰度 ${summary.kurt.toFixed(3)}。`,
+      `预测摘要：${forecastText}`,
+      otherDataReference,
+      newsReference,
+      extraInstruction ? `额外要求：${extraInstruction}` : ''
+    ].filter(Boolean).join('\n');
+
+    const response = await fetch(DEEPSEEK_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'Accept': 'text/event-stream',
+      },
+      body: JSON.stringify({
+        model: DEEPSEEK_MODEL,
+        stream: true,
+        messages: [
+          {
+            role: 'system',
+            content: '你是固定收益研究员，请基于用户提供的十年期国债收益率摘要输出结构化中文 Markdown。必须包含以下内容：1）标题；2）“核心判断”列表；3）“结构化表格”Markdown 表格，列至少包含维度、结论、依据；4）“风险提示”列表。若提供了 other_data.xlsx 的相关参考数据，可将其作为辅助背景，但不要强行推导因果关系，也不要杜撰没有提供的数据。若提供了新闻观点摘要，请将其作为市场背景信息使用，区分“事实数据”和“新闻观点”，如观点存在分歧需明确说明，不要把单条新闻观点当作确定性结论。避免给出投资建议。预测和分析尽量详实，700-1500字，预测尽量充分考虑各种数据和场景，不要说概率0%，这种极端的'
+          },
+          {
+            role: 'user',
+            content: payloadText,
+          }
+        ]
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`模型调用失败：HTTP ${response.status} ${errorText}`);
+    }
+
+    document.getElementById('aiMeta').textContent = `模型：${DEEPSEEK_MODEL} | 参考数据：${otherDataReference ? '已纳入 other_data.xlsx 摘要' : '仅收益率主数据'} | 新闻：${state.newsItems.length ? `已纳入 ${state.newsItems.length} 条观点参考` : '未纳入新闻'} | 正在流式输出...`;
+    setStatus('AI 分析流式输出中...');
+    await streamMarkdownResponse(response, 'aiAnalysis', partialText => {
+      document.getElementById('aiMeta').textContent = `模型：${DEEPSEEK_MODEL} | 参考数据：${otherDataReference ? '已纳入 other_data.xlsx 摘要' : '仅收益率主数据'} | 新闻：${state.newsItems.length ? `已纳入 ${state.newsItems.length} 条观点参考` : '未纳入新闻'} | 已输出 ${partialText.length} 字`;
+    });
+
+    document.getElementById('aiMeta').textContent = `模型：${DEEPSEEK_MODEL} | 参考数据：${otherDataReference ? '已纳入 other_data.xlsx 摘要' : '仅收益率主数据'} | 新闻：${state.newsItems.length ? `已纳入 ${state.newsItems.length} 条观点参考` : '未纳入新闻'} | 生成时间：${new Date().toLocaleString('zh-CN')}`;
+    renderOverviewModule();
+    renderReportCenter();
+    setStatus('AI 分析已生成。');
+  } catch (error) {
+    setMarkdownContent('aiAnalysis', `## 生成失败\n\n- 原因：${error.message}\n- 处理建议：确认本地静态服务、配置文件与网络访问是否正常。`);
+    document.getElementById('aiMeta').textContent = '可改为手动输入 API Key，或通过本地静态服务重新打开页面。';
+    renderOverviewModule();
+    renderReportCenter();
+    setStatus(`AI 分析失败：${error.message}`);
+  } finally {
+    analyzeBtn.disabled = false;
+    analyzeBtn.textContent = originalBtnText;
+  }
+}
+
+/**
+ * AI 新闻解读：把当前新闻列表发给 DeepSeek，专门对新闻做汇总解读。
+ * 与 generateAiAnalysis 不同，这里只输入新闻内容，不混入收益率数据，
+ * 输出聚焦于"市场新闻观点的结构化总结"。
+ */
+async function generateNewsAiSummary() {
+  // 依赖检查：必须有新闻数据才能解读
+  if (!state.newsItems || !state.newsItems.length) {
+    setStatus('请先点击"刷新新闻参考"获取新闻，再进行 AI 新闻解读。');
+    return;
+  }
+
+  const btn = document.getElementById('newsAiSummaryBtn');
+  const originalBtnText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '解读中...';
+  setMarkdownContent('newsAiSummary', '## 正在解读新闻\n\n已连接 `deepseek-v4-flash`，对新闻观点进行汇总分析中...');
+  document.getElementById('newsAiSummaryMeta').textContent = '流式输出准备中...';
+  setStatus('正在发起 AI 新闻解读请求...');
+
+  try {
+    // 获取 API Key
+    let apiKey = await tryLoadApiKey();
+    if (!apiKey) {
+      apiKey = requestApiKeyFromUser();
+    }
+    if (!apiKey) {
+      throw new Error('未获取到 API Key。');
+    }
+
+    // 构建新闻内容文本（取全部新闻，上限 10 条避免 token 过长）
+    const newsToSummarize = state.newsItems.slice(0, 10);
+    const newsText = newsToSummarize.map((item, index) => {
+      const parts = [
+        `### 新闻 ${index + 1}`,
+        `标题：${item.title || '无标题'}`,
+        item.source ? `来源：${item.source}` : '',
+        item.dateText ? `日期：${item.dateText}` : '',
+        item.retrievalLabel ? `获取方式：${item.retrievalLabel}` : '',
+        item.summary ? `摘要：${item.summary}` : '',
+        item.url ? `链接：${item.url}` : ''
+      ].filter(Boolean);
+      return parts.join('\n');
+    }).join('\n\n');
+
+    const systemPrompt = '你是固定收益市场研究员，请对用户提供的国债收益率相关新闻进行结构化汇总解读。输出要求：\n1. 先用 4-5 句话概括整体新闻基调（偏多/偏空/中性/分歧）；\n2. 提炼 5-8 条"核心观点"，每条标注来源机构或媒体；\n3. 如有"政策信号"或"资金面信号"，单独列出；\n4. 最后给出"风险提示"列表。\n注意：区分事实与观点，标注分歧，不要杜撰未提供的信息，不要给出投资建议，字数700-1500字，分析尽量详实，不要说概率0%，这种极端的结论。输出为中文 Markdown。';
+
+    const userPrompt = `以下是近期国债收益率相关的 ${newsToSummarize.length} 条新闻参考：\n\n${newsText}\n\n请对上述新闻进行汇总解读。`;
+
+    const response = await fetch(DEEPSEEK_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+        'Accept': 'text/event-stream'
+      },
+      body: JSON.stringify({
+        model: DEEPSEEK_MODEL,
+        stream: true,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ]
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`模型调用失败：HTTP ${response.status} ${errorText}`);
+    }
+
+    document.getElementById('newsAiSummaryMeta').textContent = `模型：${DEEPSEEK_MODEL} | 新闻 ${newsToSummarize.length} 条 | 正在流式输出...`;
+    setStatus('AI 新闻解读流式输出中...');
+    await streamMarkdownResponse(response, 'newsAiSummary', partialText => {
+      document.getElementById('newsAiSummaryMeta').textContent = `模型：${DEEPSEEK_MODEL} | 新闻 ${newsToSummarize.length} 条 | 已输出 ${partialText.length} 字`;
+    });
+
+    document.getElementById('newsAiSummaryMeta').textContent = `模型：${DEEPSEEK_MODEL} | 新闻 ${newsToSummarize.length} 条 | 生成时间：${new Date().toLocaleString('zh-CN')}`;
+    setStatus('AI 新闻解读已生成。');
+  } catch (error) {
+    setMarkdownContent('newsAiSummary', `## 解读失败\n\n- 原因：${error.message}\n- 处理建议：确认新闻已加载、API Key 有效、网络正常。`);
+    document.getElementById('newsAiSummaryMeta').textContent = '解读失败，请检查后重试。';
+    setStatus(`AI 新闻解读失败：${error.message}`);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalBtnText;
+  }
+}
+
+function refreshAll() {
+  state.summary = calcSummary(state.data);
+  updateSummaryUI(state.summary);
+  if (state.newsItems.length) {
+    state.newsStatus = `当前新闻参考来自 ${state.newsLastUpdatedAt || '上次'} 的检索结果；若已更换收益率样本，建议点击“刷新新闻参考”。`;
+    renderNewsReference();
+  }
+  renderHistory();
+  renderDistribution();
+  renderYearTable();
+  runForecastSafe('manual');
+  renderAnalysisTable();
+  renderAnalysisInsightChart();
+  renderOverviewModule();
+  renderDataSnapshot();
+  renderOtherDataModule();
+  renderReportCenter();
+}
+
+function bindEvents() {
+  document.querySelectorAll('.module-nav-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      switchModule(button.dataset.module);
+    });
+  });
+
+  document.querySelectorAll('.range-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('.range-btn').forEach(item => item.classList.remove('active'));
+      button.classList.add('active');
+      state.range = button.dataset.range;
+      renderHistory();
+    });
+  });
+
+  document.getElementById('loadDefaultDataBtn').addEventListener('click', async () => {
+    try {
+      await loadDefaultExcel();
+    } catch (error) {
+      setStatus(`${error.message}\n如需继续，请点击“手动选择 Excel”。`);
+    }
+  });
+
+  document.getElementById('pickFileBtn').addEventListener('click', () => {
+    document.getElementById('excelFileInput').click();
+  });
+
+  document.getElementById('excelFileInput').addEventListener('change', async event => {
+    const [file] = event.target.files || [];
+    if (!file) return;
+    try {
+      await loadExcelFile(file);
+    } catch (error) {
+      setStatus(`手动加载失败：${error.message}`);
+    }
+  });
+
+  document.querySelectorAll('.subtab-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      state.forecastTab = button.dataset.forecastTab;
+      renderForecastSubpanel();
+    });
+  });
+
+  document.querySelectorAll('.mode-chip').forEach(button => {
+    button.addEventListener('click', () => {
+      setActiveMultiFeatureMode(button.dataset.featureMode);
+    });
+  });
+  ['multiCoreFeatureTags', 'multiMacroFeatureTags'].forEach(containerId => {
+    document.getElementById(containerId).addEventListener('click', event => {
+      const button = event.target.closest('.feature-tag[data-feature-name]');
+      if (!button) return;
+      toggleMultiFeatureSelection(button.dataset.featureGroup, button.dataset.featureName);
+    });
+  });
+  document.getElementById('featureDepth').addEventListener('change', event => {
+    setActiveMultiFeatureMode(event.target.value);
+  });
+
+  document.getElementById('runForecast').addEventListener('click', () => runForecastSafe('manual'));
+  document.getElementById('runMultiCompare').addEventListener('click', () => {
+    state.forecastTab = 'multi';
+    renderForecastSubpanel();
+    runForecastSafe('multi');
+  });
+  document.getElementById('runMultiAutoSelect').addEventListener('click', () => {
+    document.getElementById('multiModelSelect').value = 'auto';
+    state.forecastTab = 'multi';
+    renderForecastSubpanel();
+    runForecastSafe('auto');
+  });
+  document.getElementById('analyzeBtn').addEventListener('click', generateAiAnalysis);
+  document.getElementById('newsAiSummaryBtn').addEventListener('click', generateNewsAiSummary);
+  document.getElementById('refreshNewsBtn').addEventListener('click', async () => {
+    if (!state.data.length || !state.summary) {
+      setStatus('请先加载收益率数据，再刷新新闻参考。');
+      return;
+    }
+    const btn = document.getElementById('refreshNewsBtn');
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '刷新中...';
+    try {
+      await fetchBondNewsReference(true);
+      setStatus('新闻参考已刷新。');
+    } catch (error) {
+      setStatus(error.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = originalText;
+    }
+  });
+  document.getElementById('refreshApiKeyBtn').addEventListener('click', async () => {
+    state.apiKey = DEFAULT_HARDCODED_API_KEY;
+    state.apiKeySource = 'hardcoded';
+    await tryLoadApiKey();
+    setStatus('已刷新 API Key 读取状态。');
+  });
+
+  window.addEventListener('resize', () => {
+    if (!state.data.length) return;
+    renderHistory();
+    renderDistribution();
+    if (state.forecast) runForecastSafe('manual');
+    renderAnalysisInsightChart();
+    renderActiveModule();
+  });
+}
+
+async function init() {
+  bindEvents();
+  renderForecastSubpanel();
+  setActiveMultiFeatureMode('enhanced');
+  switchModule('overview');
+  setMarkdownContent('ruleSummary', '## 自动摘要\n\n等待加载收益率数据。');
+  setMarkdownContent('aiAnalysis', '## 大模型分析\n\n点击“生成 AI 分析”后，将调用 `deepseek-v4` 输出市场解读。');
+  setMarkdownContent('reportCenterContent', '## 报告中心\n\n等待加载收益率数据。');
+  renderNewsReference();
+  renderOtherDataModule();
+  await tryLoadApiKey();
+  await loadOtherDataWorkbook();
+  try {
+    await loadDefaultExcel();
+  } catch (error) {
+    setStatus(`${error.message}\n如果希望自动读取默认文件，请改用本地静态服务打开当前页面。`);
+  }
+}
+
+init();
+</script>
+
+<script>
+/* ===================== 真实模型信号模块（独立加载器） ===================== */
+(function signalModule() {
+  'use strict';
+  let loaded = false;
+  const PROXY = `${window.location.protocol}//${window.location.hostname}:8001`;
+
+  function probColor(v) { return v >= 0.5 ? '#10b981' : '#ef4444'; }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g,
+      c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function bar(label, value, color) {
+    const pct = Math.round((value == null ? 0 : value) * 100);
+    return `<div style="display:flex;align-items:center;gap:10px;font-size:13px;">
+      <span style="width:96px;color:#334155;font-weight:600;">${esc(label)}</span>
+      <span style="flex:1;height:14px;background:#eef2f7;border-radius:7px;overflow:hidden;">
+        <span style="display:block;height:100%;width:${pct}%;background:${color};border-radius:7px;"></span>
+      </span>
+      <span style="width:46px;text-align:right;font-weight:700;color:${color};">${value == null ? '--' : value.toFixed(3)}</span>
+    </div>`;
+  }
+
+  async function load() {
+    const tbody = document.getElementById('signalTableBody');
+    try {
+      const res = await fetch(`${PROXY}/api/signal`, { cache: 'no-store' });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || '接口返回异常');
+      document.getElementById('sigAsof').textContent = data.asof;
+      document.getElementById('sigMode').textContent = data.mode || '';
+      document.getElementById('sigYield').textContent = data.yieldNow || '--';
+      const sent = document.getElementById('sigSentiment');
+      sent.textContent = data.llmSentiment || '未修正';
+      sent.style.color = (data.llmSentiment || '').includes('偏多') ? '#10b981'
+        : ((data.llmSentiment || '').includes('偏空') ? '#ef4444' : '#64748b');
+      document.getElementById('sigMaturity').textContent =
+        (data.signals.find(s => s.horizon === 'h5') || {}).maturity || '--';
+
+      tbody.innerHTML = data.signals.map(s => {
+        const p = s.llmProb != null ? s.llmProb : s.fusion;
+        return `<tr>
+          <td><b>${esc(s.horizon)}</b></td><td>${esc(s.maturity)}</td>
+          <td>${s.xgb == null ? '--' : s.xgb.toFixed(3)}</td>
+          <td>${s.nn == null ? '--' : s.nn.toFixed(3)}</td>
+          <td>${s.fusion == null ? '--' : s.fusion.toFixed(3)}</td>
+          <td style="color:${probColor(p)};font-weight:700;">${s.llmProb == null ? '--' : s.llmProb.toFixed(3)}</td>
+          <td style="color:${probColor(p)};">${esc(s.llmSignal || s.fusionSignal || '')}</td>
+          <td>${esc(s.xgbLevel || '--')}</td><td>${esc(s.fusionLevel || '--')}</td>
+          <td>${esc(s.llmLevel || '--')}</td></tr>`;
+      }).join('');
+
+      document.getElementById('signalBars').innerHTML = data.signals.map(s => `
+        <div style="margin-bottom:6px;">
+          <div style="font-size:13px;color:#334155;font-weight:600;margin-bottom:4px;">${esc(s.horizon)}（到期 ${esc(s.maturity)}）</div>
+          ${bar('XGB', s.xgb, '#2563eb')}
+          ${bar('融合', s.fusion, '#9467bd')}
+          ${bar('LLM修正', s.llmProb, '#d97706')}
+        </div>`).join('');
+
+      const hb = document.getElementById('signalHistoryBody');
+      hb.innerHTML = (data.history || []).map(r => `<tr>
+        <td>${esc(r['发出日'])}</td><td>${esc(r['周期'])}</td><td>${esc(r['到期日'])}</td>
+        <td>${esc(r['下行概率'])}</td><td>${esc(r['融合概率'] || '--')}</td>
+        <td>${esc(r['修正概率'] || '--')}</td></tr>`).join('');
+      loaded = true;
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="10" style="color:#ef4444;">
+        信号加载失败：${esc(err.message)}。<br>请确认：1) news_proxy.py 已启动（端口8001）；
+        2) 预测项目已运行 40/41 脚本生成 data_new/预测记录.csv。</td></tr>`;
+    }
+  }
+
+  document.addEventListener('click', (ev) => {
+    const btn = ev.target.closest && ev.target.closest('.module-nav-btn[data-module="signal"]');
+    if (btn && !loaded) load();
+  });
+  window.addEventListener('load', () => setTimeout(load, 600));
+})();
+</script>
+</body>
+</html>

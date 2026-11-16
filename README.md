@@ -97,3 +97,14 @@ python -u -B "model_nn/03_可视化分析.py"
 4. **多 seed 集成主要降低近端年份方差**（2025 Acc 0.44 → 0.62）。
 5. **模型概率系统性高估下行**：固定 th=0.39 全局 Acc +6.5pt；滚动阈值校准已验证无效。
 6. **失败清单**：缩窗（90–270d）、时间衰减权重、状态相似度加权、Top-60 特征、expanding 窗口、10 天版 seq80、滚动阈值校准。
+
+## 国债收益率研究仪表盘（bond_show/）
+
+`bond_show/` 内置本地研究面板：总览/历史/统计各模块读取 `data_ori/2026_ori_data_new.xlsx`
+的派生数据（`bond_show/export_ori_data.py` 生成），并新增"真实模型信号"模块，
+直接展示 `model_new/40/41` 脚本的预测台账与 LLM 修正（经 `news_proxy.py` 的
+`/api/signal` 提供）；新闻搜索在智谱 MCP 不可用时自动回退免费源直采。
+
+启动：双击 `bond_show/start_dashboard.bat`（或分别运行
+`python bond_show/news_proxy.py` 与 `python -m http.server 8000` 于该目录）。
+数据更新流程：40 → 41 → `python bond_show/export_ori_data.py` → 刷新面板。

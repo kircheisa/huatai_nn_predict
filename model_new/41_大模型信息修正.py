@@ -41,8 +41,10 @@ MODEL = "glm-5.3-flash"
 
 KEYWORDS = ["国债", "债市", "债券", "央行", "逆回购", "MLF", "降准", "LPR",
             "资金面", "流动性", "PMI", "CPI", "PPI", "社融", "美债", "汇率",
-            "财政", "发行", "降息", "收益率"]
+            "财政", "发行", "降息", "收益率", "国开", "政金债", "同业存单",
+            "货币宽松", "公开市场", "DR0", "Shibor"]
 MAX_ADJ = 0.08
+NEWS_DAYS = 7          # 快讯时间窗（天）
 
 
 def get_key() -> str:
@@ -58,21 +60,23 @@ def get_key() -> str:
 def fetch_news() -> list[str]:
     """免费源直采，返回 ['[时间] 标题', ...]"""
     items: list[tuple[str, str]] = []          # (时间戳, 文本)
-    try:                                        # 新浪财经滚动
-        r = requests.get("https://feed.mix.sina.com.cn/api/roll/get",
-                         params={"pageid": 153, "lid": 2516, "num": 50,
-                                 "page": 1}, timeout=15)
-        for d in r.json().get("data", []):
-            t = d.get("ctime", "")
-            items.append((t, d.get("title", "") + " " +
-                          re.sub("<[^>]+>", "", d.get("intro", ""))[:120]))
-    except Exception as e:
-        print("  [新浪源失败]", e)
-    try:                                        # 东方财富7x24
+    for page in (1, 2):                         # 新浪财经滚动（财经频道两页）
+        try:
+            r = requests.get("https://feed.mix.sina.com.cn/api/roll/get",
+                             params={"pageid": 153, "lid": 2516, "num": 100,
+                                     "page": page}, timeout=15)
+            for d in r.json().get("data", []):
+                t = d.get("ctime", "")
+                items.append((t, d.get("title", "") + " " +
+                              re.sub("<[^>]+>", "", d.get("intro", ""))[:120]))
+        except Exception as e:
+            print("  [新浪源失败]", e)
+            break
+    try:                                        # 东方财富7x24快讯
         r = requests.get(
             "https://np-listapi.eastmoney.com/comm/web/getFastNewsList",
             params={"client": "web", "biz": "web_724", "fastColumn": 102,
-                    "sortEnd": "", "pageSize": 50,
+                    "sortEnd": "", "pageSize": 100,
                     "req_trace": int(time.time() * 1000)}, timeout=15)
         for d in (r.json().get("data") or {}).get("fastNewsList", []):
             items.append((d.get("showTime", ""), d.get("title", "") + " " +
@@ -88,13 +92,13 @@ def fetch_news() -> list[str]:
                          .timestamp() if "-" in ts else int(ts))
         except Exception:
             age = 0
-        if age > 4 * 86400:                     # 只取近4天
+        if age > NEWS_DAYS * 86400:
             continue
         if not any(k in txt for k in KEYWORDS) or txt[:40] in seen:
             continue
         seen.add(txt[:40])
         picked.append(f"[{ts}] {txt.strip()}")
-        if len(picked) >= 30:
+        if len(picked) >= 40:
             break
     return picked
 
@@ -130,7 +134,9 @@ def extract_json(text: str) -> dict:
 def main() -> None:
     led = pd.read_csv(LEDGER, dtype={"发出日": str})
     asof = led["发出日"].max()
-    sig = led[led["发出日"] == asof].sort_values("周期")
+    sig = led[led["发出日"] == asof].assign(
+        _h=lambda d: d["周期"].str.lstrip("h").astype(int)).sort_values("_h")
+    sig = sig.drop(columns="_h")
     print(f"[1/4] 最新信号: 发出日 {asof}，{len(sig)} 个周期")
 
     print("[2/4] 搜集公开信息 ...")

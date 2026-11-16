@@ -207,6 +207,7 @@ def make_html(asof, ymode: str, sig: pd.DataFrame, y: pd.Series,
     svg.append(line([(xmap(d), y1(v)) for d, v in y26.items()], "black", 2.2))
     # 前向隐含点位：发出日->各到期日的虚线射线 + 端点标注
     y_now = y[asof]
+    sig = sig.sort_values("到期日")          # 表格与射线按到期日递增
     for _, r in sig.iterrows():
         c = COLORS[r["周期"]]
         xe, ye = xmap(pd.Timestamp(r["到期日"])), y1(r["隐含点位估算(%)"])
