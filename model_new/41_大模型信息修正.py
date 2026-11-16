@@ -57,6 +57,79 @@ def get_key() -> str:
     raise SystemExit("缺少API key: 设 ZHIPU_API_KEY 或创建 data_new/llm_key.txt")
 
 
+def grade(p) -> str:
+    """与 40 脚本同口径的信号分级"""
+    if p is None or pd.isna(p):
+        return "-"
+    if p >= 0.75:
+        return "强烈看下行"
+    if p >= 0.60:
+        return "看下行"
+    if p >= 0.40:
+        return "观望"
+    if p >= 0.25:
+        return "看上行"
+    return "强烈看上行"
+
+
+def fetch_em_bond() -> list[tuple[str, str]]:
+    """东财债券频道(column=345)：资金面/债市快讯的主要增量源"""
+    items: list[tuple[str, str]] = []
+    try:
+        r = requests.get(
+            "https://np-listapi.eastmoney.com/comm/web/getNewsByColumns",
+            params={"client": "web", "biz": "web_news_col", "column": 345,
+                    "order": 1, "needInteractData": 0, "page_index": 1,
+                    "page_size": 50, "req_trace": int(time.time() * 1000)},
+            timeout=15)
+        for d in (r.json().get("data") or {}).get("list") or []:
+            t = d.get("showTime", "")
+            txt = re.sub("<[^>]+>", "", d.get("title", ""))
+            items.append((t, txt + " " + (d.get("summary") or "")[:100]))
+    except Exception as e:
+        print("  [东财债券频道失败]", e)
+    return items
+
+
+def fetch_chinamoney() -> list[tuple[str, str]]:
+    """中国货币网快讯：公开接口路径多变，逐个尝试，失败自动跳过"""
+    items: list[tuple[str, str]] = []
+    hdr = {"User-Agent": "Mozilla/5.0", "Referer": "https://www.chinamoney.com.cn/"}
+    candidates = [
+        ("GET", "https://www.chinamoney.com.cn/ags/ms/cm-u-md-cm/rcContentList",
+         {"lang": "cn", "pageSize": 30, "pageNo": 1}),
+        ("POST", "https://www.chinamoney.com.cn/ags/ms/cm-u-bond-cnt/list",
+         {"lang": "cn", "pageNo": 1, "pageSize": 30}),
+    ]
+    for method, url, payload in candidates:
+        try:
+            if method == "GET":
+                r = requests.get(url, params=payload, headers=hdr, timeout=10)
+            else:
+                r = requests.post(url, data=payload, headers=hdr, timeout=10)
+            j = r.json()
+            if not isinstance(j, dict) or j.get("Error"):
+                continue
+            rows = (j.get("data") or {}).get("list") or j.get("data") or []
+            if isinstance(rows, dict):
+                rows = rows.get("list") or []
+            for d in rows:
+                if not isinstance(d, dict):
+                    continue
+                t = str(d.get("newsTime") or d.get("pubDate") or
+                        d.get("showTime") or "")
+                txt = str(d.get("newsTitle") or d.get("title") or
+                          d.get("content") or "")
+                if txt:
+                    items.append((t, txt[:150]))
+            if items:
+                print(f"  [中国货币网] 命中 {len(items)} 条 ({url.split('/')[-1]})")
+                break
+        except Exception:
+            continue
+    return items
+
+
 def fetch_news() -> list[str]:
     """免费源直采，返回 ['[时间] 标题', ...]"""
     items: list[tuple[str, str]] = []          # (时间戳, 文本)
@@ -83,6 +156,8 @@ def fetch_news() -> list[str]:
                           (d.get("summary") or "")[:120]))
     except Exception as e:
         print("  [东财源失败]", e)
+    items += fetch_em_bond()                    # 东财债券频道（资金面为主）
+    items += fetch_chinamoney()                 # 中国货币网（接口可用时）
 
     now = time.time()
     picked, seen = [], set()
@@ -189,7 +264,7 @@ def main() -> None:
                    - pd.Timedelta(days=730)].median() * 100)
         rows.append({"发出日": asof, "周期": r["周期"], "到期日": r["到期日"],
                      "融合概率": p0, "LLM修正量": round(a, 3),
-                     "修正概率": round(p1, 3),
+                     "修正概率": round(p1, 3), "修正分级": grade(p1),
                      "修正信号": "下行(债涨)" if p1 >= 0.5 else "上行(债跌)",
                      "修正隐含点位(%)": round(y_now + (1 - 2 * p1) * med_bp / 100, 3),
                      "债市情绪": op.get("债市情绪", "")})
@@ -207,7 +282,7 @@ def main() -> None:
     html_path = OUT / "时点预测曲线.html"
     if html_path.exists():
         sig_aug = sig.merge(
-            res[["周期", "LLM修正量", "修正概率", "修正信号",
+            res[["周期", "LLM修正量", "修正概率", "修正分级", "修正信号",
                  "修正隐含点位(%)"]], on="周期", how="left")
         import importlib.util as _ilu
         spec = _ilu.spec_from_file_location(

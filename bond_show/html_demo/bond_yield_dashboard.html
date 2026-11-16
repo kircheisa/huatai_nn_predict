@@ -1111,6 +1111,13 @@ canvas {
       </section>
       <div class="panel-grid-2 equal">
         <section class="card">
+          <div class="section-title" id="fwdRayTitle">前向隐含点位（真实模型信号）</div>
+          <div id="fwdRayBox" style="width:100%;min-height:230px;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:13px;">
+            等待模型信号与收益率数据加载…
+          </div>
+          <p style="color:#888;font-size:12px;margin:8px 0 0;">黑线=历史收益率；虚线=各周期模型隐含点位（圆点=XGB，菱形=融合，×=LLM修正）。数据来自预测项目40/41脚本。</p>
+        </section>
+        <section class="card">
           <div class="section-title">关键指标</div>
           <div class="list-grid">
             <div class="mini-kpi">
@@ -4656,6 +4663,8 @@ init();
         <td>${esc(r['发出日'])}</td><td>${esc(r['周期'])}</td><td>${esc(r['到期日'])}</td>
         <td>${esc(r['下行概率'])}</td><td>${esc(r['融合概率'] || '--')}</td>
         <td>${esc(r['修正概率'] || '--')}</td></tr>`).join('');
+      window.__sigData = data;
+      if (window.__renderFwdRays) window.__renderFwdRays();
       loaded = true;
     } catch (err) {
       tbody.innerHTML = `<tr><td colspan="10" style="color:#ef4444;">
@@ -4669,6 +4678,78 @@ init();
     if (btn && !loaded) load();
   });
   window.addEventListener('load', () => setTimeout(load, 600));
+
+  /* ---- 总览页：前向隐含点位射线（历史曲线 + 各周期到期点） ---- */
+  const HC = { h5: '#1f77b4', h10: '#10b981', h15: '#ef4444', h20: '#9467bd' };
+  let raysRenderedFor = '';
+
+  function esc2(x) { return String(x == null ? '' : x).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+  function renderForwardRays() {
+    const box = document.getElementById('fwdRayBox');
+    if (!box || !window.__sigData || !window.__sigData.ok) return;
+    const st = (typeof state !== 'undefined') ? state : window.state;
+    const main = (st && Array.isArray(st.data)) ? st.data : null;
+    if (!main || main.length < 30 || raysRenderedFor === window.__sigData.asof) return;
+
+    const hist = main.slice(-45);                       // 近45交易日
+    const pts = [];
+    for (const it of hist) pts.push({ x: it.date.getTime(), y: it.value, hist: true });
+    const x0 = pts[0].x, x1 = pts[pts.length - 1].x;
+    const dayMs = Math.max(x1 - x0, 1) / (pts.length - 1);
+    const W = 940, H = 240, L = 52, R = 20, T = 16, B = 34;
+    const sig = window.__sigData.signals || [];
+    const levels = [];
+    for (const s of sig) {
+      for (const k of ['xgbLevel', 'fusionLevel', 'llmLevel']) {
+        const v = parseFloat(s[k]);
+        if (isFinite(v)) levels.push(v);
+      }
+    }
+    let ymin = Math.min(...pts.map(p => p.y), ...levels);
+    let ymax = Math.max(...pts.map(p => p.y), ...levels);
+    const pad = Math.max((ymax - ymin) * 0.08, 0.02);
+    ymin -= pad; ymax += pad;
+    const X = t => L + (t - x0) / ((x1 - x0) + 26 * dayMs) * (W - L - R);
+    const Y = v => T + (ymax - v) / (ymax - ymin) * (H - T - B);
+    const seg = arr => arr.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+    const svg = [];
+    for (let i = 0; i <= 4; i++) {
+      const v = ymin + (ymax - ymin) * i / 4;
+      svg.push(`<line x1="${L}" y1="${Y(v)}" x2="${W - R}" y2="${Y(v)}" stroke="#f1f5f9"/>`);
+      svg.push(`<text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end" font-size="11" fill="#64748b">${v.toFixed(2)}</text>`);
+    }
+    svg.push(`<polyline points="${seg(pts.map(p => ({x: X(p.x), y: Y(p.y)})))}" fill="none" stroke="#0f172a" stroke-width="2"/>`);
+    const last = pts[pts.length - 1];
+    svg.push(`<circle cx="${X(last.x)}" cy="${Y(last.y)}" r="4" fill="#0f172a"/>`);
+    svg.push(`<text x="${X(last.x) - 10}" y="${Y(last.y) - 12}" font-size="11" font-weight="bold" text-anchor="end">${window.__sigData.yieldNow || ''}</text>`);
+    for (const s of sig) {
+      const hNum = parseInt(s.horizon, 10);
+      const c = HC[s.horizon] || '#94a3b8';
+      const lv = parseFloat(s.llmLevel) || parseFloat(s.fusionLevel) || parseFloat(s.xgbLevel);
+      const xe = X(x1 + hNum * dayMs), ye = Y(lv);
+      const dash = s.llmLevel ? '2,4' : '6,4';
+      svg.push(`<line x1="${X(last.x)}" y1="${Y(last.y)}" x2="${xe}" y2="${ye}" stroke="${c}" stroke-width="1.5" stroke-dasharray="${dash}"/>`);
+      svg.push(`<circle cx="${xe}" cy="${ye}" r="5" fill="${c}" stroke="#fff" stroke-width="1.4"/>`);
+      const lx = Math.min(xe + 6, W - 118);
+      const ly = ye + 6 + (hNum - 5) * 3;
+      svg.push(`<text x="${lx}" y="${ly}" font-size="11" font-weight="bold" fill="${c}">${esc2(s.horizon)} ${lv.toFixed(3)}${s.llmLevel ? ' (修)' : ''}</text>`);
+    }
+    for (const it of [0, 0.25, 0.5, 0.75, 1].map(f => new Date(x0 + (x1 - x0) * f))) {
+      svg.push(`<text x="${X(it.getTime())}" y="${H - 10}" font-size="11" fill="#64748b" text-anchor="middle">${it.toISOString().slice(0, 7)}</text>`);
+    }
+    box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;">${svg.join('')}</svg>`;
+    const t = document.getElementById('fwdRayTitle');
+    if (t) t.textContent = `前向隐含点位（真实模型信号 · ${window.__sigData.asof}发出）`;
+    raysRenderedFor = window.__sigData.asof;
+  }
+
+  window.__renderFwdRays = renderForwardRays;
+  const raysTimer = setInterval(() => {
+    renderForwardRays();
+    if (raysRenderedFor) clearInterval(raysTimer);
+  }, 1200);
+  setTimeout(() => clearInterval(raysTimer), 40000);
 })();
 </script>
 </body>

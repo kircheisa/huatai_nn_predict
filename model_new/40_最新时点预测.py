@@ -21,7 +21,10 @@
 
 from __future__ import annotations
 
+import argparse
 import importlib.util
+import json
+import shutil
 import subprocess
 import sys
 from argparse import Namespace
@@ -51,6 +54,31 @@ PARAMS = dict(max_depth=3, n_estimators=600, learning_rate=0.05,
 HORIZONS = [(5, "43v3_labels_bin.csv"), (10, "43v3_labels_bin_h10.csv"),
             (15, "43v3_labels_bin_h15.csv"), (20, "43v3_labels_bin_h20.csv")]
 COLORS = {"h5": "#1f77b4", "h10": "#2ca02c", "h15": "#d62728", "h20": "#9467bd"}
+MODELS_DIR = DATA / "models"          # 当日模型缓存（按发出日分目录）
+
+
+def grade(p) -> str:
+    """信号分级：概率分档代替二值方向（观望带 0.40-0.60）"""
+    if p is None or pd.isna(p):
+        return "-"
+    if p >= 0.75:
+        return "强烈看下行"
+    if p >= 0.60:
+        return "看下行"
+    if p >= 0.40:
+        return "观望"
+    if p >= 0.25:
+        return "看上行"
+    return "强烈看上行"
+
+
+def parse_args():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--retrain", action="store_true",
+                    help="忽略当日模型缓存，强制重训")
+    ap.add_argument("--no-nn", action="store_true",
+                    help="跳过NN支路（仅XGB+融合退化）")
+    return ap.parse_args()
 
 
 def load_sheet_dates(sheet: str) -> tuple[pd.DataFrame, pd.Series]:
@@ -90,19 +118,51 @@ def _load_nn17():
     return mod
 
 
-def nn_predict(nn17, feats: pd.DataFrame, lab: pd.DataFrame,
-               asof: pd.Timestamp, h: int) -> float:
-    """NN支路：训练窗内XGB重要性Top30 + 17脚本BiGRU(NN_B, 3-seed)预测asof"""
+def _model_dir(asof: pd.Timestamp) -> Path:
+    """当日模型缓存目录；清掉其它发出日的旧缓存"""
+    mdir = MODELS_DIR / asof.strftime("%Y%m%d")
+    if MODELS_DIR.exists():
+        for d in MODELS_DIR.iterdir():
+            if d.is_dir() and d.name != mdir.name:
+                shutil.rmtree(d, ignore_errors=True)
+    mdir.mkdir(parents=True, exist_ok=True)
+    return mdir
+
+
+def get_xgb_model(feats: pd.DataFrame, train: pd.DataFrame,
+                  asof: pd.Timestamp, h: int, retrain: bool = False):
+    """XGB：当日缓存命中则加载（特征列一致才复用），否则训练并保存"""
+    mdir = _model_dir(asof)
+    mfile, ffile = mdir / f"h{h}_xgb.ubj", mdir / f"h{h}_xgb_features.json"
+    if not retrain and mfile.exists():
+        try:
+            if json.loads(ffile.read_text(encoding="utf-8")) == list(feats.columns):
+                m = xgb.XGBClassifier(**PARAMS)
+                m.load_model(mfile)
+                return m, "缓存"
+        except Exception:
+            pass
+    m = xgb.XGBClassifier(**PARAMS)
+    m.fit(train[feats.columns], train["label"].astype(int),
+          sample_weight=train["sample_weight"])
+    m.save_model(mfile)
+    ffile.write_text(json.dumps(list(feats.columns), ensure_ascii=False),
+                     encoding="utf-8")
+    return m, "新训"
+
+
+def get_nn_probas(nn17, feats: pd.DataFrame, lab: pd.DataFrame,
+                  asof: pd.Timestamp, h: int, retrain: bool = False):
+    """NN：按当日缓存加载3-seed权重，否则训练并保存；返回(概率, 来源)"""
+    import torch
     df = feats.join(lab, how="inner")
     train = df[(df.index <= asof) & df["label"].notna()
                & df["sample_weight"].notna()].iloc[-756:]
     mi = xgb.XGBClassifier(**{**PARAMS, "n_estimators": 300})
     mi.fit(train[feats.columns], train["label"].astype(int),
            sample_weight=train["sample_weight"])
-    top30 = pd.Series(mi.feature_importances_, index=feats.columns)\
-        .sort_values(ascending=False).head(30).index.tolist()
+    top30 = pd.Series(mi.feature_importances_, index=feats.columns)        .sort_values(ascending=False).head(30).index.tolist()
 
-    import torch
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     args = Namespace(seq_len=60, purge_gap=-1, val_rate=0.2, epochs=80,
                      lr=5e-4, weight_decay=1e-4, patience=12, min_epochs=10,
@@ -120,7 +180,28 @@ def nn_predict(nn17, feats: pd.DataFrame, lab: pd.DataFrame,
     X_t = torch.from_numpy(Xs)
     y_arr = np.nan_to_num(y_all.values, nan=0).astype(int)
     w_arr = np.nan_to_num(w_all.values, nan=1.0).astype(float)
-    probas = []
+
+    mdir = _model_dir(asof)
+    nfile = mdir / f"h{h}_nn.pt"
+    if not retrain and nfile.exists():
+        try:
+            bundle = torch.load(nfile, map_location=device, weights_only=True)
+            if bundle.get("features") == top30:
+                probas = []
+                for k in range(3):
+                    model = nn17.BiGRUInceptionAttentionModel(
+                        input_size=len(top30), hidden_size=args.hidden_size,
+                        num_layers=args.gru_layers, dropout=args.dropout,
+                        n_blocks=args.n_blocks).to(device)
+                    model.load_state_dict(bundle[f"seed{k}"])
+                    model.eval()
+                    probas.append(nn17.predict_proba(
+                        model, X_t, np.array([asof_pos]), args, device)[0])
+                return float(np.mean(probas)), "缓存"
+        except Exception as exc:  # noqa: BLE001
+            print(f"    [NN缓存失效h{h}]", exc)
+
+    probas, bundle = [], {"features": top30}
     for k in range(3):
         model, info = nn17.train_one_fold(
             args, X_t, y_arr, w_arr, 0, tr_hi, device,
@@ -129,11 +210,14 @@ def nn_predict(nn17, feats: pd.DataFrame, lab: pd.DataFrame,
             break
         probas.append(nn17.predict_proba(model, X_t, np.array([asof_pos]),
                                          args, device)[0])
-    return float(np.mean(probas)) if probas else float("nan")
+        bundle[f"seed{k}"] = {key: v.cpu() for key, v in
+                              model.state_dict().items()}
+    torch.save(bundle, nfile)
+    return (float(np.mean(probas)) if probas else float("nan")), "新训"
 
 
 def predict_asof(feats: pd.DataFrame, y: pd.Series, asof: pd.Timestamp,
-                 with_nn: bool = True):
+                 with_nn: bool = True, retrain: bool = False):
     nn17 = _load_nn17() if with_nn else None
     bd = pd.bdate_range(asof, asof + pd.Timedelta(days=45))
     rows = []
@@ -142,11 +226,10 @@ def predict_asof(feats: pd.DataFrame, y: pd.Series, asof: pd.Timestamp,
         df = feats.join(lab, how="inner")
         train = df[(df.index <= asof) & df["label"].notna()
                    & df["sample_weight"].notna()].iloc[-756:]
-        m = xgb.XGBClassifier(**PARAMS)
-        m.fit(train[feats.columns], train["label"].astype(int),
-              sample_weight=train["sample_weight"])
+        m, xgb_src = get_xgb_model(feats, train, asof, h, retrain)
         p = float(m.predict_proba(feats.loc[[asof]])[:, 1][0])
-        p_nn = nn_predict(nn17, feats, lab, asof, h) if with_nn else float("nan")
+        p_nn, nn_src = (get_nn_probas(nn17, feats, lab, asof, h, retrain)
+                        if with_nn else (float("nan"), "-"))
         p_fu = (p + p_nn) / 2
         med_bp = ((y.shift(-h) - y).abs().dropna()
                   [lambda s: s.index >= (asof - pd.Timedelta(days=730))].median() * 100)
@@ -156,9 +239,11 @@ def predict_asof(feats: pd.DataFrame, y: pd.Series, asof: pd.Timestamp,
                      "隐含点位估算(%)": round(y[asof] + (1 - 2 * p) * med_bp / 100, 3),
                      "NN概率": round(p_nn, 3),
                      "融合概率": round(p_fu, 3),
+                     "融合分级": grade(p_fu),
                      "融合信号": "下行(债涨)" if p_fu >= 0.5 else "上行(债跌)",
                      "融合隐含点位(%)": round(y[asof] + (1 - 2 * p_fu) * med_bp / 100, 3),
-                     "训练样本截至": train.index.max().date().isoformat()})
+                     "训练样本截至": train.index.max().date().isoformat(),
+                     "模型来源": f"XGB:{xgb_src}/NN:{nn_src}"})
     return pd.DataFrame(rows)
 
 
@@ -295,6 +380,7 @@ def make_html(asof, ymode: str, sig: pd.DataFrame, y: pd.Series,
         p = r.get("修正概率")
         col = "green" if (p or 0) >= 0.5 else "red"
         return (f"<td style='color:{col};font-weight:bold'>{fmt(p)}</td>"
+                f"<td style='color:#6b7280'>{fmt(r.get('修正分级'))}</td>"
                 f"<td>{fmt(r.get('修正信号'))}</td>"
                 f"<td>{fmt(r.get('修正隐含点位(%)'))}</td>")
 
@@ -304,12 +390,13 @@ def make_html(asof, ymode: str, sig: pd.DataFrame, y: pd.Series,
         f"{r['下行概率']:.3f}</td><td>{r['信号']}</td><td>{r['隐含点位估算(%)']}</td>"
         f"<td>{fmt(r.get('NN概率'))}</td>"
         f"<td style='color:{'green' if (r.get('融合概率') or 0) >= 0.5 else 'red'};font-weight:bold'>"
-        f"{fmt(r.get('融合概率'))}</td><td>{fmt(r.get('融合信号'))}</td>"
+        f"{fmt(r.get('融合概率'))}</td><td style='color:#6b7280'>{fmt(r.get('融合分级'))}</td>"
+        f"<td>{fmt(r.get('融合信号'))}</td>"
         f"<td>{fmt(r.get('融合隐含点位(%)'))}</td>"
         f"{fix_cells(r)}"
         f"<td>{r['训练样本截至']}</td></tr>" for _, r in sig.iterrows())
-    fix_head = ("<th>LLM修正概率</th><th>修正信号</th><th>修正隐含点位</th>"
-                if has_fix else "")
+    fix_head = ("<th>LLM修正概率</th><th>修正分级</th><th>修正信号</th>"
+                "<th>修正隐含点位</th>" if has_fix else "")
     llm_card = ""
     if llm:
         pts = "".join(f"<li>{p}</li>" for p in llm.get("信息要点", []))
@@ -344,7 +431,7 @@ padding:6px 12px;text-align:center}}th{{background:#f5f7fa}}</style></head><body
 &nbsp;|&nbsp;<b>协议：</b>滚动756窗口/21脚本超参/四周期XGB+NN融合</div>
 <div class="card"><table><tr><th>周期</th><th>到期日</th><th>XGB下行概率</th>
 <th>XGB信号</th><th>XGB隐含点位</th><th>NN概率</th><th>融合概率</th>
-<th>融合信号</th><th>融合隐含点位</th>{fix_head}<th>训练样本截至</th></tr>{tbl}</table>
+<th>融合分级</th><th>融合信号</th><th>融合隐含点位</th>{fix_head}<th>训练样本截至</th></tr>{tbl}</table>
 <p style="color:#888;font-size:12px">隐含点位=当前值±概率加权的历史该周期变动中位数，
 非模型原生输出；融合=(XGB+NN概率平均)；下行=收益率下降(债券价格上涨)。
 图中：实心圆/实心星=XGB，空心菱形/空心星=融合，×=LLM修正。</p></div>
@@ -379,7 +466,11 @@ def main() -> None:
     assert asof in feats.index, f"发出日{asof.date()}不在特征网格"
 
     print("[3/4] 四周期预测 ...")
-    sig = predict_asof(feats, y, asof)
+    args = parse_args()
+    if args.retrain:
+        print("  --retrain: 忽略当日缓存，强制重训")
+    sig = predict_asof(feats, y, asof,
+                       with_nn=not args.no_nn, retrain=args.retrain)
     sig.insert(0, "发出日", asof.date().isoformat())
     sig.insert(1, "特征口径", ymode)
     sig.insert(2, "当日收益率", round(y[asof], 4))
