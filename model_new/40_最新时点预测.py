@@ -262,7 +262,7 @@ def make_html(asof, ymode: str, sig: pd.DataFrame, y: pd.Series,
     def line(pts, color, w=1.6, dash=""):
         pts = " ".join(f"{a:.1f},{b:.1f}" for a, b in pts)
         return (f'<polyline points="{pts}" fill="none" stroke="{color}" '
-                f'stroke-width="{w}" {f"stroke-dasharray={dash}" if dash else ""}/>')
+                f'stroke-width="{w}" {f"stroke-dasharray=" + chr(34) + dash + chr(34) if dash else ""}/>')
 
     y26 = y[y.index >= "2026-01-01"]
     W, H1, H2 = 1130, 300, 300
@@ -456,9 +456,14 @@ def main() -> None:
     y = y_d
 
     feats_file = "43v4_features.csv" if netbuy_ok else "43v4nb_features.csv"
-    feats = pd.read_csv(DATA / feats_file, index_col=0, parse_dates=True)
-    if feats.index.max() < asof:
-        print("[2/4] 原始数据比特征新，自动重建特征链(30/32/38) ...")
+    try:
+        feats = pd.read_csv(DATA / feats_file, index_col=0, parse_dates=True)
+        need_rebuild = feats.index.max() < asof
+    except FileNotFoundError:
+        need_rebuild = True
+        print(f"  特征文件 {feats_file} 不存在，将自动重建")
+    if need_rebuild:
+        print("[2/4] 原始数据比特征新（或缺失），自动重建特征链(30/32/38) ...")
         rebuild_features()
         feats = pd.read_csv(DATA / feats_file, index_col=0, parse_dates=True)
     else:
