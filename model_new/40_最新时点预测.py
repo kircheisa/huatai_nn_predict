@@ -264,7 +264,7 @@ def make_html(asof, ymode: str, sig: pd.DataFrame, y: pd.Series,
         return (f'<polyline points="{pts}" fill="none" stroke="{color}" '
                 f'stroke-width="{w}" {dashattr}/>')
 
-    y_hist = y[y.index >= asof - pd.Timedelta(days=150)]   # 近150日历日
+    y_hist = y[y.index >= "2026-01-01"]                   # 2026全年
     W, H, T, B, L, R = 1130, 420, 26, 40, 56, 16
     svg = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" '
            f'font-family="Microsoft YaHei,sans-serif" font-size="12">']
@@ -295,24 +295,31 @@ def make_html(asof, ymode: str, sig: pd.DataFrame, y: pd.Series,
     y_now = y[asof]
     svg.append(f'<circle cx="{xmap(asof):.0f}" cy="{Y(y_now):.0f}" r="4.5" '
                f'fill="black" stroke="white" stroke-width="1"/>')
-    svg.append(f'<text x="{xmap(asof) - 6:.0f}" y="{Y(y_now) - 12:.0f}" '
+    svg.append(f'<text x="{xmap(asof) - 6:.0f}" y="{Y(y_now) + 24:.0f}" '
                f'fill="black" font-size="12" font-weight="bold">'
                f'发出日 {y_now:.3f}</text>')
+    # 前向路径：发出日 -> h5 -> h10 -> h15 -> h20 连成一条折线
+    pts_fwd, marks = [], []
     for gi, (_, r) in enumerate(sig.iterrows()):
-        c = COLORS[r["周期"]]
         lv = r.get("融合隐含点位(%)")
         if pd.isna(lv):
             continue
+        c = COLORS[r["周期"]]
         xe, ye = xmap(pd.Timestamp(r["到期日"])), Y(float(lv))
-        dy = gi * 18                                   # 标签按周期错行
-        svg.append(line([(xmap(asof), Y(y_now)), (xe, ye)], c, 1.8, "7,5"))
+        pts_fwd.append((xe, ye))
+        marks.append((gi, c, xe, ye, r["周期"], float(lv)))
+    if pts_fwd:
+        svg.append(line([(xmap(asof), Y(y_now))] + pts_fwd, "#2563eb", 2.0, "7,5"))
+    LOFF = {"h5": 22, "h10": -18, "h15": 40, "h20": -34}   # 各周期固定错位
+    for gi, c, xe, ye, hz, lv in marks:
         svg.append(f'<path d="M{xe:.0f},{ye - 7:.0f} l6,7 -6,7 -6,-7 z" '
                    f'fill="white" stroke="{c}" stroke-width="2"/>')
-        lx = xe + 9 if xe + 130 <= W - R else xe - 9
+        lx = xe + 9 if xe + 130 <= W - R else xe - 9   # 右缘翻转左对齐
         anch = "start" if lx > xe else "end"
-        svg.append(f'<text x="{lx:.0f}" y="{ye + 5 + dy:.0f}" fill="{c}" '
+        ly = ye + LOFF.get(hz, 18)
+        svg.append(f'<text x="{lx:.0f}" y="{ly:.0f}" fill="{c}" '
                    f'font-size="12" font-weight="bold" text-anchor="{anch}">'
-                   f'{r["周期"]}融合 {float(lv):.3f}</text>')
+                   f'{hz}融合 {lv:.3f}</text>')
     svg.append(f'<text x="{L}" y="{T - 8}" fill="black" font-weight="bold">'
                f'10Y国债收益率(%) 与融合模型隐含点位预测路径  2026</text>')
     svg.append("</svg>")
