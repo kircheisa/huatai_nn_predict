@@ -249,122 +249,72 @@ def predict_asof(feats: pd.DataFrame, y: pd.Series, asof: pd.Timestamp,
 
 def make_html(asof, ymode: str, sig: pd.DataFrame, y: pd.Series,
               hist: dict[str, pd.Series], llm: dict | None = None) -> None:
-    """自包含SVG：上=收益率，下=各周期下行概率史+最新信号点
-    sig 可含 LLM 修正列（修正概率/修正信号/修正隐含点位(%)），llm 为
-    41 脚本的分析结果（情绪/要点/理由/新闻）时追加解读卡片。"""
+    """自包含SVG：收益率历史 + 融合模型的前向隐含点位射线（单面板简洁版）。
+    sig 可含 LLM 修正列；llm 为 41 脚本分析结果时追加解读卡片。"""
 
     def xmap(d):  # 时间->像素（横轴延伸到最远到期日，给隐含点位留空间）
         mat_max = max(pd.Timestamp(r["到期日"]) for _, r in sig.iterrows())
         t0 = pd.Timestamp("2026-01-01")
-        t1 = max(asof, mat_max + pd.Timedelta(days=6))
+        t1 = max(asof, mat_max + pd.Timedelta(days=8))
         return 70 + (pd.Timestamp(d) - t0).total_seconds() / (t1 - t0).total_seconds() * 1030
 
     def line(pts, color, w=1.6, dash=""):
         pts = " ".join(f"{a:.1f},{b:.1f}" for a, b in pts)
+        dashattr = f'stroke-dasharray="' + dash + '"' if dash else ""
         return (f'<polyline points="{pts}" fill="none" stroke="{color}" '
-                f'stroke-width="{w}" {f"stroke-dasharray=" + chr(34) + dash + chr(34) if dash else ""}/>')
+                f'stroke-width="{w}" {dashattr}/>')
 
-    y26 = y[y.index >= "2026-01-01"]
-    W, H1, H2 = 1130, 300, 300
-    svg = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H1 + H2 + 70}" '
+    y_hist = y[y.index >= asof - pd.Timedelta(days=150)]   # 近150日历日
+    W, H, T, B, L, R = 1130, 420, 26, 40, 56, 16
+    svg = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" '
            f'font-family="Microsoft YaHei,sans-serif" font-size="12">']
-    # 网格与月刻度
     for mo in pd.date_range("2026-01-01", "2026-12-31", freq="MS"):
         x = xmap(mo)
-        for top, hh in [(20, H1), (H1 + 50, H2)]:
-            svg.append(f'<line x1="{x:.0f}" y1="{top}" x2="{x:.0f}" '
-                       f'y2="{top + hh - 20}" stroke="#eee"/>')
-        svg.append(f'<text x="{x:.0f}" y="{H1 + H2 + 58}" text-anchor="middle" '
+        svg.append(f'<line x1="{x:.0f}" y1="{T}" x2="{x:.0f}" y2="{H - B}" stroke="#eee"/>')
+        svg.append(f'<text x="{x:.0f}" y="{H - 12}" text-anchor="middle" '
                    f'fill="#666">{mo.month}月</text>')
-    # 面板1: 收益率 + 前向隐含点位（XGB实心圆 / 融合空心菱形 / 修正×）
-    imp = [r["隐含点位估算(%)"] for _, r in sig.iterrows()]
-    imp += [r["融合隐含点位(%)"] for _, r in sig.iterrows()
-            if pd.notna(r.get("融合隐含点位(%)"))] or imp
-    imp += [r["修正隐含点位(%)"] for _, r in sig.iterrows()
-            if pd.notna(r.get("修正隐含点位(%)"))] or imp
-    lo, hi_ = min(y26.min(), min(imp)), y26.max()
-    pad = (hi_ - lo) * 0.08
+
+    sig = sig.sort_values("到期日")          # 射线与表格按到期日递增
+    levels = [float(r["融合隐含点位(%)"]) for _, r in sig.iterrows()
+              if pd.notna(r.get("融合隐含点位(%)"))]
+    lo = min(float(y_hist.min()), *levels) if levels else float(y_hist.min())
+    hi_ = max(float(y_hist.max()), *levels) if levels else float(y_hist.max())
+    pad = (hi_ - lo) * 0.10
     lo, hi_ = lo - pad, hi_ + pad
 
-    def y1(v):
-        return 20 + (hi_ - v) / (hi_ - lo) * (H1 - 40)
+    def Y(v):
+        return T + (hi_ - v) / (hi_ - lo) * (H - T - B)
 
-    svg.append(line([(xmap(d), y1(v)) for d, v in y26.items()], "black", 2.2))
-    # 前向隐含点位：发出日->各到期日的虚线射线 + 端点标注
-    y_now = y[asof]
-    sig = sig.sort_values("到期日")          # 表格与射线按到期日递增
-    for _, r in sig.iterrows():
-        c = COLORS[r["周期"]]
-        xe, ye = xmap(pd.Timestamp(r["到期日"])), y1(r["隐含点位估算(%)"])
-        svg.append(line([(xmap(asof), y1(y_now)), (xe, ye)], c, 1.4, "6,4"))
-        svg.append(f'<circle cx="{xe:.0f}" cy="{ye:.0f}" r="4.5" fill="{c}" '
-                   f'stroke="white" stroke-width="1.2"/>')
-        svg.append(f'<text x="{xe - 4:.0f}" y="{ye + 18:.0f}" fill="{c}" '
-                   f'font-size="11" font-weight="bold">'
-                   f'{r["周期"]}→{r["隐含点位估算(%)"]:.3f}</text>')
-        # 融合隐含点位：空心菱形 + 细虚线
-        if pd.notna(r.get("融合隐含点位(%)")):
-            yf = y1(r["融合隐含点位(%)"])
-            svg.append(line([(xmap(asof), y1(y_now)), (xe, yf)], c, 1.0, "2,4"))
-            svg.append(f'<path d="M{xe:.0f},{yf - 6:.0f} l5,6 -5,6 -5,-6 z" '
-                       f'fill="white" stroke="{c}" stroke-width="1.6"/>')
-            svg.append(f'<text x="{xe + 8:.0f}" y="{yf + 4:.0f}" fill="{c}" '
-                       f'font-size="10">融{r["融合隐含点位(%)"]:.3f}</text>')
-        # LLM修正隐含点位：×标记
-        if pd.notna(r.get("修正隐含点位(%)")):
-            yc = y1(r["修正隐含点位(%)"])
-            svg.append(f'<path d="M{xe - 6:.0f},{yc - 6:.0f} l12,12 '
-                       f'm0,-12 l-12,12" stroke="{c}" stroke-width="2.4" '
-                       f'fill="none"/>')
-            svg.append(f'<text x="{xe - 4:.0f}" y="{yc - 12:.0f}" fill="{c}" '
-                       f'font-size="10" font-weight="bold">修'
-                       f'{r["修正隐含点位(%)"]:.3f}</text>')
-    svg.append(f'<circle cx="{xmap(asof):.0f}" cy="{y1(y_now):.0f}" r="4" '
-               f'fill="black" stroke="white" stroke-width="1"/>')
-    svg.append(f'<text x="{xmap(asof) - 4:.0f}" y="{y1(y_now) - 10:.0f}" '
-               f'fill="black" font-size="11" font-weight="bold">'
-               f'发出日 {y_now:.3f}</text>')
     for v in np.linspace(lo, hi_, 5):
-        svg.append(f'<line x1="70" y1="{y1(v):.0f}" x2="1100" y2="{y1(v):.0f}" '
-                   f'stroke="#f2f2f2"/><text x="62" y="{y1(v) + 4:.0f}" '
-                   f'text-anchor="end" fill="#666">{v:.2f}</text>')
-    svg.append(f'<text x="76" y="36" fill="black" font-weight="bold">'
-               f'10Y国债收益率(%)  2026</text>')
-    # 面板2: 概率曲线
-    def y2(v):
-        return H1 + 50 + (1 - v) * (H2 - 70)
+        svg.append(f'<line x1="{L}" y1="{Y(v):.0f}" x2="{W - R}" y2="{Y(v):.0f}" '
+                   f'stroke="#f2f2f2"/>')
+        svg.append(f'<text x="{L - 8}" y="{Y(v) + 4:.0f}" text-anchor="end" '
+                   f'fill="#666">{v:.2f}</text>')
+    svg.append(line([(xmap(d), Y(v)) for d, v in y_hist.items()], "black", 2.2))
 
-    svg.append(f'<line x1="70" y1="{y2(0.5):.0f}" x2="1100" y2="{y2(0.5):.0f}" '
-               f'stroke="#999" stroke-dasharray="6,4"/>')
-    svg.append(f'<text x="1104" y="{y2(0.5) + 4:.0f}" fill="#999">0.5</text>')
-    lg_x = 76
-    for name, s in hist.items():
-        h = name.split("h")[-1]
-        svg.append(line([(xmap(d), y2(v)) for d, v in s.dropna().items()],
-                        COLORS.get(f"h{h}", "gray"), 1.3))
-        svg.append(f'<rect x="{lg_x}" y="{H1 + 8}" width="26" height="4" '
-                   f'fill="{COLORS.get(f"h{h}", "gray")}"/><text x="{lg_x + 32}" '
-                   f'y="{H1 + 14}" fill="#333">{name}</text>')
-        lg_x += 110
-    # 最新信号点（右侧星标：实心=XGB，空心=融合）
-    for _, r in sig.iterrows():
+    y_now = y[asof]
+    svg.append(f'<circle cx="{xmap(asof):.0f}" cy="{Y(y_now):.0f}" r="4.5" '
+               f'fill="black" stroke="white" stroke-width="1"/>')
+    svg.append(f'<text x="{xmap(asof) - 6:.0f}" y="{Y(y_now) - 12:.0f}" '
+               f'fill="black" font-size="12" font-weight="bold">'
+               f'发出日 {y_now:.3f}</text>')
+    for gi, (_, r) in enumerate(sig.iterrows()):
         c = COLORS[r["周期"]]
-        xx, yy = xmap(asof), y2(r["下行概率"])
-        svg.append(f'<path d="M{xx:.0f},{yy:.0f} m0,-9 l2.4,5.4 6,0.6 -4.5,4 '
-                   f'1.3,5.9 -5.2,-3.1 -5.2,3.1 1.3,-5.9 -4.5,-4 6,-0.6 z" '
-                   f'fill="{c}" stroke="black" stroke-width="0.6"/>')
-        svg.append(f'<text x="{xx - 6:.0f}" y="{yy - 14:.0f}" fill="{c}" '
-                   f'font-weight="bold">{r["下行概率"]:.2f}</text>')
-        if pd.notna(r.get("融合概率")):
-            yf2 = y2(min(1.0, r["融合概率"] + 0.0))
-            svg.append(f'<path d="M{xx - 18:.0f},{yf2:.0f} m0,-7 l1.9,4.2 '
-                       f'4.7,0.5 -3.5,3.1 1,4.6 -4.1,-2.4 -4.1,2.4 1,-4.6 '
-                       f'-3.5,-3.1 4.7,-0.5 z" fill="white" stroke="{c}" '
-                       f'stroke-width="1.4"/>')
-            svg.append(f'<text x="{xx - 44:.0f}" y="{yf2 + 4:.0f}" fill="{c}" '
-                       f'font-size="10">融{r["融合概率"]:.2f}</text>')
-    svg.append(f'<text x="76" y="{H1 + 44}" fill="black" font-weight="bold">'
-               f'各周期下行概率（样本外预测史 + ★{asof.date()}最新信号）</text>')
+        lv = r.get("融合隐含点位(%)")
+        if pd.isna(lv):
+            continue
+        xe, ye = xmap(pd.Timestamp(r["到期日"])), Y(float(lv))
+        dy = gi * 18                                   # 标签按周期错行
+        svg.append(line([(xmap(asof), Y(y_now)), (xe, ye)], c, 1.8, "7,5"))
+        svg.append(f'<path d="M{xe:.0f},{ye - 7:.0f} l6,7 -6,7 -6,-7 z" '
+                   f'fill="white" stroke="{c}" stroke-width="2"/>')
+        lx = xe + 9 if xe + 130 <= W - R else xe - 9
+        anch = "start" if lx > xe else "end"
+        svg.append(f'<text x="{lx:.0f}" y="{ye + 5 + dy:.0f}" fill="{c}" '
+                   f'font-size="12" font-weight="bold" text-anchor="{anch}">'
+                   f'{r["周期"]}融合 {float(lv):.3f}</text>')
+    svg.append(f'<text x="{L}" y="{T - 8}" fill="black" font-weight="bold">'
+               f'10Y国债收益率(%) 与融合模型隐含点位预测路径  2026</text>')
     svg.append("</svg>")
 
     def fmt(v, spec=".3f"):
@@ -434,7 +384,7 @@ padding:6px 12px;text-align:center}}th{{background:#f5f7fa}}</style></head><body
 <th>融合分级</th><th>融合信号</th><th>融合隐含点位</th>{fix_head}<th>训练样本截至</th></tr>{tbl}</table>
 <p style="color:#888;font-size:12px">隐含点位=当前值±概率加权的历史该周期变动中位数，
 非模型原生输出；融合=(XGB+NN概率平均)；下行=收益率下降(债券价格上涨)。
-图中：实心圆/实心星=XGB，空心菱形/空心星=融合，×=LLM修正。</p></div>
+图中彩色虚线=融合模型的隐含点位预测路径（菱形=到期日预测值）；XGB与LLM修正数值见表格。</p></div>
 {llm_card}
 <div class="card">{''.join(svg)}</div>
 </body></html>"""
