@@ -319,7 +319,7 @@ def make_html(asof, ymode: str, sig: pd.DataFrame, y: pd.Series,
         ly = ye + LOFF.get(hz, 18)
         svg.append(f'<text x="{lx:.0f}" y="{ly:.0f}" fill="{c}" '
                    f'font-size="12" font-weight="bold" text-anchor="{anch}">'
-                   f'{hz}融合 {lv:.3f}</text>')
+                   f'{hz} {lv:.3f}</text>')
     svg.append(f'<text x="{L}" y="{T - 8}" fill="black" font-weight="bold">'
                f'10Y国债收益率(%) 与融合模型隐含点位预测路径  2026</text>')
     svg.append("</svg>")
